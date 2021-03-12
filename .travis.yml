@@ -24,9 +24,9 @@ branches:
   only:
     - main
     - dev
-    - /^Sparta-.*$\
-    - /^refactor/*$\
-    - /^fix/*$\
+    - /^Sparta-.*$/
+    - /^refactor/*$/
+    - /^fix/*$/
 
 notifications:
   email: false
