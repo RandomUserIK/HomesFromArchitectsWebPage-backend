@@ -1,6 +1,8 @@
 os: linux
 dist: focal
 language: java
+jdk:
+  - openjdk8
 
 addons:
   apt:
@@ -12,8 +14,8 @@ services:
 
 before_install:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS sparta_dev;'
-  - mysql -e 'create user 'spartauser'@'%' identified by 'password';'
-  - mysql -e 'grant all on sparta_dev.* to 'spartauser'@'%';'
+  - mysql -e 'create user 'spartauser'@'localhost' identified by 'password';'
+  - mysql -e 'grant all on sparta_dev.* to 'spartauser'@'localhost';'
 
 script:
   ./build.sh
