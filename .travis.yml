@@ -1,0 +1,31 @@
+language: java
+jdk: oraclejdk8
+
+os: linux
+dist: focal
+
+addons:
+  apt:
+    packages:
+      - maven
+
+services:
+  - mysql
+
+before_install:
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS sparta_dev;'
+  - mysql -e 'create user 'spartauser'@'%' identified by 'password';'
+  - mysql -e 'grant all on sparta_dev.* to 'spartauser'@'%';'
+
+script:
+  ./build.sh
+
+branches:
+  only:
+    - dev
+    - /^Sparta-*$\
+    - /^refactor/*$\
+    - /^fix/*$\
+
+notifications:
+  email: false
