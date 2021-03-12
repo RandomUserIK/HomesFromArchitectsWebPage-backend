@@ -1,5 +1,6 @@
 os: linux
-dist: focal
+dist: bionic
+sudo: required
 language: java
 
 addons:
@@ -11,9 +12,9 @@ services:
   - mysql
 
 before_install:
-  - mysql -e 'CREATE DATABASE IF NOT EXISTS sparta_dev;'
-  - mysql -e 'create user 'spartauser'@'localhost' identified by 'password';'
-  - mysql -e 'grant all on sparta_dev.* to 'spartauser'@'localhost';'
+  - mysql -e "CREATE DATABASE IF NOT EXISTS sparta_dev;"
+  - mysql -e "CREATE USER 'spartauser'@'localhost' IDENTIFIED BY 'password';"
+  - mysql -e "GRANT ALL PRIVILEGES ON sparta_dev. * TO 'spartauser'@'localhost';"
 
 script:
   ./build.sh
