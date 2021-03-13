@@ -8,6 +8,10 @@ addons:
     packages:
       - maven
       - openjdk-8-jdk
+  sonarcloud:
+    organization: "randomuserik"
+    token:
+      secure: "**************************"
 
 services:
   - mysql
