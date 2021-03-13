@@ -1,13 +1,13 @@
-package sk.sparta;
+package sk.hfa;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpartaApplication {
+public class HfaApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpartaApplication.class, args);
+		SpringApplication.run(HfaApplication.class, args);
 	}
 
 }

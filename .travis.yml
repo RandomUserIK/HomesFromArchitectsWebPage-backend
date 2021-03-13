@@ -13,9 +13,9 @@ services:
   - mysql
 
 before_install:
-  - mysql -e "CREATE DATABASE IF NOT EXISTS sparta_dev;"
-  - mysql -e "CREATE USER 'spartauser'@'localhost' IDENTIFIED BY 'password';"
-  - mysql -e "GRANT ALL PRIVILEGES ON sparta_dev. * TO 'spartauser'@'localhost';"
+  - mysql -e "CREATE DATABASE IF NOT EXISTS hfa_dev;"
+  - mysql -e "CREATE USER 'hfauser'@'localhost' IDENTIFIED BY 'password';"
+  - mysql -e "GRANT ALL PRIVILEGES ON hfa_dev. * TO 'hfauser'@'localhost';"
 
 script:
   ./build.sh
@@ -24,7 +24,7 @@ branches:
   only:
     - main
     - dev
-    - /^Sparta-.*$/
+    - /^HFA-.*$/
     - /^refactor/*$/
     - /^fix/*$/
 

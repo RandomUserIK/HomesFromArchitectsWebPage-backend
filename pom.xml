@@ -9,11 +9,11 @@
 		<relativePath/>
 	</parent>
 
-	<groupId>sk.sparta</groupId>
-	<artifactId>Sparta</artifactId>
+	<groupId>sk.hfa</groupId>
+	<artifactId>HFA</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Sparta</name>
-	<description>Project for Sparta Athletic webpage</description>
+	<name>HFA</name>
+	<description>Project for Homes from Architects webpage</description>
 
 	<properties>
 		<java.version>1.8</java.version>

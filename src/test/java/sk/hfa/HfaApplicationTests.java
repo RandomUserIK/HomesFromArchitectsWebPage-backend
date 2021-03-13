@@ -1,10 +1,10 @@
-package sk.sparta;
+package sk.hfa;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SpartaApplicationTests {
+class HfaApplicationTests {
 
 	@Test
 	void contextLoads() {

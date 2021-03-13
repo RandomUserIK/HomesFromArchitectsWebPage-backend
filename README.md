@@ -1,2 +1,2 @@
 # SpartaWebPage [![Build Status](https://travis-ci.org/RandomUserIK/SpartaWebPage-backend.svg?branch=dev)](https://travis-ci.org/RandomUserIK/SpartaWebPage-backend) [![Total alerts](https://img.shields.io/lgtm/alerts/g/RandomUserIK/SpartaWebPage-backend.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/RandomUserIK/SpartaWebPage-backend/alerts/) [![Language grade: Java](https://img.shields.io/lgtm/grade/java/g/RandomUserIK/SpartaWebPage-backend.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/RandomUserIK/SpartaWebPage-backend/context:java)
-Project for Sparta Athletic webpage
+Project for Homes from Architects webpage
