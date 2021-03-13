@@ -1,0 +1,32 @@
+os: linux
+dist: bionic
+sudo: required
+language: java
+
+addons:
+  apt:
+    packages:
+      - maven
+      - openjdk-8-jdk
+
+services:
+  - mysql
+
+before_install:
+  - mysql -e "CREATE DATABASE IF NOT EXISTS hfa_dev;"
+  - mysql -e "CREATE USER 'hfauser'@'localhost' IDENTIFIED BY 'password';"
+  - mysql -e "GRANT ALL PRIVILEGES ON hfa_dev. * TO 'hfauser'@'localhost';"
+
+script:
+  ./build.sh
+
+branches:
+  only:
+    - main
+    - dev
+    - /^HFA-.*$/
+    - /^refactor/*$/
+    - /^fix/*$/
+
+notifications:
+  email: false
