@@ -48,6 +48,18 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Logging -->
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+
 		<!-- Unit test dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
