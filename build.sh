@@ -1,1 +1,1 @@
-mvn clean install -B
+mvn clean install -B && mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=RandomUserIK_SpartaWebPage-backend
