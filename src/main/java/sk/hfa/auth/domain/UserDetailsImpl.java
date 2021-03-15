@@ -1,9 +1,6 @@
 package sk.hfa.auth.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -88,4 +85,10 @@ public class UserDetailsImpl implements UserDetails {
         UserDetailsImpl user = (UserDetailsImpl) other;
         return Objects.equals(id, user.id);
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
 }

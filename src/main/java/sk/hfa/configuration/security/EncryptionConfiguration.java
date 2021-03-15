@@ -11,11 +11,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 public class EncryptionConfiguration {
 
-    private final UserDetailsService userDetailsService;
+    private final UserDetailsService userDetailsServiceImpl;
 
     @Autowired
-    public EncryptionConfiguration(@Lazy UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    public EncryptionConfiguration(@Lazy UserDetailsService userDetailsServiceImpl) {
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
 
     @Bean
@@ -25,7 +25,7 @@ public class EncryptionConfiguration {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder authManagerBuilder) throws Exception {
-        authManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+        authManagerBuilder.userDetailsService(userDetailsServiceImpl).passwordEncoder(bCryptPasswordEncoder());
     }
 
 }

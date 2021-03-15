@@ -1,5 +1,6 @@
 package sk.hfa.configuration.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class AuthenticationEntryPoint extends BasicAuthenticationEntryPoint {
 
@@ -17,8 +19,11 @@ public class AuthenticationEntryPoint extends BasicAuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-
-        super.commence(request, response, authException);
+        if (authException != null) {
+            log.warn("Unauthorized exception", authException);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().println("HTTP Status 401 - " + authException.getMessage());
+        }
     }
 
     @Override
