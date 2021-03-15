@@ -1,5 +1,6 @@
 package sk.hfa.auth.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,6 +29,7 @@ public class User {
     @NotNull
     @Getter
     @Setter
+    @JsonIgnore
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
