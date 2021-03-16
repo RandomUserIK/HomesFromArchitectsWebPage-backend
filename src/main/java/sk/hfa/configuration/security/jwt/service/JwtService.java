@@ -3,11 +3,12 @@ package sk.hfa.configuration.security.jwt.service;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import sk.hfa.auth.domain.UserDetailsImpl;
 import sk.hfa.configuration.security.jwt.service.interfaces.IJwtService;
 
 import java.util.Date;
-import java.util.Map;
 import java.util.function.Function;
 
 @Slf4j
@@ -21,12 +22,12 @@ public class JwtService implements IJwtService {
     private long expiration;
 
     @Override
-    public String tokenFrom(Map<String, Object> claims) {
+    public String tokenFrom(Authentication authentication) {
         log.info("Creating a new JWT token.");
         return Jwts.builder()
-                .addClaims(claims)
+                .setSubject(((UserDetailsImpl) authentication.getPrincipal()).getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(SignatureAlgorithm.RS512, secret)
                 .compact();
     }
 
@@ -49,6 +50,11 @@ public class JwtService implements IJwtService {
             log.warn("Provided JWT token is invalid.", ex);
             return false;
         }
+    }
+
+    @Override
+    public String getSubjectFromToken(String token)  throws ExpiredJwtException {
+        return getClaimFromToken(token, Claims::getSubject);
     }
 
     private Date getExpirationDateFromToken(String token)  throws ExpiredJwtException {

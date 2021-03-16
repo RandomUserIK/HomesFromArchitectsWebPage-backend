@@ -8,4 +8,6 @@ public interface IUserService {
 
     Optional<User> findByUsername(String username);
 
+    User saveUser(User user);
+
 }

@@ -11,6 +11,8 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -34,8 +36,8 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     );
 
     private final AuthenticationEntryPoint authenticationEntryPoint;
-
     private final IJwtService jwtService;
+    private final UserDetailsService userDetailsServiceImpl;
 
     @Value("${hfa.server.security.permit-patterns}")
     private String[] permitPatterns;
@@ -47,9 +49,11 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private boolean isCsrfEnabled;
 
     @Autowired
-    public HfaSecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint, IJwtService jwtService) {
+    public HfaSecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint, IJwtService jwtService,
+                                    UserDetailsService userDetailsServiceImpl) {
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.jwtService = jwtService;
+        this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
 
     @Bean
@@ -75,7 +79,7 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .cors()
                 .and()
-                .addFilterBefore(createAuthenticationFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(createAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                         .antMatchers(permitPatterns).permitAll()
                         .antMatchers(authenticatePatterns).hasAuthority("ROLE_ADMIN")
@@ -95,6 +99,7 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
         setCsrf(http);
     }
 
+    @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
@@ -109,7 +114,7 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private AuthenticationFilter createAuthenticationFilter() {
-        return new AuthenticationFilter(jwtService);
+        return new AuthenticationFilter(jwtService, userDetailsServiceImpl);
     }
 
 }
