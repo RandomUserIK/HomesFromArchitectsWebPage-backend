@@ -34,6 +34,7 @@ public class AdminRunner implements CommandLineRunner {
         log.info("Creating dummy admin user...");
         User adminUser = new User(username, password);
         Role adminRole = new Role("ROLE_ADMIN");
+        adminRole = roleService.save(adminRole);
         adminUser.getRoles().add(adminRole);
         adminRole.getUsers().add(adminUser);
         userService.saveUser(adminUser);
