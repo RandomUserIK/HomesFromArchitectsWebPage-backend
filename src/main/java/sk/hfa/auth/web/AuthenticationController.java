@@ -26,8 +26,8 @@ public class AuthenticationController {
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
-        authenticationService.authenticateUser(request.getUsername(), request.getPassword());
-        return ResponseEntity.ok(new AuthenticationResponse());
+        AuthenticationResponse response = authenticationService.authenticateUser(request.getUsername(), request.getPassword());
+        return ResponseEntity.ok(response);
     }
 
 }

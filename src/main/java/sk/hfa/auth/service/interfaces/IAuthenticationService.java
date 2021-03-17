@@ -1,9 +1,9 @@
 package sk.hfa.auth.service.interfaces;
 
-import sk.hfa.auth.domain.User;
+import sk.hfa.auth.web.responsebodies.AuthenticationResponse;
 
 public interface IAuthenticationService {
 
-    User authenticateUser(String username, String password);
+    AuthenticationResponse authenticateUser(String username, String password);
 
 }

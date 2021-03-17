@@ -27,7 +27,7 @@ public class JwtService implements IJwtService {
         return Jwts.builder()
                 .setSubject(((UserDetailsImpl) authentication.getPrincipal()).getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(SignatureAlgorithm.RS512, secret)
+                .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
 
