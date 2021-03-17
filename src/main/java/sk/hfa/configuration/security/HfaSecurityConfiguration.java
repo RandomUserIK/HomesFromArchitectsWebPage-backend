@@ -1,7 +1,6 @@
 package sk.hfa.configuration.security;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,10 +10,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -40,15 +39,11 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsServiceImpl;
 
     @Value("${hfa.server.security.permit-patterns}")
-    private String[] permitPatterns;
-
-    @Value("${hfa.server.security.authenticate-patterns}")
-    private String[] authenticatePatterns;
+    private String[] publicApiPatterns;
 
     @Value("${hfa.server.security.csrf}")
     private boolean isCsrfEnabled;
 
-    @Autowired
     public HfaSecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint, IJwtService jwtService,
                                     UserDetailsService userDetailsServiceImpl) {
         this.authenticationEntryPoint = authenticationEntryPoint;
@@ -67,23 +62,29 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
         EXPOSED_HEADERS.stream().forEach(configuration::addExposedHeader);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/api/**", configuration);
+        source.registerCorsConfiguration("/**", configuration);
 
         return source;
     }
 
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        // TODO: configure CORS policy
         http
-                .httpBasic()
-                .and()
-                .cors()
-                .and()
+                .cors().disable()
                 .addFilterBefore(createAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                        .antMatchers(permitPatterns).permitAll()
-                        .antMatchers(authenticatePatterns).hasAuthority("ROLE_ADMIN")
+                        .antMatchers(publicApiPatterns).permitAll()
                 .anyRequest().authenticated()
+                .and()
+                .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .logout()
                     .logoutUrl("/api/auth/logout")
@@ -91,18 +92,12 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
                 .and()
                 .exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint);
-                // .and()
-                // .headers()
-                //     .frameOptions().sameOrigin();
+                    .authenticationEntryPoint(authenticationEntryPoint)
+                .and()
+                .headers()
+                    .frameOptions().sameOrigin();
 
         setCsrf(http);
-    }
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
     }
 
     private void setCsrf(HttpSecurity http) throws Exception {

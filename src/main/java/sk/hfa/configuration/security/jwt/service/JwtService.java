@@ -32,16 +32,6 @@ public class JwtService implements IJwtService {
     }
 
     @Override
-    public boolean isExpired(String token) {
-        try {
-            getExpirationDateFromToken(token);
-        } catch (ExpiredJwtException e) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public boolean isValid(String token) {
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);

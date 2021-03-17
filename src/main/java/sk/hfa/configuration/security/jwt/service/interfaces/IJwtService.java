@@ -6,8 +6,6 @@ public interface IJwtService {
 
     String tokenFrom(Authentication authentication);
 
-    boolean isExpired(String token);
-
     boolean isValid(String token);
 
     String getSubjectFromToken(String token);

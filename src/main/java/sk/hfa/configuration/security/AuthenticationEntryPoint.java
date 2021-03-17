@@ -20,7 +20,7 @@ public class AuthenticationEntryPoint extends BasicAuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
         if (authException != null) {
-            log.warn("Unauthorized exception", authException);
+            log.warn("Unauthorized", authException);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().println("HTTP Status 401 - " + authException.getMessage());
         }
