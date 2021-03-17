@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.Set;
 
 @Data
-public class LoginResponse {
+public class AuthenticationResponse {
 
     private Long id;
 
@@ -15,6 +15,6 @@ public class LoginResponse {
 
     private String token;
 
-    private String type;
+    private String type = "Bearer";
 
 }

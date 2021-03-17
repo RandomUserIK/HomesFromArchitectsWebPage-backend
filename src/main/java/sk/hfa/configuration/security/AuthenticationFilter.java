@@ -15,12 +15,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Objects;
 
 @Slf4j
 public class AuthenticationFilter extends OncePerRequestFilter {
 
-    private final static String AUTHORIZATION = "Authorization";
-    private final static String BEARER = "Bearer ";
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String BEARER = "Bearer ";
 
     private final IJwtService jwtService;
     private final UserDetailsService userDetailsServiceImpl;
@@ -31,12 +32,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String jwt = parseJwt(request);
-        if (jwt != null && jwtService.isValid(jwt)) {
-            String username = jwtService.getSubjectFromToken(jwt);
+        String token = parseJwt(request);
+        if (!Objects.isNull(token) && jwtService.isValid(token)) {
+            String username = jwtService.getSubjectFromToken(token);
 
             UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(

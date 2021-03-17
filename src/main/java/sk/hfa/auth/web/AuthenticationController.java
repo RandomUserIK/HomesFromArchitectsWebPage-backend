@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sk.hfa.auth.service.interfaces.IAuthenticationService;
-import sk.hfa.auth.web.requestbodies.LoginRequest;
-import sk.hfa.auth.web.responsebodies.LoginResponse;
+import sk.hfa.auth.web.requestbodies.AuthenticationRequest;
+import sk.hfa.auth.web.responsebodies.AuthenticationResponse;
 
 import javax.validation.Valid;
 
@@ -25,10 +25,9 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        // TODO:
+    public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
         authenticationService.authenticateUser(request.getUsername(), request.getPassword());
-        return ResponseEntity.ok(new LoginResponse());
+        return ResponseEntity.ok(new AuthenticationResponse());
     }
 
 }

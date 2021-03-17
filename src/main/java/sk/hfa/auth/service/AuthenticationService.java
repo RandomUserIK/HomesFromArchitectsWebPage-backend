@@ -8,15 +8,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import sk.hfa.auth.domain.User;
 import sk.hfa.auth.service.interfaces.IAuthenticationService;
+import sk.hfa.configuration.security.jwt.service.interfaces.IJwtService;
 
 @Slf4j
 @Service
 public class AuthenticationService implements IAuthenticationService {
 
     private final AuthenticationManager authenticationManager;
+    private final IJwtService jwtService;
 
-    public AuthenticationService(AuthenticationManager authenticationManager) {
+    public AuthenticationService(AuthenticationManager authenticationManager, IJwtService jwtService) {
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -25,6 +28,10 @@ public class AuthenticationService implements IAuthenticationService {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        log.info("User successfully authenticated. Generating new JWT token...");
+        String token = jwtService.tokenFrom(authentication);
+
+        // TODO
         return null;
     }
 
