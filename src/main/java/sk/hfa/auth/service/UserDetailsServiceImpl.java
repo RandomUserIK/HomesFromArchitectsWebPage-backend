@@ -17,7 +17,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final IUserService userService;
 
-    @Autowired
     public UserDetailsServiceImpl(IUserService userService) {
         this.userService = userService;
     }
