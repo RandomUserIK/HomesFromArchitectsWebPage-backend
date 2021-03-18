@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IIndividualProjectService {
 
-    IndividualProject findIndividualProjectById(Long Id);
+    IndividualProject findIndividualProjectById(Long id);
 
     IndividualProject findIndividualProjectByProjectName(String projectName);
 
