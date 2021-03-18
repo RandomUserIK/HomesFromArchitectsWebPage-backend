@@ -1,9 +1,9 @@
-package sk.hfa.databases.posts.services;
+package sk.hfa.databases.projects.services;
 
 import org.springframework.stereotype.Service;
-import sk.hfa.databases.posts.domains.IndividualProject;
-import sk.hfa.databases.posts.domains.repositories.IndividualProjectRepository;
-import sk.hfa.databases.posts.services.interfaces.IIndividualProjectService;
+import sk.hfa.databases.projects.domains.IndividualProject;
+import sk.hfa.databases.projects.domains.repositories.IndividualProjectRepository;
+import sk.hfa.databases.projects.services.interfaces.IIndividualProjectService;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +24,12 @@ public class IndividualProjectService implements IIndividualProjectService {
     }
 
     @Override
+    public IndividualProject findIndividualProjectByProjectName(String projectName) {
+        Optional<IndividualProject> post = individualProjectRepository.findByProjectName(projectName);
+        return post.orElse(null);
+    }
+
+    @Override
     public List<IndividualProject> getAllIndividualProjects() {
         return individualProjectRepository.findAll();
     }
@@ -31,5 +37,17 @@ public class IndividualProjectService implements IIndividualProjectService {
     @Override
     public List<IndividualProject> saveAll(List<IndividualProject> individualProjects) {
         return individualProjectRepository.saveAll(individualProjects);
+    }
+
+    @Override
+    public void save(IndividualProject project) {
+        individualProjectRepository.save(project);
+    }
+
+    @Override
+    public IndividualProject createNewProject(String projectName) {
+        IndividualProject individualProject = new IndividualProject();
+        individualProject.setProjectName(projectName);
+        return individualProject;
     }
 }
