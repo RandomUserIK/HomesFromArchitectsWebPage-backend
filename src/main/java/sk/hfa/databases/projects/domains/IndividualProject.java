@@ -34,6 +34,6 @@ public class IndividualProject {
     @OneToMany()
     private List<TextSections> textSections;
     @ElementCollection
-    private List<String> photoPaths = new ArrayList();
+    private List<String> photoPaths = new ArrayList<>();
 }
 
