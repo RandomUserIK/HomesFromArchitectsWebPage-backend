@@ -22,8 +22,8 @@ public class IndividualProject {
     private Double grossArea;
     private Double selfHelpBuild;
     private Double priceOnKey;
-    private Double BasicProject;
-    private Double AdvancedProject;
+    private Double basicProject;
+    private Double advancedProject;
     private String titlePhoto;
     private String floorPlanPhoto;
     private Double totalLivingArea;
@@ -34,6 +34,6 @@ public class IndividualProject {
     @OneToMany()
     private List<TextSections> textSections;
     @ElementCollection
-    private List<String> photoPaths = new ArrayList<String>();
+    private List<String> photoPaths = new ArrayList();
 }
 
