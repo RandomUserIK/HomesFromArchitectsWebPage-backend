@@ -6,7 +6,6 @@ import sk.hfa.databases.projects.domains.repositories.IndividualProjectRepositor
 import sk.hfa.databases.projects.services.interfaces.IIndividualProjectService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class IndividualProjectService implements IIndividualProjectService {
