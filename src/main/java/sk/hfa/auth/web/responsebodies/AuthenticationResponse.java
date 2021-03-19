@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class AuthenticationResponse {
 
-    private static final String TYPE = "Bearer";
+    private static final String BEARER = "Bearer";
 
     private Long id;
 
@@ -38,7 +38,7 @@ public class AuthenticationResponse {
                 .username(userDetails.getUsername())
                 .roles(userRoles)
                 .token(token)
-                .type(TYPE)
+                .type(BEARER)
                 .build();
     }
 

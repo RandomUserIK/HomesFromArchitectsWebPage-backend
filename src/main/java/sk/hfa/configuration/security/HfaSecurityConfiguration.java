@@ -15,24 +15,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import sk.hfa.configuration.security.jwt.service.interfaces.IJwtService;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
-
-    private static final List<String> EXPOSED_HEADERS = Arrays.asList(
-            "x-auth-token", "Access-Control-Allow-Credentials", "Access-Control-Allow-Origin", "Cache-Control",
-            "Content-Type", "Expires", "Pragma", "X-XSS-Protection", "X-Content-Type-Options", "X-Frame-Options"
-    );
 
     private final AuthenticationEntryPoint authenticationEntryPoint;
     private final IJwtService jwtService;
@@ -44,27 +33,12 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Value("${hfa.server.security.csrf}")
     private boolean isCsrfEnabled;
 
-    public HfaSecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint, IJwtService jwtService,
-                                    UserDetailsService userDetailsServiceImpl) {
+    public HfaSecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint,
+                                    UserDetailsService userDetailsServiceImpl,
+                                    IJwtService jwtService) {
         this.authenticationEntryPoint = authenticationEntryPoint;
-        this.jwtService = jwtService;
         this.userDetailsServiceImpl = userDetailsServiceImpl;
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(true);
-
-        EXPOSED_HEADERS.stream().forEach(configuration::addExposedHeader);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
+        this.jwtService = jwtService;
     }
 
     @Bean
