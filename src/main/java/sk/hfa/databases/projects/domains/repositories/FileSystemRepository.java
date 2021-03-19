@@ -11,7 +11,7 @@ import java.util.Date;
 @Repository
 public class FileSystemRepository {
 
-    String RESOURCES_DIR = FileSystemRepository.class.getResource("/").getPath();
+    private static final String RESOURCES_DIR = FileSystemRepository.class.getResource("/").getPath();
 
     public String save(byte[] content, String imageName) throws Exception {
         Path newFile = Paths.get(RESOURCES_DIR + new Date().getTime() + "-" + imageName);
@@ -21,11 +21,7 @@ public class FileSystemRepository {
     }
 
     public FileSystemResource findInFileSystem(String location) {
-        try {
-            return new FileSystemResource(Paths.get(location));
-        } catch (Exception e) {
-            throw new RuntimeException();
-        }
+        return new FileSystemResource(Paths.get(location));
     }
 
 

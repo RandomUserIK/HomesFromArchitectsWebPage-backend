@@ -19,14 +19,12 @@ public class IndividualProjectService implements IIndividualProjectService {
 
     @Override
     public IndividualProject findIndividualProjectById(Long id) {
-        Optional<IndividualProject> post = individualProjectRepository.findById(id);
-        return post.orElse(null);
+        return individualProjectRepository.findById(id).orElse(null);
     }
 
     @Override
     public IndividualProject findIndividualProjectByProjectName(String projectName) {
-        Optional<IndividualProject> post = individualProjectRepository.findByProjectName(projectName);
-        return post.orElse(null);
+        return individualProjectRepository.findByProjectName(projectName).orElse(null);
     }
 
     @Override

@@ -32,7 +32,7 @@ public class IndividualProject {
     private String heatingSource;
     private String heatingType;
     @OneToMany()
-    private List<TextSections> textSections;
+    private List<TextSection> textSections;
     @ElementCollection
     private List<String> photoPaths = new ArrayList<>();
 }

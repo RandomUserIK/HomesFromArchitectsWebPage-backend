@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-public class TextSections {
+public class TextSection {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
