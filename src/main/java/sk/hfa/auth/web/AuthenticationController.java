@@ -3,10 +3,7 @@ package sk.hfa.auth.web;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sk.hfa.auth.service.interfaces.IAuthenticationService;
 import sk.hfa.auth.web.requestbodies.AuthenticationRequest;
 import sk.hfa.auth.web.responsebodies.AuthenticationResponse;
@@ -16,6 +13,8 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
+// TODO: remove after CORS policy is configured
+@CrossOrigin("http://localhost:4200")
 public class AuthenticationController {
 
     private final IAuthenticationService authenticationService;
