@@ -6,7 +6,6 @@ import sk.hfa.databases.projects.domains.repositories.IndividualProjectRepositor
 import sk.hfa.databases.projects.services.interfaces.IIndividualProjectService;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class IndividualProjectService implements IIndividualProjectService {
@@ -19,14 +18,12 @@ public class IndividualProjectService implements IIndividualProjectService {
 
     @Override
     public IndividualProject findIndividualProjectById(Long id) {
-        Optional<IndividualProject> post = individualProjectRepository.findById(id);
-        return post.orElse(null);
+        return individualProjectRepository.findById(id).orElse(null);
     }
 
     @Override
     public IndividualProject findIndividualProjectByProjectName(String projectName) {
-        Optional<IndividualProject> post = individualProjectRepository.findByProjectName(projectName);
-        return post.orElse(null);
+        return individualProjectRepository.findByProjectName(projectName).orElse(null);
     }
 
     @Override
