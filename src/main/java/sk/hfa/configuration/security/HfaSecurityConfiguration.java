@@ -53,13 +53,9 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration configuration = new CorsConfiguration();
-        // configuration.addAllowedOrigin("*");
-        // configuration.addAllowedMethod("*");
-        // configuration.addAllowedHeader("*");
-        // configuration.setAllowCredentials(true);
-        // // TODO: remove after CORS policy is properly configured
-        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -77,25 +73,26 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // TODO: configure CORS policy
         http
-                .cors().disable()
+                .cors()
+                .and()
                 .addFilterBefore(createAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                        .antMatchers(publicApiPatterns).permitAll()
+                .antMatchers(publicApiPatterns).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
-                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .logout()
-                    .logoutUrl("/api/auth/logout")
-                    .invalidateHttpSession(true)
-                    .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+                .logoutUrl("/api/auth/logout")
+                .invalidateHttpSession(true)
+                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
                 .and()
                 .exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint);
-                // .and()
-                // .headers()
-                //     .frameOptions().sameOrigin();
+                .authenticationEntryPoint(authenticationEntryPoint);
+        // .and()
+        // .headers()
+        //     .frameOptions().sameOrigin();
 
         setCsrf(http);
     }

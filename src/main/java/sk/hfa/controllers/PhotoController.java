@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,8 +19,7 @@ import sk.hfa.databases.projects.domains.repositories.IndividualProjectRepositor
 import java.io.InputStream;
 
 @Controller
-@RequestMapping(path = "/photo")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@RequestMapping(path = "/api/photo")
 @Slf4j
 public class PhotoController {
 
@@ -32,6 +32,7 @@ public class PhotoController {
 
     @PostMapping(path = "/upload")
     @ResponseBody
+    @PreAuthorize("hasRole('ADMIN')")
     String upload(@RequestParam("file") MultipartFile file, @RequestParam("projectId") String projectId) throws Exception {
         String saveFilePath = "";
         IndividualProject individualProject = individualProjectRepository.findById(Long.valueOf(projectId)).orElse(null);

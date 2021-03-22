@@ -13,8 +13,6 @@ import javax.validation.Valid;
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
-// TODO: remove after CORS policy is configured
-@CrossOrigin("http://localhost:4200")
 public class AuthenticationController {
 
     private final IAuthenticationService authenticationService;

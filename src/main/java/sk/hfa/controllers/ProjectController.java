@@ -1,13 +1,14 @@
 package sk.hfa.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import sk.hfa.databases.projects.domains.IndividualProject;
 import sk.hfa.databases.projects.services.interfaces.IIndividualProjectService;
 
 @Controller
-@RequestMapping(path = "/project")
+@RequestMapping(path = "/api/project")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ProjectController {
 
@@ -15,6 +16,7 @@ public class ProjectController {
     private IIndividualProjectService individualProject;
 
     @PostMapping(path = "/add")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseBody String addProject(@RequestBody IndividualProject entity) {
        IndividualProject project = individualProject.findIndividualProjectById( Long.valueOf(entity.getId().toString()));
         if(project != null)
