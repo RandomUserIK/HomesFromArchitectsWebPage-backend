@@ -1,5 +1,7 @@
 package sk.hfa.databases.projects.services.interfaces;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import sk.hfa.databases.projects.domains.IndividualProject;
 
 import java.util.List;
@@ -10,7 +12,7 @@ public interface IIndividualProjectService {
 
     IndividualProject findIndividualProjectByProjectName(String projectName);
 
-    List<IndividualProject> getAllIndividualProjects();
+    Page<IndividualProject> getAllIndividualProjects(Pageable pageable);
 
     List<IndividualProject> saveAll(List<IndividualProject> list);
 

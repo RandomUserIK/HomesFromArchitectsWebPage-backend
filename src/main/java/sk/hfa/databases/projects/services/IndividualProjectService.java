@@ -1,5 +1,7 @@
 package sk.hfa.databases.projects.services;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sk.hfa.databases.projects.domains.IndividualProject;
 import sk.hfa.databases.projects.domains.repositories.IndividualProjectRepository;
@@ -27,8 +29,8 @@ public class IndividualProjectService implements IIndividualProjectService {
     }
 
     @Override
-    public List<IndividualProject> getAllIndividualProjects() {
-        return individualProjectRepository.findAll();
+    public Page<IndividualProject> getAllIndividualProjects(Pageable pageable) {
+        return individualProjectRepository.findAll(pageable);
     }
 
     @Override
