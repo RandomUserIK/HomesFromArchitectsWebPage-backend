@@ -3,7 +3,10 @@ package sk.hfa.auth.web;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import sk.hfa.auth.service.interfaces.IAuthenticationService;
 import sk.hfa.auth.web.requestbodies.AuthenticationRequest;
 import sk.hfa.auth.web.responsebodies.AuthenticationResponse;
@@ -23,8 +26,7 @@ public class AuthenticationController {
 
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
-        AuthenticationResponse response = authenticationService.authenticateUser(request.getUsername(), request.getPassword());
-        return ResponseEntity.ok(response);
+        return authenticationService.authenticateUser(request);
     }
 
 }
