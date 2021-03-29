@@ -11,8 +11,8 @@ import sk.hfa.auth.domain.UserDetailsImpl;
 import sk.hfa.configuration.security.jwt.service.interfaces.IJwtService;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -56,10 +56,10 @@ public class JwtService implements IJwtService {
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthoritiesFromToken(String token) throws ExpiredJwtException {
+    public Set<GrantedAuthority> getAuthoritiesFromToken(String token) throws ExpiredJwtException {
         return Arrays.stream(getAllClaimsFromToken(token).get(AUTHORITIES_CLAIM).toString().split(","))
                 .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) throws ExpiredJwtException {

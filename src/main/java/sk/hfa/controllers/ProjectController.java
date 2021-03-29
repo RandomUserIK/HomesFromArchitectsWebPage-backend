@@ -9,7 +9,6 @@ import sk.hfa.databases.projects.services.interfaces.IIndividualProjectService;
 
 @Controller
 @RequestMapping(path = "/api/project")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ProjectController {
 
     @Autowired
@@ -17,7 +16,8 @@ public class ProjectController {
 
     @PostMapping(path = "/add")
     @PreAuthorize("hasRole('ADMIN')")
-    @ResponseBody String addProject(@RequestBody IndividualProject entity) {
+    @ResponseBody
+    public String addProject(@RequestBody IndividualProject entity) {
        IndividualProject project = individualProject.findIndividualProjectById( Long.valueOf(entity.getId().toString()));
         if(project != null)
             return "Project already exist";
@@ -26,12 +26,14 @@ public class ProjectController {
     }
 
     @PostMapping(path = "/concrete")
-    @ResponseBody IndividualProject getProject(@RequestParam("projectId") String projectId) {
+    @ResponseBody
+    public IndividualProject getProject(@RequestParam("projectId") String projectId) {
         return individualProject.findIndividualProjectById(Long.valueOf(projectId));
     }
 
     @GetMapping(path = "/all")
-    @ResponseBody Iterable<IndividualProject> getAllProjects() {
+    @ResponseBody
+    public Iterable<IndividualProject> getAllProjects() {
         return individualProject.getAllIndividualProjects();
     }
 }

@@ -4,7 +4,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Collection;
+import java.util.Set;
 
 public interface IJwtService {
 
@@ -14,6 +14,6 @@ public interface IJwtService {
 
     String getSubjectFromToken(String token);
 
-    Collection<? extends GrantedAuthority> getAuthoritiesFromToken(String token) throws ExpiredJwtException;
+    Set<GrantedAuthority> getAuthoritiesFromToken(String token) throws ExpiredJwtException;
 
 }

@@ -32,9 +32,6 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Value("${hfa.server.security.permit-patterns}")
     private String[] publicApiPatterns;
 
-    @Value("${hfa.server.security.csrf}")
-    private boolean isCsrfEnabled;
-
     public HfaSecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint,
                                     @Lazy IAuthenticationService authenticationService) {
         this.authenticationEntryPoint = authenticationEntryPoint;
@@ -85,14 +82,11 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private void setCsrf(HttpSecurity http) throws Exception {
-        if (isCsrfEnabled) {
-            http.csrf().ignoringAntMatchers("/api/auth/login", String.join(",", publicApiPatterns))
-                       .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-        } else
-            http.csrf().disable();
+        http.csrf().ignoringAntMatchers("/api/auth/login", String.join(",", publicApiPatterns)) //NOSONAR
+                   .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
     }
 
-    private AuthorizationFilter createAuthorizationFilter() throws Exception {
+    private AuthorizationFilter createAuthorizationFilter() {
         return new AuthorizationFilter(authenticationService);
     }
 

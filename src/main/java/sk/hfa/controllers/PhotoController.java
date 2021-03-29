@@ -33,7 +33,7 @@ public class PhotoController {
     @PostMapping(path = "/upload")
     @ResponseBody
     @PreAuthorize("hasRole('ADMIN')")
-    String upload(@RequestParam("file") MultipartFile file, @RequestParam("projectId") String projectId) throws Exception {
+    public String upload(@RequestParam("file") MultipartFile file, @RequestParam("projectId") String projectId) throws Exception {
         String saveFilePath = "";
         IndividualProject individualProject = individualProjectRepository.findById(Long.valueOf(projectId)).orElse(null);
         if (individualProject != null) {
@@ -48,7 +48,7 @@ public class PhotoController {
 
     @PostMapping(path = "/preview", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    ResponseEntity<?> getImage(@RequestParam("path") String path) {
+    public ResponseEntity<?> getImage(@RequestParam("path") String path) {
         try {
             FileSystemResource fileSystemResource = fileSystemRepository.findInFileSystem(path);
             String filePath = fileSystemResource.getPath();

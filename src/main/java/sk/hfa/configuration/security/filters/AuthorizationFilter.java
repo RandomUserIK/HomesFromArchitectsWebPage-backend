@@ -21,7 +21,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private static final String UNAUTHORIZED = "Unauthorized";
 
-    private IAuthenticationService authenticationService;
+    private final IAuthenticationService authenticationService;
 
     public AuthorizationFilter(IAuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
