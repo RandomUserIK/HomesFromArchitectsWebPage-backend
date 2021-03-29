@@ -41,7 +41,7 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOrigin("*"); //NOSONAR
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
 

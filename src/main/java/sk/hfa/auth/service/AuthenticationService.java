@@ -8,7 +8,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import sk.hfa.auth.domain.UserDetailsImpl;
@@ -19,7 +18,6 @@ import sk.hfa.configuration.security.cookie.interfaces.ICookieService;
 import sk.hfa.configuration.security.jwt.service.interfaces.IJwtService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 
