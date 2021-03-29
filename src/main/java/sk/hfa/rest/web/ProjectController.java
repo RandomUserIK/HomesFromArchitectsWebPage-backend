@@ -8,16 +8,18 @@ import org.springframework.web.bind.annotation.*;
 import sk.hfa.databases.projects.domains.IndividualProject;
 import sk.hfa.databases.projects.services.interfaces.IIndividualProjectService;
 import sk.hfa.rest.domain.throwable.InvalidPageableRequestException;
-
-import java.util.List;
+import sk.hfa.rest.responsebodies.IndividualProjectsMessageResource;
+import sk.hfa.rest.responsebodies.MessageResource;
 
 @RestController
 @RequestMapping(path = "/api/project")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
+@CrossOrigin(origins =  "*", allowedHeaders = "*")
 public class ProjectController {
 
     @Autowired
     private IIndividualProjectService individualProject;
+
+    private static final int ELEMENTS_PER_PAGE = 9;
 
     @PostMapping(path = "/add")
     @PreAuthorize("hasRole('ADMIN')")
@@ -35,12 +37,37 @@ public class ProjectController {
     }
 
     @GetMapping("all")
-    public List<IndividualProject> getAllProjects(@RequestParam("page") int page) throws Exception {
-        PageRequest pageRequest = PageRequest.of(page, 9);
+    public MessageResource getAllProjects(@RequestParam("page") int page) {
+        PageRequest pageRequest = PageRequest.of(page, ELEMENTS_PER_PAGE);
         Page<IndividualProject> resultPage = individualProject.getAllIndividualProjects(pageRequest);
         if (page > resultPage.getTotalPages()) {
             throw new InvalidPageableRequestException("Invalid pageable request");
         }
-        return resultPage.getContent();
+        IndividualProjectsMessageResource messageResource = new IndividualProjectsMessageResource();
+        messageResource.setIndividualProjects(resultPage.getContent());
+        messageResource.setCurrentPage(page);
+        messageResource.setTotalElements(resultPage.getTotalElements());
+        messageResource.setElementsPerPage(ELEMENTS_PER_PAGE);
+
+        return messageResource;
     }
+
+    @GetMapping("keyword")
+    public MessageResource getProductsByKeyword(@RequestParam("page") int page, @RequestParam("keyword") String keyword) {
+        PageRequest pageRequest = PageRequest.of(page, ELEMENTS_PER_PAGE);
+        Page<IndividualProject> resultPage = individualProject.getAllBySearchKeyword(pageRequest, keyword);
+        if (page > resultPage.getTotalPages()) {
+            throw new InvalidPageableRequestException("Invalid pageable request");
+        }
+
+        IndividualProjectsMessageResource messageResource = new IndividualProjectsMessageResource();
+        messageResource.setIndividualProjects(resultPage.getContent());
+        messageResource.setCurrentPage(page);
+        messageResource.setTotalElements(resultPage.getTotalElements());
+        messageResource.setElementsPerPage(ELEMENTS_PER_PAGE);
+
+        return messageResource;
+    }
+
+
 }

@@ -14,6 +14,8 @@ public interface IIndividualProjectService {
 
     Page<IndividualProject> getAllIndividualProjects(Pageable pageable);
 
+    Page<IndividualProject> getAllBySearchKeyword(Pageable pageable, String keyword);
+
     List<IndividualProject> saveAll(List<IndividualProject> list);
 
     void save(IndividualProject project);

@@ -14,6 +14,8 @@ public interface IndividualProjectRepository extends JpaRepository<IndividualPro
 
     Page<IndividualProject> findAll(Pageable pageable);
 
+    Page<IndividualProject> findByProjectNameStartsWith(String projectName, Pageable pageable);
+
     Optional<IndividualProject> findById(Long id);
 
     Optional<IndividualProject> findByProjectName(String projectName);

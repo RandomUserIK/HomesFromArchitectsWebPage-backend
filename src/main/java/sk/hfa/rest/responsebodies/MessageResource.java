@@ -1,4 +1,4 @@
 package sk.hfa.rest.responsebodies;
 
-abstract class MessageResource {
+public abstract class MessageResource {
 }

@@ -34,6 +34,11 @@ public class IndividualProjectService implements IIndividualProjectService {
     }
 
     @Override
+    public Page<IndividualProject> getAllBySearchKeyword(Pageable pageable, String keyword) {
+        return individualProjectRepository.findByProjectNameStartsWith(keyword, pageable);
+    }
+
+    @Override
     public List<IndividualProject> saveAll(List<IndividualProject> individualProjects) {
         return individualProjectRepository.saveAll(individualProjects);
     }
