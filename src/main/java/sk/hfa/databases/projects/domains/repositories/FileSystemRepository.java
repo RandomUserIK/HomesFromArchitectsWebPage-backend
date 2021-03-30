@@ -1,4 +1,4 @@
-package sk.hfa.projects.domain.repositories;
+package sk.hfa.databases.projects.domains.repositories;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Repository;
@@ -24,5 +24,6 @@ public class FileSystemRepository {
     public FileSystemResource findInFileSystem(String location) {
         return new FileSystemResource(Paths.get(location));
     }
+
 
 }
