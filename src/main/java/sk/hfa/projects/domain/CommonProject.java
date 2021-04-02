@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import sk.hfa.projects.domain.enums.Category;
-import sk.hfa.projects.services.ProjectService;
 import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 

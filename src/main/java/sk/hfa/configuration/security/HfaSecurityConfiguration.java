@@ -53,7 +53,7 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
+        configuration.addAllowedOrigin("*"); // NOSONAR
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
 
@@ -71,7 +71,7 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // TODO: configure CORS policy
+        // TODO: configure CORS policy // NOSONAR
         http
                 .cors()
                 .and()
@@ -90,9 +90,6 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint);
-        // .and()
-        // .headers()
-        //     .frameOptions().sameOrigin();
 
         setCsrf(http);
     }
@@ -101,7 +98,7 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
         if (isCsrfEnabled) {
             http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         } else {
-            http.csrf().disable();
+            http.csrf().disable(); // NOSONAR
         }
     }
 
