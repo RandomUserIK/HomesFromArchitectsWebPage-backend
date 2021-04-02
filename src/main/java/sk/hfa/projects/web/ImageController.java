@@ -17,7 +17,7 @@ import java.io.IOException;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/api/images/")
+@RequestMapping(path = "/api/images")
 public class ImageController {
 
     private final IImageService imageService;
@@ -27,15 +27,15 @@ public class ImageController {
     }
 
     // @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(path = "upload", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(path="/upload", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResource> uploadImage(@RequestParam("projectId") String projectId,
-                                                  @RequestParam("file") MultipartFile file) {
+                                                       @RequestParam("file") MultipartFile file) {
         String uploadedFilePath = imageService.upload(projectId, file);
         MessageResource responseBody = new ImageUploadMessageResource(uploadedFilePath);
         return ResponseEntity.ok(responseBody);
     }
 
-    @GetMapping(path = "{path}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(path = "/{path}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<MessageResource> getImage(@PathVariable String path) throws IOException {
         FileSystemResource imageResource = imageService.findFileSystemResourceByPath(path);
         HttpHeaders headers = new HttpHeaders();
