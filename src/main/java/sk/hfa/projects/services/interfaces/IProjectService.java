@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.domain.enums.Category;
+import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 
 import java.util.List;
 
@@ -19,6 +20,8 @@ public interface IProjectService {
 
     Page<Project> getAllOnPage(int page);
 
+    Page<Project> getAllOnPageAndCategory(int page, String category);
+
     Page<Project> getAllOnPageAndKeyword(int page, String keyword);
 
     Page<Project> getAll(Pageable pageable);
@@ -26,5 +29,7 @@ public interface IProjectService {
     Page<Project> findAllByKeyword(Pageable pageable, String keyword);
 
     List<Project> saveAll(List<Project> projects);
+
+    Project build(ProjectRequest request);
 
 }

@@ -17,7 +17,7 @@ import java.io.IOException;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "/api/images")
+@RequestMapping(path = "/api/images/")
 public class ImageController {
 
     private final IImageService imageService;
@@ -26,8 +26,8 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(path = "/upload", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(path = "upload", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResource> uploadImage(@RequestParam("projectId") String projectId,
                                                   @RequestParam("file") MultipartFile file) {
         String uploadedFilePath = imageService.upload(projectId, file);
@@ -35,8 +35,8 @@ public class ImageController {
         return ResponseEntity.ok(responseBody);
     }
 
-    @GetMapping(path = "/preview", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<MessageResource> getImage(@RequestParam("path") String path) throws IOException {
+    @GetMapping(path = "{path}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<MessageResource> getImage(@PathVariable String path) throws IOException {
         FileSystemResource imageResource = imageService.findFileSystemResourceByPath(path);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);

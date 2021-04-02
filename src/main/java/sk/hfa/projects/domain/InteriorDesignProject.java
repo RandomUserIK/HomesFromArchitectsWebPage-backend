@@ -6,8 +6,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import sk.hfa.projects.domain.enums.Category;
-import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.IndividualProjectRequest;
+import sk.hfa.projects.web.domain.requestbodies.InteriorProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 
 import javax.persistence.Entity;
@@ -21,16 +21,16 @@ import javax.persistence.InheritanceType;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class IndividualProject extends Project {
+public class InteriorDesignProject extends Project {
 
-    private boolean individual;
+    private boolean interior;
 
     public static Project build(ProjectRequest request) {
-        return IndividualProject.builder()
+        return InteriorDesignProject.builder()
                 .id(request.getId())
                 .title(request.getTitle())
                 .titleImage(request.getTitleImage())
-                .category(Category.INDIVIDUAL)
+                .category(Category.INTERIOR_DESIGN)
                 .textSections(request.getTextSections())
                 .imagePaths(request.getImagePaths())
                 .hasGarage(request.getHasGarage())
@@ -50,7 +50,7 @@ public class IndividualProject extends Project {
                 .totalLivingArea(request.getTotalLivingArea())
                 .roofPitch(request.getRoofPitch())
                 .minimumParcelWidth(request.getMinimumParcelWidth())
-                .individual(((IndividualProjectRequest) request).isIndividual())
+                .interior(((InteriorProjectRequest) request).isInterior())
                 .build();
     }
 

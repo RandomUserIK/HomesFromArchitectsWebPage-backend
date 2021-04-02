@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.services.interfaces.IProjectService;
+import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
+import sk.hfa.projects.web.domain.responsebodies.CreateProjectMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.MessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectPageMessageResource;
@@ -22,14 +24,16 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    // TODO:
     // @PreAuthorize("hasRole('ADMIN')")
-    // @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    // public ResponseEntity<MessageResource> addProject(@RequestBody ProjectRequestBody project) {
-    //     return null;
-    // }
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource> createProject(@RequestBody ProjectRequest request) {
+        Project project = projectService.build(request);
+        project = projectService.save(project);
+        MessageResource responseBody = new CreateProjectMessageResource(project);
+        return ResponseEntity.ok(responseBody);
+    }
 
-    @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> getProject(@PathVariable long id) {
         Project project = projectService.findById(id);
         MessageResource responseBody = new ProjectMessageResource(project);
@@ -37,14 +41,23 @@ public class ProjectController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> getAll(@RequestParam("category") String category, @RequestParam("page") int page) {
+    public ResponseEntity<MessageResource> getAllOnPage(@RequestParam("page") int page) {
         Page<Project> result = projectService.getAllOnPage(page);
         MessageResource responseBody = ProjectPageMessageResource.build(result);
         return ResponseEntity.ok(responseBody);
     }
 
-    @GetMapping(path = "{page}/{keyword}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> getAllOnKeyword(@PathVariable int page, @PathVariable String keyword) {
+    @GetMapping(path = "/categorical", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource> getAllOnPageAndCategory(@RequestParam("page") int page,
+                                                                   @RequestParam("category") String category) {
+        Page<Project> result = projectService.getAllOnPageAndCategory(page, category);
+        MessageResource responseBody = ProjectPageMessageResource.build(result);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @GetMapping(path = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource> getAllOnKeyword(@RequestParam("page") int page,
+                                                           @RequestParam("keyword") String keyword) {
         Page<Project> result = projectService.getAllOnPageAndKeyword(page, keyword);
         MessageResource responseBody = ProjectPageMessageResource.build(result);
         return ResponseEntity.ok(responseBody);
