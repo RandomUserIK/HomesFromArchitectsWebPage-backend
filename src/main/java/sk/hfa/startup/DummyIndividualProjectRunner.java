@@ -33,18 +33,4 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
         }
     }
 
-    private final IProjectService projectService;
-
-    public DummyIndividualProjectRunner(IProjectService projectService) {
-        this.projectService = projectService;
-    }
-
-    @Override
-    public void run(String... args) {
-        for (int i = 0; i < 25; i++) {
-            Project ip = new IndividualProject();
-            ip.setTitle("Test" + i);
-            projectService.save(ip);
-        }
-    }
 }
