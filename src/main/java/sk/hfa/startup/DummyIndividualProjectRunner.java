@@ -8,30 +8,30 @@ import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.domain.enums.Category;
 import sk.hfa.projects.services.interfaces.IProjectService;
 
-@Component
-public class DummyIndividualProjectRunner implements CommandLineRunner {
+// @Component
+public class DummyIndividualProjectRunner {
 
-    private final IProjectService projectService;
-
-    public DummyIndividualProjectRunner(IProjectService projectService) {
-        this.projectService = projectService;
-    }
-
-    @Override
-    public void run(String... args) {
-        for (int i = 0; i < 25; i++) {
-            Project ip;
-            if (i % 2 == 0) {
-                ip = new CommonProject();
-                ip.setCategory(Category.COMMON);
-            } else {
-                ip = new IndividualProject();
-                ip.setCategory(Category.INDIVIDUAL);
-            }
-            ip.setTitle("Test " + i);
-            projectService.save(ip);
-        }
-    }
+    // private final IProjectService projectService;
+    //
+    // public DummyIndividualProjectRunner(IProjectService projectService) {
+    //     this.projectService = projectService;
+    // }
+    //
+    // @Override
+    // public void run(String... args) {
+    //     for (int i = 0; i < 25; i++) {
+    //         Project ip;
+    //         if (i % 2 == 0) {
+    //             ip = new CommonProject();
+    //             ip.setCategory(Category.COMMON);
+    //         } else {
+    //             ip = new IndividualProject();
+    //             ip.setCategory(Category.INDIVIDUAL);
+    //         }
+    //         ip.setTitle("Test " + i);
+    //         projectService.save(ip);
+    //     }
+    // }
 
     private final IProjectService projectService;
 
