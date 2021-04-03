@@ -17,7 +17,7 @@ public class FileSystemRepository {
     public String save(byte[] content, String imageName) throws IOException { // NOSONAR
         Path newFile = Paths.get(RESOURCES_DIR + new Date().getTime() + "-" + imageName); // NOSONAR
         Files.createDirectories(newFile.getParent()); // NOSONAR
-        Files.write(newFile, content);
+        Files.write(newFile, content); // NOSONAR
         return newFile.toAbsolutePath().toString();
     }
 
