@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import sk.hfa.projects.domain.TextSection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -30,10 +31,6 @@ public abstract class ProjectRequest {
     private String titleImage;
 
     private String category;
-
-    private List<TextSection> textSections;
-
-    private List<String> imagePaths;
 
     private Boolean hasGarage;
 
@@ -68,5 +65,9 @@ public abstract class ProjectRequest {
     private Double roofPitch;
 
     private Double minimumParcelWidth;
+
+    private List<TextSection> textSections = new ArrayList<>();
+
+    private List<String> imagePaths = new ArrayList<>();
 
 }

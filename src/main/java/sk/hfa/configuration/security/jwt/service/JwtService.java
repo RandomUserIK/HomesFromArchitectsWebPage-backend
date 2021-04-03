@@ -47,10 +47,6 @@ public class JwtService implements IJwtService {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    private Date getExpirationDateFromToken(String token)  throws ExpiredJwtException {
-        return getClaimFromToken(token, Claims::getExpiration);
-    }
-
     private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) throws ExpiredJwtException {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);

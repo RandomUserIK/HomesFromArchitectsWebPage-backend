@@ -20,11 +20,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import sk.hfa.configuration.security.jwt.service.interfaces.IJwtService;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Slf4j
 @Configuration
 @EnableWebSecurity

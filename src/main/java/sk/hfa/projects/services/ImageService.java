@@ -57,7 +57,7 @@ public class ImageService implements IImageService {
     private String saveImage(Project project, MultipartFile file) {
         String imageFilePath = "";
         try {
-            imageFilePath = fileSystemRepository.save(file.getBytes(), file.getOriginalFilename());
+            imageFilePath = fileSystemRepository.save(file.getBytes(), file.getOriginalFilename()); // NOSONAR
             project.getImagePaths().add(imageFilePath);
             projectService.save(project);
             log.info("Image ["+ file.getOriginalFilename() + "] was successfully uploaded.");
