@@ -24,7 +24,7 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    // @PreAuthorize("hasRole('ADMIN')")
+    // TODO: @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> createProject(@RequestBody ProjectRequest request) {
         Project project = projectService.build(request);
