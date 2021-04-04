@@ -1,5 +1,6 @@
 package sk.hfa.projects.services.interfaces;
 
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import sk.hfa.projects.domain.Project;
@@ -25,6 +26,8 @@ public interface IProjectService {
     Page<Project> getAllOnPageAndKeyword(int page, String keyword);
 
     Page<Project> getAll(Pageable pageable);
+
+    Page<Project> getAllOnPageAndQuery(int page, Predicate predicate);
 
     Page<Project> findAllByKeyword(Pageable pageable, String keyword);
 

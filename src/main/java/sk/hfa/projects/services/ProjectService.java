@@ -1,5 +1,6 @@
 package sk.hfa.projects.services;
 
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -104,6 +105,17 @@ public class ProjectService implements IProjectService {
     @Override
     public Page<Project> getAll(Pageable pageable) {
         return projectRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Project> getAllOnPageAndQuery(int page, Predicate predicate) {
+        PageRequest pageRequest = PageRequest.of(page, ELEMENTS_PER_PAGE);
+        Page<Project> result = projectRepository.findAll(predicate, pageRequest);
+
+        if (page > result.getTotalPages())
+            throw new InvalidPageableRequestException(INVALID_PAGEABLE_MESSAGE);
+
+        return result;
     }
 
     @Override

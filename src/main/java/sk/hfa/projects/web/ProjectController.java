@@ -1,7 +1,9 @@
 package sk.hfa.projects.web;
 
+import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,6 +61,14 @@ public class ProjectController {
     public ResponseEntity<MessageResource> getAllOnKeyword(@RequestParam("page") int page,
                                                            @RequestParam("keyword") String keyword) {
         Page<Project> result = projectService.getAllOnPageAndKeyword(page, keyword);
+        MessageResource responseBody = ProjectPageMessageResource.build(result);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @GetMapping(path = "/filter/{page}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource> getAllOnQuery(@QuerydslPredicate(root = Project.class) Predicate predicate,
+                                                         @PathVariable int page) {
+        Page<Project> result = projectService.getAllOnPageAndQuery(page, predicate);
         MessageResource responseBody = ProjectPageMessageResource.build(result);
         return ResponseEntity.ok(responseBody);
     }
