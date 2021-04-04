@@ -35,14 +35,6 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public Project createNewProject(String title, Category category) {
-        Project newProject = (category.compareTo(Category.COMMON) == 0) ? new CommonProject() : new IndividualProject();
-        newProject.setCategory(category);
-        newProject.setTitle(title);
-        return newProject;
-    }
-
-    @Override
     public Project save(Project project) {
         return projectRepository.save(project);
     }
@@ -54,15 +46,6 @@ public class ProjectService implements IProjectService {
 
         return projectRepository.findById(id).orElseThrow(() ->
                 new ProjectNotFoundException("Project not found on the given ID: [" + id.toString() + "]"));
-    }
-
-    @Override
-    public Project findByTitle(String title) {
-        if (Objects.isNull(title) || title.isEmpty())
-            throw new IllegalArgumentException("Invalid title provided");
-
-        return projectRepository.findByTitle(title).orElseThrow(() ->
-                new ProjectNotFoundException("Project not found on the given title: [" + title + "]"));
     }
 
     @Override
@@ -92,17 +75,6 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public Page<Project> getAllOnPageAndKeyword(int page, String keyword) {
-        PageRequest pageRequest = PageRequest.of(page, ELEMENTS_PER_PAGE);
-        Page<Project> result = findAllByKeyword(pageRequest, keyword);
-
-        if (page > result.getTotalPages())
-            throw new InvalidPageableRequestException(INVALID_PAGEABLE_MESSAGE);
-
-        return result;
-    }
-
-    @Override
     public Page<Project> getAll(Pageable pageable) {
         return projectRepository.findAll(pageable);
     }
@@ -116,16 +88,6 @@ public class ProjectService implements IProjectService {
             throw new InvalidPageableRequestException(INVALID_PAGEABLE_MESSAGE);
 
         return result;
-    }
-
-    @Override
-    public Page<Project> findAllByKeyword(Pageable pageable, String keyword) {
-        return projectRepository.findByTitleStartsWith(keyword, pageable);
-    }
-
-    @Override
-    public List<Project> saveAll(List<Project> projects) {
-        return projectRepository.saveAll(projects);
     }
 
     @Override

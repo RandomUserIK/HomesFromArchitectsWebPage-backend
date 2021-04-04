@@ -58,16 +58,8 @@ public class ProjectController {
     }
 
     @GetMapping(path = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> getAllOnKeyword(@RequestParam("page") int page,
-                                                           @RequestParam("keyword") String keyword) {
-        Page<Project> result = projectService.getAllOnPageAndKeyword(page, keyword);
-        MessageResource responseBody = ProjectPageMessageResource.build(result);
-        return ResponseEntity.ok(responseBody);
-    }
-
-    @GetMapping(path = "/filter/{page}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> getAllOnQuery(@QuerydslPredicate(root = Project.class) Predicate predicate,
-                                                         @PathVariable int page) {
+    public ResponseEntity<MessageResource> getAllOnQuery(@RequestParam("page") int page,
+                                                         @QuerydslPredicate(root = Project.class) Predicate predicate) {
         Page<Project> result = projectService.getAllOnPageAndQuery(page, predicate);
         MessageResource responseBody = ProjectPageMessageResource.build(result);
         return ResponseEntity.ok(responseBody);
