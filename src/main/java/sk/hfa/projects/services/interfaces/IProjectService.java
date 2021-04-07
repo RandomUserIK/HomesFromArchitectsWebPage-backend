@@ -17,8 +17,6 @@ public interface IProjectService {
 
     Page<Project> getAllOnPage(int page);
 
-    Page<Project> getAllOnPageAndCategory(int page, String category);
-
     Page<Project> getAll(Pageable pageable);
 
     Page<Project> getAllOnPageAndQuery(int page, Predicate predicate);

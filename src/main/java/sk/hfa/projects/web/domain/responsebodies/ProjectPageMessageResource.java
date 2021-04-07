@@ -28,6 +28,7 @@ public class ProjectPageMessageResource implements MessageResource {
             throw new IllegalArgumentException("Invalid page provided");
 
         return ProjectPageMessageResource.builder()
+                .currentPage(page.getNumber())
                 .projects(page.getContent())
                 .totalElements(page.getTotalElements())
                 .elementsPerPage(ProjectService.ELEMENTS_PER_PAGE)

@@ -49,17 +49,9 @@ public class ProjectController {
         return ResponseEntity.ok(responseBody);
     }
 
-    @GetMapping(path = "/categorical", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> getAllOnPageAndCategory(@RequestParam("page") int page,
-                                                                   @RequestParam("category") String category) {
-        Page<Project> result = projectService.getAllOnPageAndCategory(page, category);
-        MessageResource responseBody = ProjectPageMessageResource.build(result);
-        return ResponseEntity.ok(responseBody);
-    }
-
     @GetMapping(path = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> getAllOnQuery(@RequestParam("page") int page,
-                                                         @QuerydslPredicate(root = Project.class) Predicate predicate) {
+    public ResponseEntity<MessageResource> getAllOnPageAndQuery(@RequestParam("page") int page,
+                                                                @QuerydslPredicate(root = Project.class) Predicate predicate) {
         Page<Project> result = projectService.getAllOnPageAndQuery(page, predicate);
         MessageResource responseBody = ProjectPageMessageResource.build(result);
         return ResponseEntity.ok(responseBody);

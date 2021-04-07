@@ -23,7 +23,7 @@ import java.util.Objects;
 @Service
 public class ProjectService implements IProjectService {
 
-    public static final int ELEMENTS_PER_PAGE = 9;
+    public static final int ELEMENTS_PER_PAGE = 10;
 
     private static final String INVALID_PAGEABLE_MESSAGE = "Invalid pageable request";
     private static final String INVALID_CATEGORY_MESSAGE = "Invalid category provided";
@@ -52,21 +52,6 @@ public class ProjectService implements IProjectService {
     public Page<Project> getAllOnPage(int page) {
         PageRequest pageRequest = PageRequest.of(page, ELEMENTS_PER_PAGE);
         Page<Project> result = getAll(pageRequest);
-
-        if (page > result.getTotalPages())
-            throw new InvalidPageableRequestException(INVALID_PAGEABLE_MESSAGE);
-
-        return result;
-    }
-
-    @Override
-    public Page<Project> getAllOnPageAndCategory(int page, String category) {
-        if (!isValidCategory(category))
-            throw new IllegalArgumentException(INVALID_CATEGORY_MESSAGE);
-
-        Category projectCategory = getCategory(category);
-        PageRequest pageRequest = PageRequest.of(page, ELEMENTS_PER_PAGE);
-        Page<Project> result = projectRepository.findAllByCategory(projectCategory, pageRequest);
 
         if (page > result.getTotalPages())
             throw new InvalidPageableRequestException(INVALID_PAGEABLE_MESSAGE);
