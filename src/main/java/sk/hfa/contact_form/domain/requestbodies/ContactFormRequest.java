@@ -2,6 +2,7 @@ package sk.hfa.contact_form.domain.requestbodies;
 
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
@@ -16,6 +17,7 @@ public class ContactFormRequest {
     private String surname;
 
     @NotBlank
+    @Email
     private String email;
 
     @NotBlank
