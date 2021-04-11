@@ -9,7 +9,7 @@ public class EmailTextBuilder {
     public static String build(ContactFormRequest contactFormRequest) {
         String newLine = System.getProperty("line.separator");
 
-        return "Name: " + contactFormRequest.getName() +
+        return  "Name: " + contactFormRequest.getName() +
                 newLine +
                 "Surname: " + contactFormRequest.getSurname() +
                 newLine +
