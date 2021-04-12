@@ -2,6 +2,7 @@ package sk.hfa.projects.web.domain.responsebodies;
 
 import lombok.Data;
 import lombok.AllArgsConstructor;
+import sk.hfa.web.domain.responsebodies.MessageResource;
 
 import java.io.InputStream;
 
