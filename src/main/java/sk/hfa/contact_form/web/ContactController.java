@@ -1,6 +1,5 @@
 package sk.hfa.contact_form.web;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,9 +13,9 @@ import sk.hfa.recaptcha.service.interfaces.IRecaptchaService;
 
 import javax.validation.Valid;
 
-@Slf4j
+
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/contact")
 public class ContactController {
 
     private final IRecaptchaService recaptchaService;
@@ -28,7 +27,7 @@ public class ContactController {
         this.emailService = emailService;
     }
 
-    @PostMapping("/contact")
+    @PostMapping
     public ResponseEntity<MessageResource> getContactForm(@Valid @RequestBody ContactFormRequest contactForm) {
         recaptchaService.processResponse(contactForm.getRecaptchaToken());
         emailService.send(contactForm);
