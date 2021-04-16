@@ -29,8 +29,9 @@ public class ImageController {
     // TODO: @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path="/upload", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResource> uploadImage(@RequestParam("projectId") String projectId,
-                                                       @RequestParam("file") MultipartFile file) {
-        String uploadedFilePath = imageService.upload(projectId, file);
+                                                       @RequestParam("file") MultipartFile file,
+                                                       @RequestParam("type") String type) {
+        String uploadedFilePath = imageService.upload(projectId, file, type);
         MessageResource responseBody = new ImageUploadMessageResource(uploadedFilePath);
         return ResponseEntity.ok(responseBody);
     }

@@ -27,12 +27,13 @@ public class ProjectController {
     }
 
     // TODO: @PreAuthorize("hasRole('ADMIN')")
+//    TODO: Prerobit na MessageResource
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> createProject(@RequestBody ProjectRequest request) {
+    public ResponseEntity<Project> createProject(@RequestBody ProjectRequest request) {
         Project project = projectService.build(request);
         project = projectService.save(project);
-        MessageResource responseBody = new CreateProjectMessageResource(project);
-        return ResponseEntity.ok(responseBody);
+//        MessageResource responseBody = new CreateProjectMessageResource(project);
+        return ResponseEntity.ok(project);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
