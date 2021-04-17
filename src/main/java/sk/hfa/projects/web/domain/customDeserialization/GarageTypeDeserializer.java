@@ -6,13 +6,14 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import java.io.IOException;
 
-public class CustomGarageBooleanDeserialization extends StdDeserializer<Boolean> {
 
-    public CustomGarageBooleanDeserialization() {
+public class GarageTypeDeserializer extends StdDeserializer<Boolean> {
+
+    public GarageTypeDeserializer() {
         this(null);
     }
 
-    public CustomGarageBooleanDeserialization(Class<?> vc) {
+    public GarageTypeDeserializer(Class<?> vc) {
         super(vc);
     }
 

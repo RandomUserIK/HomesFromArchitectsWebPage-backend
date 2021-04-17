@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import sk.hfa.projects.domain.TextSection;
-import sk.hfa.projects.web.domain.customDeserialization.CustomGarageBooleanDeserialization;
+import sk.hfa.projects.web.domain.customDeserialization.GarageTypeDeserializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public abstract class ProjectRequest {
 
     private String category;
 
-    @JsonDeserialize(using = CustomGarageBooleanDeserialization.class)
+    @JsonDeserialize(using = GarageTypeDeserializer.class)
     private Boolean hasGarage;
 
     private Integer persons;
