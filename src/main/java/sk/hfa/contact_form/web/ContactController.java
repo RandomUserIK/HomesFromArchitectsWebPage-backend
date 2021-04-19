@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import sk.hfa.contact_form.domain.requestbodies.ContactFormRequest;
 import sk.hfa.contact_form.domain.responsebodies.SubmittedContactFormResponse;
 import sk.hfa.email.service.interfaces.IEmailService;
-import sk.hfa.projects.web.domain.responsebodies.MessageResource;
+import sk.hfa.web.domain.responsebodies.MessageResource;
 import sk.hfa.recaptcha.service.interfaces.IRecaptchaService;
 
 import javax.validation.Valid;

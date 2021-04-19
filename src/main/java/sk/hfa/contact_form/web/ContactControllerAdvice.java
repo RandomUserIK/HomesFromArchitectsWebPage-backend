@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import sk.hfa.projects.web.domain.responsebodies.ErrorMessageResource;
-import sk.hfa.projects.web.domain.responsebodies.MessageResource;
+import sk.hfa.web.domain.responsebodies.MessageResource;
 import sk.hfa.recaptcha.domain.throwable.RecaptchaException;
 
 @Slf4j
