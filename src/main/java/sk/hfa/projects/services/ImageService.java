@@ -60,15 +60,14 @@ public class ImageService implements IImageService {
 
     @Override
     public ImageType getImageType(String imageType) {
-        switch (imageType) {
-            case "titleImage":
-                return ImageType.TITLE_IMAGE;
-            case "floorPlanImage":
-                return ImageType.FLOOR_PLAN_IMAGE;
-            case "galleryImages":
-                return ImageType.GALLERY_IMAGES;
-            default:
-                throw new IllegalArgumentException("Invalid image type");
+        if (imageType.equals(ImageType.TITLE_IMAGE.getImageType())) {
+            return ImageType.TITLE_IMAGE;
+        } else if (imageType.equals(ImageType.FLOOR_PLAN_IMAGE.getImageType())) {
+            return ImageType.FLOOR_PLAN_IMAGE;
+        } else if (imageType.equals(ImageType.GALLERY_IMAGES.getImageType())) {
+            return ImageType.GALLERY_IMAGES;
+        } else {
+            throw new IllegalArgumentException("Invalid image type");
         }
     }
 
