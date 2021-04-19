@@ -3,6 +3,7 @@ package sk.hfa.projects.web.domain.responsebodies;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import sk.hfa.web.domain.responsebodies.MessageResource;
 
 @Data
 @Builder
