@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.services.interfaces.IProjectService;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
-import sk.hfa.projects.web.domain.responsebodies.MessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectPageMessageResource;
+import sk.hfa.web.domain.responsebodies.MessageResource;
 
 @Slf4j
 @RestController
