@@ -5,14 +5,13 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sk.hfa.projects.domain.enums.ImageType;
 import sk.hfa.projects.services.interfaces.IImageService;
 import sk.hfa.projects.web.domain.responsebodies.ImageMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ImageUploadMessageResource;
-import sk.hfa.projects.web.domain.responsebodies.MessageResource;
+import sk.hfa.web.domain.responsebodies.MessageResource;
 
 import java.io.IOException;
 

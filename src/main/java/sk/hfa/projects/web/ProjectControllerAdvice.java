@@ -9,7 +9,7 @@ import sk.hfa.projects.domain.throwable.InvalidPageableRequestException;
 import sk.hfa.projects.domain.throwable.InvalidProjectRequestException;
 import sk.hfa.projects.domain.throwable.ProjectNotFoundException;
 import sk.hfa.projects.web.domain.responsebodies.ErrorMessageResource;
-import sk.hfa.projects.web.domain.responsebodies.MessageResource;
+import sk.hfa.web.domain.responsebodies.MessageResource;
 
 @Slf4j
 @ControllerAdvice(assignableTypes = ProjectController.class)
