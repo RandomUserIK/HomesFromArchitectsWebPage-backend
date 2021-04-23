@@ -1,4 +1,4 @@
-package sk.hfa.contact_form.domain.responsebodies;
+package sk.hfa.order.web.domain.responsebodies;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,6 +6,6 @@ import sk.hfa.web.domain.responsebodies.MessageResource;
 
 @Data
 @AllArgsConstructor
-public class SubmittedContactFormResponse implements MessageResource {
+public class CreateOrderMessageResource implements MessageResource {
     private String message;
 }

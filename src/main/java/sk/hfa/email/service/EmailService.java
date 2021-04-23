@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import sk.hfa.contact_form.domain.requestbodies.ContactFormRequest;
+import sk.hfa.contactform.domain.requestbodies.ContactFormRequest;
 import sk.hfa.email.service.interfaces.IEmailService;
 import sk.hfa.email.service.utils.EmailTextBuilder;
 
