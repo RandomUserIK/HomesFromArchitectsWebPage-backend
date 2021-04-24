@@ -1,4 +1,4 @@
-package sk.hfa.order.web.domain.responsebodies;
+package sk.hfa.orderform.web.domain.responsebodies;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
