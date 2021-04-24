@@ -2,10 +2,12 @@ package sk.hfa.projects.web.domain.requestbodies;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import sk.hfa.projects.domain.TextSection;
+import sk.hfa.projects.web.domain.customDeserialization.GarageTypeDeserializer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,7 @@ public abstract class ProjectRequest {
 
     private String category;
 
+    @JsonDeserialize(using = GarageTypeDeserializer.class)
     private Boolean hasGarage;
 
     private Integer persons;
