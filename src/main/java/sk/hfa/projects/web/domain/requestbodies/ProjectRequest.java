@@ -32,39 +32,15 @@ public abstract class ProjectRequest {
 
     private String category;
 
+    private String energeticClass;
+
     private Boolean hasGarage;
 
     private Integer persons;
 
-    private Integer rooms;
-
-    private String energeticClass;
-
-    private String entryOrientation;
-
-    private String heatingSource;
-
-    private String heatingType;
-
-    private String floorPlanImage;
-
     private Double builtUpArea;
 
     private Double usableArea;
-
-    private Double selfHelpBuildPrice;
-
-    private Double onKeyPrice;
-
-    private Double basicProjectPrice;
-
-    private Double extendedProjectPrice;
-
-    private Double totalLivingArea;
-
-    private Double roofPitch;
-
-    private Double minimumParcelWidth;
 
     private List<TextSection> textSections = new ArrayList<>();
 

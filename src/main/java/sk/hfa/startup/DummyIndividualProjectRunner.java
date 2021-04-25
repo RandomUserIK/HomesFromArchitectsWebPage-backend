@@ -25,12 +25,11 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
                 ip = new CommonProject();
                 ip.setCategory(Category.COMMON);
                 ip.setPersons(4);
-                ip.setOnKeyPrice(i * 200.0);
+                ((CommonProject) ip).setOnKeyPrice(i * 200.0);
             } else {
                 ip = new IndividualProject();
                 ip.setCategory(Category.INDIVIDUAL);
                 ip.setPersons(3);
-                ip.setOnKeyPrice(i * 500.0);
             }
             ip.setTitle("Test " + i);
             projectService.save(ip);

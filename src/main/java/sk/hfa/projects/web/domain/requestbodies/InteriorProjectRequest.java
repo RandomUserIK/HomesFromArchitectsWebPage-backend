@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class InteriorProjectRequest extends ProjectRequest {
 
+    // TODO:
     private boolean interior;
 
 }

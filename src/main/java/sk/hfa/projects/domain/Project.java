@@ -38,35 +38,11 @@ public abstract class Project {
 
     private Integer persons;
 
-    private Integer rooms;
-
     private String energeticClass;
-
-    private String entryOrientation;
-
-    private String heatingSource;
-
-    private String heatingType;
-
-    private String floorPlanImage;
 
     private Double builtUpArea;
 
     private Double usableArea;
-
-    private Double selfHelpBuildPrice;
-
-    private Double onKeyPrice;
-
-    private Double basicProjectPrice;
-
-    private Double extendedProjectPrice;
-
-    private Double totalLivingArea;
-
-    private Double roofPitch;
-
-    private Double minimumParcelWidth;
 
     protected Project() {
         textSections = new ArrayList<>();

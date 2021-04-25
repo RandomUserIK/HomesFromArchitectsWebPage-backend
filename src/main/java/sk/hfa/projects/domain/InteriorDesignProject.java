@@ -22,6 +22,7 @@ import javax.persistence.InheritanceType;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class InteriorDesignProject extends Project {
 
+    // TODO:
     private boolean interior;
 
     public static Project build(ProjectRequest request) {
@@ -34,21 +35,9 @@ public class InteriorDesignProject extends Project {
                 .imagePaths(request.getImagePaths())
                 .hasGarage(request.getHasGarage())
                 .persons(request.getPersons())
-                .rooms(request.getRooms())
                 .energeticClass(request.getEnergeticClass())
-                .entryOrientation(request.getEntryOrientation())
-                .heatingSource(request.getHeatingSource())
-                .heatingType(request.getHeatingType())
-                .floorPlanImage(request.getFloorPlanImage())
                 .builtUpArea(request.getBuiltUpArea())
                 .usableArea(request.getUsableArea())
-                .selfHelpBuildPrice(request.getSelfHelpBuildPrice())
-                .onKeyPrice(request.getOnKeyPrice())
-                .basicProjectPrice(request.getBasicProjectPrice())
-                .extendedProjectPrice(request.getExtendedProjectPrice())
-                .totalLivingArea(request.getTotalLivingArea())
-                .roofPitch(request.getRoofPitch())
-                .minimumParcelWidth(request.getMinimumParcelWidth())
                 .interior(((InteriorProjectRequest) request).isInterior())
                 .build();
     }
