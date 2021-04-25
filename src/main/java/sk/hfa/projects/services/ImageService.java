@@ -1,10 +1,12 @@
 package sk.hfa.projects.services;
 
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sk.hfa.projects.domain.Project;
+import sk.hfa.projects.domain.enums.ImageType;
 import sk.hfa.projects.domain.repositories.FileSystemRepository;
 import sk.hfa.projects.domain.throwable.FetchFileSystemResourceException;
 import sk.hfa.projects.domain.throwable.ImageUploadException;
@@ -31,17 +33,19 @@ public class ImageService implements IImageService {
     }
 
     @Override
-    public String upload(String projectId, MultipartFile file) {
+    @Synchronized
+    public String upload(String projectId, MultipartFile file, ImageType imageType) {
         if (Objects.isNull(file) || Objects.isNull(projectId) || projectId.isEmpty())
             throw new ImageUploadException(UPLOAD_FAILED_MESSAGE);
 
-        Project project = projectService.findById(Long.valueOf(projectId));
+        Project project;
+        project = projectService.findById(Long.valueOf(projectId));
+
         if (Objects.isNull(project)) {
             log.warn("Project not found on given ID: [" + projectId + "]");
             throw new ImageUploadException(UPLOAD_FAILED_MESSAGE);
         }
-
-        return saveImage(project, file);
+        return saveImage(project, file, imageType);
     }
 
     @Override
@@ -54,19 +58,42 @@ public class ImageService implements IImageService {
         }
     }
 
+    @Override
+    public ImageType getImageType(String imageType) {
+        if (imageType.equals(ImageType.TITLE_IMAGE.getImageType())) {
+            return ImageType.TITLE_IMAGE;
+        } else if (imageType.equals(ImageType.FLOOR_PLAN_IMAGE.getImageType())) {
+            return ImageType.FLOOR_PLAN_IMAGE;
+        } else if (imageType.equals(ImageType.GALLERY_IMAGES.getImageType())) {
+            return ImageType.GALLERY_IMAGES;
+        } else {
+            throw new IllegalArgumentException("Invalid image type");
+        }
+    }
+
     // TODO
-    private String saveImage(Project project, MultipartFile file) {
+    private String saveImage(Project project, MultipartFile file, ImageType imageType) {
         String imageFilePath = "";
         try {
             imageFilePath = fileSystemRepository.save(file.getBytes(), file.getOriginalFilename()); // NOSONAR
-            project.getImagePaths().add(imageFilePath);
-            projectService.save(project);
-            log.info("Image ["+ file.getOriginalFilename() + "] was successfully uploaded.");
+            saveImagePathToSpecifiedAttribute(imageType, project, imageFilePath);
+            log.info("Image [" + file.getOriginalFilename() + "] was successfully uploaded.");
         } catch (IOException ex) {
             log.error(UPLOAD_FAILED_MESSAGE, ex);
             throw new ImageUploadException(UPLOAD_FAILED_MESSAGE);
         }
         return imageFilePath;
+    }
+
+    private void saveImagePathToSpecifiedAttribute(ImageType imageType, Project project, String imageFilePath) {
+        if (imageType == ImageType.FLOOR_PLAN_IMAGE) {
+            project.setFloorPlanImage(imageFilePath);
+        } else if (imageType == ImageType.TITLE_IMAGE) {
+            project.setTitleImage(imageFilePath);
+        } else if (imageType == ImageType.GALLERY_IMAGES) {
+            project.getImagePaths().add(imageFilePath);
+        }
+        projectService.save(project);
     }
 
 }
