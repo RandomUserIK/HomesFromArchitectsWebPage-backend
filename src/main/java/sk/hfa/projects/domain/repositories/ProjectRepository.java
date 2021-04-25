@@ -28,7 +28,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, Queryds
         bindings.bind(qProject.title).first(StringExpression::containsIgnoreCase);
         bindings.bind(qProject.persons).first((path, value) -> path.eq(value));
         bindings.bind(qProject.category).first((path, value) -> path.eq(value));
-        bindings.bind(qProject.onKeyPrice).first((path, value) -> path.loe(value));
     }
 
 }
