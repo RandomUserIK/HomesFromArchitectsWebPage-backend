@@ -62,10 +62,14 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .cors()
                 .and()
+                .anonymous()
+                .and()
                 .addFilterBefore(createAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
                     .antMatchers(publicApiPatterns).permitAll()
-                .anyRequest().authenticated()
+                .and()
+                .authorizeRequests()
+                    .anyRequest().authenticated()
                 .and()
                 .logout()
                     .logoutUrl("/api/auth/logout")
@@ -87,7 +91,7 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private AuthorizationFilter createAuthorizationFilter() {
-        return new AuthorizationFilter(authenticationService);
+        return new AuthorizationFilter(authenticationService, publicApiPatterns);
     }
 
 }

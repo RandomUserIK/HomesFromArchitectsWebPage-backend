@@ -23,7 +23,9 @@ public class AuthenticationResponse {
 
     private Set<String> roles;
 
-    public static AuthenticationResponse build(UserDetailsImpl userDetails) {
+    private Integer jwtExpiration;
+
+    public static AuthenticationResponse build(UserDetailsImpl userDetails, Integer jwtExpiration) {
         Set<String> userRoles = (Objects.isNull(userDetails.getAuthorities())) ? null :
                 userDetails.getAuthorities().stream()
                                             .map(GrantedAuthority::getAuthority)
@@ -33,6 +35,7 @@ public class AuthenticationResponse {
                 .id(userDetails.getId())
                 .username(userDetails.getUsername())
                 .roles(userRoles)
+                .jwtExpiration(jwtExpiration)
                 .build();
     }
 

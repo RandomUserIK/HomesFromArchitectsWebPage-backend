@@ -1,6 +1,7 @@
 package sk.hfa.auth.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,9 @@ public class AuthenticationService implements IAuthenticationService {
     private final ICookieService cookieService;
     private final IJwtService jwtService;
 
+    @Value("${hfa.server.security.jwt.expiration}")
+    private Integer jwtExpiration;
+
     public AuthenticationService(AuthenticationManager authenticationManager, ICookieService cookieService,
                                  IJwtService jwtService) {
         this.authenticationManager = authenticationManager;
@@ -46,7 +50,7 @@ public class AuthenticationService implements IAuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         log.info("User [" + authenticationRequest.getUsername() + "] successfully authenticated.");
-        AuthenticationResponse response = AuthenticationResponse.build((UserDetailsImpl) authentication.getPrincipal());
+        AuthenticationResponse response = AuthenticationResponse.build((UserDetailsImpl) authentication.getPrincipal(), jwtExpiration);
         String token = jwtService.tokenFrom(authentication);
         HttpCookie cookie = cookieService.fromToken(token);
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);

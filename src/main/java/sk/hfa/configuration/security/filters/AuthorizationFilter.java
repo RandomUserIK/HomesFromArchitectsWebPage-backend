@@ -15,6 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
 @Slf4j
 public class AuthorizationFilter extends OncePerRequestFilter {
@@ -23,14 +24,21 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private final IAuthenticationService authenticationService;
 
-    public AuthorizationFilter(IAuthenticationService authenticationService) {
+    private final String[] publicApiPatterns;
+
+    public AuthorizationFilter(IAuthenticationService authenticationService, String[] publicApiPatterns) {
         this.authenticationService = authenticationService;
+        this.publicApiPatterns = publicApiPatterns;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
+            if (Arrays.stream(publicApiPatterns).anyMatch(pattern -> request.getRequestURI().equals(pattern))) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             Authentication authentication = authenticationService.authorizeUser(request);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
