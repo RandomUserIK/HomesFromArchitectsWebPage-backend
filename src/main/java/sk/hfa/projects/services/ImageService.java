@@ -88,7 +88,7 @@ public class ImageService implements IImageService {
     }
 
     private void saveImagePathToSpecifiedAttribute(ImageType imageType, Project project, String imageFilePath) {
-        if (imageType == ImageType.FLOOR_PLAN_IMAGE && project instanceof CommonProject) {
+        if (imageType == ImageType.GALLERY_FLOOR_PLANS_IMAGES && project instanceof CommonProject) {
             if (Objects.isNull(((CommonProject) project).getFloorPlanImagePaths()))
                 ((CommonProject) project).setFloorPlanImagePaths(new ArrayList<>());
 
