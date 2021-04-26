@@ -48,7 +48,8 @@ public abstract class Project {
 
     private String heatingType;
 
-    private String floorPlanImage;
+    @ElementCollection
+    private List<String> floorPlanImagesPaths;
 
     private Double builtUpArea;
 
