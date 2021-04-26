@@ -64,8 +64,8 @@ public class ImageService implements IImageService {
     public ImageType getImageType(String imageType) {
         if (imageType.equals(ImageType.TITLE_IMAGE.getImageType())) {
             return ImageType.TITLE_IMAGE;
-        } else if (imageType.equals(ImageType.FLOOR_PLAN_IMAGE.getImageType())) {
-            return ImageType.FLOOR_PLAN_IMAGE;
+        } else if (imageType.equals(ImageType.GALLERY_FLOOR_PLANS_IMAGES.getImageType())) {
+            return ImageType.GALLERY_FLOOR_PLANS_IMAGES;
         } else if (imageType.equals(ImageType.GALLERY_IMAGES.getImageType())) {
             return ImageType.GALLERY_IMAGES;
         } else {
