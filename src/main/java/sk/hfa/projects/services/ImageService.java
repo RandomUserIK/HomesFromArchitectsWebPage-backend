@@ -72,8 +72,7 @@ public class ImageService implements IImageService {
             throw new IllegalArgumentException("Invalid image type");
         }
     }
-
-    // TODO
+    
     private String saveImage(Project project, MultipartFile file, ImageType imageType) {
         String imageFilePath = "";
         try {
