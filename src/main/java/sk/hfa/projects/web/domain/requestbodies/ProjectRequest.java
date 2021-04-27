@@ -49,7 +49,7 @@ public abstract class ProjectRequest {
 
     private String heatingType;
 
-    private String floorPlanImage;
+    private List<String> floorPlanImagesPaths = new ArrayList<>();
 
     private Double builtUpArea;
 

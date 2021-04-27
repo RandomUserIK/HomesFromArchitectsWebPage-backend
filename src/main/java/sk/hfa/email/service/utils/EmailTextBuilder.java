@@ -1,7 +1,7 @@
 package sk.hfa.email.service.utils;
 
 import lombok.Data;
-import sk.hfa.contact_form.domain.requestbodies.ContactFormRequest;
+import sk.hfa.contactform.domain.requestbodies.ContactFormRequest;
 
 @Data
 public class EmailTextBuilder {
