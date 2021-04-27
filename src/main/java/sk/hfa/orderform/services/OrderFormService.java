@@ -15,8 +15,8 @@ public class OrderFormService implements IOrderFormService {
     }
 
     @Override
-    public void save(OrderForm order) {
-        orderRepository.save(order);
+    public OrderForm save(OrderForm order) {
+        return orderRepository.save(order);
     }
 
     @Override

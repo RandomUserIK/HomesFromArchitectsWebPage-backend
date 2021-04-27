@@ -4,7 +4,7 @@ import sk.hfa.orderform.domain.OrderForm;
 
 public interface IOrderFormService {
 
-    void save(OrderForm order);
+    OrderForm save(OrderForm order);
 
     void deleteById(Long id);
 
