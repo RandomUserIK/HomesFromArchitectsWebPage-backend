@@ -1,12 +1,12 @@
-package sk.hfa.contact_form.web;
+package sk.hfa.contactform.web;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import sk.hfa.contact_form.domain.requestbodies.ContactFormRequest;
-import sk.hfa.contact_form.domain.responsebodies.SubmittedContactFormResponse;
+import sk.hfa.contactform.domain.requestbodies.ContactFormRequest;
+import sk.hfa.contactform.domain.responsebodies.SubmittedContactFormResponse;
 import sk.hfa.email.service.interfaces.IEmailService;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 import sk.hfa.recaptcha.service.interfaces.IRecaptchaService;

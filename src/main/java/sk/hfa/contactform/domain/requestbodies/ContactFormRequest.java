@@ -1,4 +1,4 @@
-package sk.hfa.contact_form.domain.requestbodies;
+package sk.hfa.contactform.domain.requestbodies;
 
 import lombok.Data;
 
