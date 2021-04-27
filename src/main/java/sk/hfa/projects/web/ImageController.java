@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sk.hfa.projects.domain.enums.ImageType;
 import sk.hfa.projects.services.interfaces.IImageService;
 import sk.hfa.projects.web.domain.responsebodies.ImageMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ImageUploadMessageResource;
@@ -28,8 +29,10 @@ public class ImageController {
     // TODO: @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path="/upload", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResource> uploadImage(@RequestParam("projectId") String projectId,
-                                                       @RequestParam("file") MultipartFile file) {
-        String uploadedFilePath = imageService.upload(projectId, file);
+                                                       @RequestParam("file") MultipartFile file,
+                                                       @RequestParam("type") String imageType) {
+        ImageType imageTypeEnum = imageService.getImageType(imageType);
+        String uploadedFilePath = imageService.upload(projectId, file, imageTypeEnum);
         MessageResource responseBody = new ImageUploadMessageResource(uploadedFilePath);
         return ResponseEntity.ok(responseBody);
     }
