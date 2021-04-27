@@ -27,8 +27,7 @@ public class OrderFormController {
 
     @PostMapping
     public ResponseEntity<MessageResource> createProject(@Valid @RequestBody OrderFormRequest request) {
-        OrderForm order = OrderForm.build(request);
-        orderService.save(order);
+        orderService.save(request);
 
         MessageResource messageResource = new CreateOrderMessageResource("success");
         return ResponseEntity.ok(messageResource);

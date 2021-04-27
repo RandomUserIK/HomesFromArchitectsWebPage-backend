@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import sk.hfa.orderform.domain.OrderForm;
 import sk.hfa.orderform.domain.repositories.OrderFormRepository;
 import sk.hfa.orderform.services.interfaces.IOrderFormService;
+import sk.hfa.orderform.web.domain.requestbodies.OrderFormRequest;
 
 @Service
 public class OrderFormService implements IOrderFormService {
@@ -15,7 +16,8 @@ public class OrderFormService implements IOrderFormService {
     }
 
     @Override
-    public OrderForm save(OrderForm order) {
+    public OrderForm save(OrderFormRequest request) {
+        OrderForm order = OrderForm.build(request);
         return orderRepository.save(order);
     }
 
