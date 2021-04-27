@@ -39,7 +39,7 @@ public class IndividualProject extends Project {
                 .entryOrientation(request.getEntryOrientation())
                 .heatingSource(request.getHeatingSource())
                 .heatingType(request.getHeatingType())
-                .floorPlanImage(request.getFloorPlanImage())
+                .floorPlanImagesPaths(request.getFloorPlanImagesPaths())
                 .builtUpArea(request.getBuiltUpArea())
                 .usableArea(request.getUsableArea())
                 .selfHelpBuildPrice(request.getSelfHelpBuildPrice())
