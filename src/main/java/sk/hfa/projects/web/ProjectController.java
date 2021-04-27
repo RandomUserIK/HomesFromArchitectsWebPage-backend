@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.services.interfaces.IProjectService;
@@ -27,8 +26,8 @@ public class ProjectController {
     }
 
 
-//    TODO: Prerobit na MessageResource
-    @PreAuthorize("hasRole('ADMIN')")
+    // TODO: Prerobit na MessageResource
+    // TODO: @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Project> createProject(@RequestBody ProjectRequest request) {
         Project project = projectService.build(request);
