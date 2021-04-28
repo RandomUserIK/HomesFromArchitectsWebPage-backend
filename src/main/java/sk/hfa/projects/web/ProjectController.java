@@ -27,7 +27,7 @@ public class ProjectController {
     }
 
 
-//    TODO: Prerobit na MessageResource
+    // TODO: Prerobit na MessageResource
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Project> createProject(@RequestBody ProjectRequest request) {
@@ -36,11 +36,11 @@ public class ProjectController {
         return ResponseEntity.ok(project);
     }
 
+    // TODO: Prerobit na MessageResource
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> getProject(@PathVariable long id) {
+    public ResponseEntity<Project> getProject(@PathVariable long id) {
         Project project = projectService.findById(id);
-        MessageResource responseBody = new ProjectMessageResource(project);
-        return ResponseEntity.ok(responseBody);
+        return ResponseEntity.ok(project);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

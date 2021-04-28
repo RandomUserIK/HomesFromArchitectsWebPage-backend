@@ -38,8 +38,7 @@ public class ImageService implements IImageService {
         if (Objects.isNull(file) || Objects.isNull(projectId) || projectId.isEmpty())
             throw new ImageUploadException(UPLOAD_FAILED_MESSAGE);
 
-        Project project;
-        project = projectService.findById(Long.valueOf(projectId));
+        Project project = projectService.findById(Long.valueOf(projectId));
 
         if (Objects.isNull(project)) {
             log.warn("Project not found on given ID: [" + projectId + "]");
@@ -73,7 +72,7 @@ public class ImageService implements IImageService {
 
     // TODO
     private String saveImage(Project project, MultipartFile file, ImageType imageType) {
-        String imageFilePath = "";
+        String imageFilePath;
         try {
             imageFilePath = fileSystemRepository.save(file.getBytes(), file.getOriginalFilename()); // NOSONAR
             saveImagePathToSpecifiedAttribute(imageType, project, imageFilePath);
