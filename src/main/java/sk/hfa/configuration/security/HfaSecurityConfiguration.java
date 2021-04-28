@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -62,12 +63,7 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .cors()
                 .and()
-                .anonymous()
-                .and()
                 .addFilterBefore(createAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .authorizeRequests()
-                    .antMatchers(publicApiPatterns).permitAll()
-                .and()
                 .authorizeRequests()
                     .anyRequest().authenticated()
                 .and()
@@ -83,6 +79,11 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
                         .frameOptions().sameOrigin();
 
         setCsrf(http);
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(publicApiPatterns); // NOSONAR
     }
 
     private void setCsrf(HttpSecurity http) throws Exception {
