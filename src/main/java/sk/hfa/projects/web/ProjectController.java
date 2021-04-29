@@ -36,11 +36,12 @@ public class ProjectController {
         return ResponseEntity.ok(project);
     }
 
+    // TODO:
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> getProject(@PathVariable long id) {
+    public ResponseEntity<Project> getProject(@PathVariable long id) {
         Project project = projectService.findById(id);
-        MessageResource responseBody = new ProjectMessageResource(project);
-        return ResponseEntity.ok(responseBody);
+        // MessageResource responseBody = new ProjectMessageResource(project);
+        return ResponseEntity.ok(project);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
