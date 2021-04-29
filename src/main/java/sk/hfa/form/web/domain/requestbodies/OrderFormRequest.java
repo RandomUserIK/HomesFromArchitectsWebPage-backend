@@ -1,13 +1,15 @@
-package sk.hfa.orderform.web.domain.requestbodies;
+package sk.hfa.form.web.domain.requestbodies;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class OrderFormRequest {
+public class OrderFormRequest extends ContactFormRequest {
 
     @NotBlank
     private String projectTitle;
@@ -28,3 +30,4 @@ public class OrderFormRequest {
     private List<String> connectionProjects;
 
 }
+

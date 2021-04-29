@@ -73,16 +73,13 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
                 .and()
                 .exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint)
-                .and()
-                    .headers()
-                        .frameOptions().sameOrigin();
+                    .authenticationEntryPoint(authenticationEntryPoint);
 
         setCsrf(http);
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers(publicApiPatterns); // NOSONAR
     }
 

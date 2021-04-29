@@ -1,4 +1,4 @@
-package sk.hfa.contactform.web;
+package sk.hfa.form.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -6,12 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import sk.hfa.projects.web.domain.responsebodies.ErrorMessageResource;
-import sk.hfa.web.domain.responsebodies.MessageResource;
 import sk.hfa.recaptcha.domain.throwable.RecaptchaException;
+import sk.hfa.web.domain.responsebodies.MessageResource;
 
 @Slf4j
-@ControllerAdvice(assignableTypes = ContactController.class)
-public class ContactControllerAdvice {
+@ControllerAdvice(assignableTypes = FormController.class)
+public class FormControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<MessageResource> handleAccountStatusException(RecaptchaException ex) {
