@@ -5,15 +5,11 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 import sk.hfa.projects.domain.enums.Category;
-import sk.hfa.projects.web.domain.requestbodies.IndividualProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Entity
@@ -22,13 +18,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class IndividualProject extends Project {
-
-    @ElementCollection
-    private List<String> galleryImagePaths;
-
-    public IndividualProject() {
-        galleryImagePaths = new ArrayList<>();
-    }
 
     public static Project build(ProjectRequest request) {
         return IndividualProject.builder()
@@ -43,7 +32,6 @@ public class IndividualProject extends Project {
                 .energeticClass(request.getEnergeticClass())
                 .builtUpArea(request.getBuiltUpArea())
                 .usableArea(request.getUsableArea())
-                .galleryImagePaths(((IndividualProjectRequest) request).getGalleryImagePaths())
                 .build();
     }
 
