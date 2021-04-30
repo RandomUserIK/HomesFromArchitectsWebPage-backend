@@ -6,6 +6,9 @@ import sk.hfa.form.web.domain.requestbodies.ContactFormRequest;
 @Data
 public class ContactEmailBuilder {
 
+    private ContactEmailBuilder() {
+    }
+
     public static String build(ContactFormRequest contactFormRequest) {
         String newLine = System.getProperty("line.separator");
 

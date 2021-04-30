@@ -6,6 +6,9 @@ import sk.hfa.form.web.domain.requestbodies.OrderFormRequest;
 @Data
 public class OrderEmailBuilder {
 
+    private OrderEmailBuilder() {
+    }
+
     private static String buildContactInfo(OrderFormRequest orderFormRequest) {
         return ContactEmailBuilder.build(orderFormRequest);
     }

@@ -1,7 +1,6 @@
 package sk.hfa.form.web.domain.requestbodies;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
