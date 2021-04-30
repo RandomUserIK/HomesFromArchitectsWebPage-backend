@@ -35,7 +35,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
-            if (Arrays.stream(publicApiPatterns).anyMatch(pattern -> request.getRequestURI().equals(pattern))) {
+            if (Arrays.stream(publicApiPatterns).anyMatch(pattern -> request.getRequestURI().contains(pattern))) {
                 filterChain.doFilter(request, response);
                 return;
             }

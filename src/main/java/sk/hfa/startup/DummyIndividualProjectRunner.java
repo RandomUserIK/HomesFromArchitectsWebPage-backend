@@ -43,7 +43,7 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
                 "Stropy sú monolitické betónové. Vykurovanie je podlahové.");
         Project commonProject = new CommonProject();
         commonProject.setCategory(Category.COMMON);
-        commonProject.setTitle("'Palisander'");
+        commonProject.setTitle("Palisander");
         commonProject.setPersons(6);
         commonProject.setBuiltUpArea(198.72);
         ((CommonProject) commonProject).setTotalLivingArea(231.30);
