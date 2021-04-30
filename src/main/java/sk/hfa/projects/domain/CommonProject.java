@@ -3,7 +3,6 @@ package sk.hfa.projects.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import sk.hfa.projects.domain.enums.Category;
 import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
