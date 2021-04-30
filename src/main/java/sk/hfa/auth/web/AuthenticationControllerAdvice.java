@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import sk.hfa.auth.web.responsebodies.AuthenticationErrorResponse;
@@ -18,6 +20,18 @@ public class AuthenticationControllerAdvice {
     @ExceptionHandler
     public ResponseEntity<AuthenticationErrorResponse> handleBadCredentialsException(BadCredentialsException ex) {
         log.error("Invalid credentials provided", ex);
+        return new ResponseEntity<>(AuthenticationErrorResponse.build(FAILED_TO_AUTHENTICATE_MESSAGE), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AuthenticationErrorResponse> handleDisabledException(DisabledException ex) {
+        log.error("Disabled", ex);
+        return new ResponseEntity<>(AuthenticationErrorResponse.build(FAILED_TO_AUTHENTICATE_MESSAGE), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AuthenticationErrorResponse> handleLockedException(LockedException ex) {
+        log.error("Locked", ex);
         return new ResponseEntity<>(AuthenticationErrorResponse.build(FAILED_TO_AUTHENTICATE_MESSAGE), HttpStatus.UNAUTHORIZED);
     }
 

@@ -1,12 +1,15 @@
 package sk.hfa.auth.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Builder
@@ -24,12 +27,12 @@ public class UserDetailsImpl implements UserDetails {
     private String password;
 
     @Setter
-    private List<? extends GrantedAuthority> authorities;
+    private Set<GrantedAuthority> authorities;
 
     public static UserDetailsImpl build(User user) {
-        List<GrantedAuthority> authorities = user.getRoles().stream()
+        Set<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         return UserDetailsImpl.builder()
                 .id(user.getId())
@@ -40,7 +43,7 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
-    public List<? extends GrantedAuthority> getAuthorities() {
+    public Set<GrantedAuthority> getAuthorities() {
         return authorities;
     }
 
