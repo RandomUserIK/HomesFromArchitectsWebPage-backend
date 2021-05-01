@@ -14,6 +14,7 @@ public class TextSection {
 
     private String title;
 
+    @Column(length = 1000)
     private String text;
 
 }

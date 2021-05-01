@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import sk.hfa.projects.domain.CommonProject;
 import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.domain.enums.ImageType;
 import sk.hfa.projects.domain.repositories.FileSystemRepository;
@@ -15,6 +16,7 @@ import sk.hfa.projects.services.interfaces.IProjectService;
 
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Slf4j
@@ -70,8 +72,7 @@ public class ImageService implements IImageService {
             throw new IllegalArgumentException("Invalid image type");
         }
     }
-
-    // TODO
+    
     private String saveImage(Project project, MultipartFile file, ImageType imageType) {
         String imageFilePath = "";
         try {
@@ -86,8 +87,11 @@ public class ImageService implements IImageService {
     }
 
     private void saveImagePathToSpecifiedAttribute(ImageType imageType, Project project, String imageFilePath) {
-        if (imageType == ImageType.GALLERY_FLOOR_PLANS_IMAGES) {
-            project.getFloorPlanImagesPaths().add(imageFilePath);
+        if (imageType == ImageType.GALLERY_FLOOR_PLANS_IMAGES && project instanceof CommonProject) {
+            if (Objects.isNull(((CommonProject) project).getFloorPlanImagePaths()))
+                ((CommonProject) project).setFloorPlanImagePaths(new ArrayList<>());
+
+            ((CommonProject) project).getFloorPlanImagePaths().add(imageFilePath);
         } else if (imageType == ImageType.TITLE_IMAGE) {
             project.setTitleImage(imageFilePath);
         } else if (imageType == ImageType.GALLERY_IMAGES) {
