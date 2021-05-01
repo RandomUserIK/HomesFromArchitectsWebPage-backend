@@ -3,26 +3,54 @@ package sk.hfa.projects.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import sk.hfa.projects.domain.enums.Category;
 import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
 @SuperBuilder
-@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class CommonProject extends Project {
 
-    private boolean common;
+    private Integer rooms;
+
+    private String entryOrientation;
+
+    private String heatingSource;
+
+    private String heatingType;
+
+    private Double selfHelpBuildPrice;
+
+    private Double onKeyPrice;
+
+    private Double basicProjectPrice;
+
+    private Double extendedProjectPrice;
+
+    private Double totalLivingArea;
+
+    private Double roofPitch;
+
+    private Double minimumParcelWidth;
+
+    @ElementCollection
+    private List<String> floorPlanImagePaths;
+
+    public CommonProject() {
+        floorPlanImagePaths = new ArrayList<>();
+    }
 
     public static Project build(ProjectRequest request) {
         return CommonProject.builder()
@@ -34,22 +62,21 @@ public class CommonProject extends Project {
                 .imagePaths(request.getImagePaths())
                 .hasGarage(request.getHasGarage())
                 .persons(request.getPersons())
-                .rooms(request.getRooms())
+                .rooms(((CommonProjectRequest) request).getRooms())
                 .energeticClass(request.getEnergeticClass())
-                .entryOrientation(request.getEntryOrientation())
-                .heatingSource(request.getHeatingSource())
-                .heatingType(request.getHeatingType())
-                .floorPlanImagesPaths(request.getFloorPlanImagesPaths())
+                .entryOrientation(((CommonProjectRequest) request).getEntryOrientation())
+                .heatingSource(((CommonProjectRequest) request).getHeatingSource())
+                .heatingType(((CommonProjectRequest) request).getHeatingType())
+                .floorPlanImagePaths(((CommonProjectRequest) request).getFloorPlanImagePaths())
                 .builtUpArea(request.getBuiltUpArea())
                 .usableArea(request.getUsableArea())
-                .selfHelpBuildPrice(request.getSelfHelpBuildPrice())
-                .onKeyPrice(request.getOnKeyPrice())
-                .basicProjectPrice(request.getBasicProjectPrice())
-                .extendedProjectPrice(request.getExtendedProjectPrice())
-                .totalLivingArea(request.getTotalLivingArea())
-                .roofPitch(request.getRoofPitch())
-                .minimumParcelWidth(request.getMinimumParcelWidth())
-                .common(((CommonProjectRequest) request).isCommon())
+                .selfHelpBuildPrice(((CommonProjectRequest) request).getSelfHelpBuildPrice())
+                .onKeyPrice(((CommonProjectRequest) request).getOnKeyPrice())
+                .basicProjectPrice(((CommonProjectRequest) request).getBasicProjectPrice())
+                .extendedProjectPrice(((CommonProjectRequest) request).getExtendedProjectPrice())
+                .totalLivingArea(((CommonProjectRequest) request).getTotalLivingArea())
+                .roofPitch(((CommonProjectRequest) request).getRoofPitch())
+                .minimumParcelWidth(((CommonProjectRequest) request).getMinimumParcelWidth())
                 .build();
     }
 
