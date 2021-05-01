@@ -83,10 +83,7 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
                     .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
                 .and()
                 .exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint)
-                .and()
-                    .headers()
-                        .frameOptions().sameOrigin();
+                    .authenticationEntryPoint(authenticationEntryPoint);
 
         setCsrf(http);
     }
