@@ -19,11 +19,14 @@ import javax.validation.Valid;
 @RequestMapping(path = "/api/form")
 public class FormController {
 
-    @Autowired
-    private IRecaptchaService recaptchaService;
+    private final IRecaptchaService recaptchaService;
 
-    @Autowired
-    private IEmailService emailService;
+    private final IEmailService emailService;
+
+    public FormController(IRecaptchaService recaptchaService, IEmailService emailService) {
+        this.recaptchaService = recaptchaService;
+        this.emailService = emailService;
+    }
 
 
     @PostMapping("/order")
