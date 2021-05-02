@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sk.hfa.projects.domain.enums.ImageType;
 import sk.hfa.projects.services.interfaces.IImageService;
-import sk.hfa.projects.web.domain.responsebodies.ImageMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ImageUploadMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
