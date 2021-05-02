@@ -24,6 +24,7 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
+    // TODO: prerobit na message resource
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
         return authenticationService.authenticateUser(request);
