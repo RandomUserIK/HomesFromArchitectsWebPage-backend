@@ -1,9 +1,11 @@
 package sk.hfa.form.web;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import sk.hfa.email.service.interfaces.IEmailService;
 import sk.hfa.form.web.domain.requestbodies.ContactFormRequest;
 import sk.hfa.form.web.domain.requestbodies.OrderFormRequest;
@@ -15,7 +17,6 @@ import javax.validation.Valid;
 
 @Slf4j
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(path = "/api/form")
 public class FormController {
 

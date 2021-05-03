@@ -30,7 +30,9 @@ public class AdminRunner implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
+        if (userService.findByUsername("admin").isPresent())
+            return;
         log.info("Creating dummy admin user...");
         User adminUser = new User(username, password);
         Role adminRole = new Role("ROLE_ADMIN");

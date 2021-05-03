@@ -2,6 +2,7 @@ package sk.hfa.projects.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import sk.hfa.projects.domain.enums.ImageType;
 import sk.hfa.projects.services.interfaces.IImageService;
-import sk.hfa.projects.web.domain.responsebodies.ImageMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ImageUploadMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
@@ -37,14 +37,16 @@ public class ImageController {
         return ResponseEntity.ok(responseBody);
     }
 
-    @GetMapping(path = "/{path}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<MessageResource> getImage(@PathVariable String path) throws IOException {
+    @GetMapping(produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<InputStreamResource> getImage(@RequestParam("path") String path) throws IOException {
         FileSystemResource imageResource = imageService.findFileSystemResourceByPath(path);
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + (imageResource.getFilename()));
-        MessageResource responseBody = new ImageMessageResource(imageResource.getInputStream());
-        return ResponseEntity.ok().headers(headers).body(responseBody);
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(new InputStreamResource(imageResource.getInputStream()));
     }
 
 }
