@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sk.hfa.auth.service.interfaces.IAuthenticationService;
 import sk.hfa.auth.web.requestbodies.AuthenticationRequest;
-import sk.hfa.auth.web.responsebodies.AuthenticationResponse;
+import sk.hfa.web.domain.responsebodies.MessageResource;
 
 import javax.validation.Valid;
 
@@ -24,10 +24,10 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    // TODO: prerobit na message resource
     @PostMapping(value = "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
-        return authenticationService.authenticateUser(request);
+    public ResponseEntity<MessageResource> login(@Valid @RequestBody AuthenticationRequest request) {
+        MessageResource response = authenticationService.authenticateUser(request);
+        return ResponseEntity.ok(response);
     }
 
 }

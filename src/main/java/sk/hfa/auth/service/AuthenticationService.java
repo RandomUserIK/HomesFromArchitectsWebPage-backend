@@ -2,9 +2,7 @@ package sk.hfa.auth.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -12,11 +10,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import sk.hfa.auth.domain.UserDetailsImpl;
+import sk.hfa.auth.domain.throwable.InvalidJwtTokenException;
 import sk.hfa.auth.service.interfaces.IAuthenticationService;
 import sk.hfa.auth.web.requestbodies.AuthenticationRequest;
 import sk.hfa.auth.web.responsebodies.AuthenticationResponse;
-import sk.hfa.configuration.security.cookie.interfaces.ICookieService;
 import sk.hfa.configuration.security.jwt.service.interfaces.IJwtService;
+import sk.hfa.web.domain.responsebodies.MessageResource;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
@@ -26,22 +25,21 @@ import java.util.Set;
 @Service
 public class AuthenticationService implements IAuthenticationService {
 
+    private static final String TOKEN_TYPE = "Bearer ";
+
     private final AuthenticationManager authenticationManager;
-    private final ICookieService cookieService;
     private final IJwtService jwtService;
 
     @Value("${hfa.server.security.jwt.expiration}")
-    private Integer jwtExpiration;
+    private Long jwtExpiration;
 
-    public AuthenticationService(AuthenticationManager authenticationManager, ICookieService cookieService,
-                                 IJwtService jwtService) {
+    public AuthenticationService(AuthenticationManager authenticationManager, IJwtService jwtService) {
         this.authenticationManager = authenticationManager;
-        this.cookieService = cookieService;
         this.jwtService = jwtService;
     }
 
     @Override
-    public ResponseEntity<AuthenticationResponse> authenticateUser(AuthenticationRequest authenticationRequest) {
+    public MessageResource authenticateUser(AuthenticationRequest authenticationRequest) {
         log.info("Authenticating user with the username: [" + authenticationRequest.getUsername() + "]");
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(),
@@ -50,21 +48,21 @@ public class AuthenticationService implements IAuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         log.info("User [" + authenticationRequest.getUsername() + "] successfully authenticated.");
-        AuthenticationResponse response = AuthenticationResponse.build((UserDetailsImpl) authentication.getPrincipal(), jwtExpiration);
         String token = jwtService.tokenFrom(authentication);
-        HttpCookie cookie = cookieService.fromToken(token);
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString()).body(response);
+        return AuthenticationResponse.build((UserDetailsImpl) authentication.getPrincipal(), jwtExpiration, TOKEN_TYPE + token);
     }
 
     @Override
     public Authentication authorizeUser(HttpServletRequest request) {
-        String token = cookieService.extractToken(request);
-
-        if (Objects.isNull(token) || token.isEmpty())
+        String jwtHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (Objects.isNull(jwtHeader) || !jwtHeader.startsWith(TOKEN_TYPE))
             throw new IllegalArgumentException("JWT Token not found");
 
-        String username = jwtService.getSubjectFromToken(token);
+        String token = jwtHeader.replace(TOKEN_TYPE, "");
+        if (!jwtService.isValid(token))
+            throw new InvalidJwtTokenException("Invalid JWT Token provided.");
 
+        String username = jwtService.getSubjectFromToken(token);
         if (Objects.isNull(username) || username.isEmpty())
             throw new IllegalArgumentException("Failed to extract username from the provided JWT token");
 

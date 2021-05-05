@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import sk.hfa.auth.domain.UserDetailsImpl;
+import sk.hfa.auth.domain.throwable.InvalidJwtTokenException;
 import sk.hfa.auth.service.interfaces.IAuthenticationService;
 
 import javax.servlet.FilterChain;
@@ -15,7 +17,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 
 @Slf4j
 public class AuthorizationFilter extends OncePerRequestFilter {
@@ -24,26 +25,21 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private final IAuthenticationService authenticationService;
 
-    private final String[] publicApiPatterns;
-
-    public AuthorizationFilter(IAuthenticationService authenticationService, String[] publicApiPatterns) {
+    public AuthorizationFilter(IAuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
-        this.publicApiPatterns = publicApiPatterns;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
-            if (Arrays.stream(publicApiPatterns).anyMatch(pattern -> request.getRequestURI().contains(pattern))) {
-                filterChain.doFilter(request, response);
-                return;
-            }
+            log.info("Authorizing access to " + request.getRequestURI());
             Authentication authentication = authenticationService.authorizeUser(request);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("User [" + ((UserDetailsImpl) authentication.getPrincipal()).getUsername() + "] authorized.");
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException |
-                 IllegalArgumentException ex) {
+                 IllegalArgumentException | InvalidJwtTokenException ex) {
             log.error(UNAUTHORIZED, ex);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, UNAUTHORIZED);
         }

@@ -49,7 +49,7 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
             ts3.setText("Rodinný dom je navrhnutý z keramických tvárnic, ktoré možno zameniť za pórobetón. " +
                     "Stropy sú monolitické betónové. Vykurovanie je podlahové.");
             Project commonProject = new CommonProject();
-            commonProject.setCategory(Category.COMMON);
+            commonProject.setCategory(Category.INTERIOR_DESIGN);
             commonProject.setTitle("Palisander");
             commonProject.setPersons(6);
             commonProject.setBuiltUpArea(198.72);

@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -74,16 +75,18 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                     .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .and()
-                .authorizeRequests()
-                    .anyRequest().authenticated()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .logout()
                     .logoutUrl("/api/auth/logout")
                     .invalidateHttpSession(true)
+                    .clearAuthentication(true)
                     .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
                 .and()
                 .exceptionHandling()
-                    .authenticationEntryPoint(authenticationEntryPoint);
+                    .authenticationEntryPoint(authenticationEntryPoint)
+                .and()
+                .httpBasic().disable(); // NOSONAR
 
         setCsrf(http);
     }
@@ -94,12 +97,12 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private void setCsrf(HttpSecurity http) throws Exception {
-        http.csrf().ignoringAntMatchers("/api/auth/login", String.join(",", publicApiPatterns)) //NOSONAR
+        http.csrf().ignoringAntMatchers(String.join(",", publicApiPatterns)) //NOSONAR
                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
     }
 
     private AuthorizationFilter createAuthorizationFilter() {
-        return new AuthorizationFilter(authenticationService, publicApiPatterns);
+        return new AuthorizationFilter(authenticationService);
     }
 
 }

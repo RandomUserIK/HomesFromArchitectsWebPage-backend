@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.services.interfaces.IProjectService;
@@ -25,18 +26,20 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-
-    // TODO: @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> createProject(@RequestBody ProjectRequest request) {
+        log.info("Creating a new project.");
         Project project = projectService.build(request);
         project = projectService.save(project);
         MessageResource responseBody = new ProjectMessageResource(project);
+        log.info("The project with the ID: [" + project.getId() + "] was successfully created.");
         return ResponseEntity.ok(responseBody);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> getProject(@PathVariable long id) {
+        log.info("Fetching the project with the ID: " + id);
         Project project = projectService.findById(id);
         MessageResource responseBody = new ProjectMessageResource(project);
         return ResponseEntity.ok(responseBody);
@@ -44,6 +47,7 @@ public class ProjectController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> getAllOnPage(@RequestParam("page") int page) {
+        log.info("Fetching projects on the page [" + page + "]");
         Page<Project> result = projectService.getAllOnPage(page);
         MessageResource responseBody = ProjectPageMessageResource.build(result);
         return ResponseEntity.ok(responseBody);
@@ -52,6 +56,7 @@ public class ProjectController {
     @GetMapping(path = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> getAllOnPageAndQuery(@RequestParam("page") int page,
                                                                 @QuerydslPredicate(root = Project.class) Predicate predicate) {
+        log.info("Fetching projects on the page [" + page + "] and filtering on custom query [" + predicate.toString() + "].");
         Page<Project> result = projectService.getAllOnPageAndQuery(page, predicate);
         MessageResource responseBody = ProjectPageMessageResource.build(result);
         return ResponseEntity.ok(responseBody);
