@@ -10,7 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import sk.hfa.auth.domain.UserDetailsImpl;
 import sk.hfa.auth.domain.throwable.InvalidJwtTokenException;
-import sk.hfa.auth.service.interfaces.IAuthenticationService;
+import sk.hfa.auth.service.interfaces.IAuthorizationService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -23,10 +23,10 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private static final String UNAUTHORIZED = "Unauthorized";
 
-    private final IAuthenticationService authenticationService;
+    private final IAuthorizationService authorizationService;
 
-    public AuthorizationFilter(IAuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
+    public AuthorizationFilter(IAuthorizationService authorizationService) {
+        this.authorizationService = authorizationService;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
             log.info("Authorizing access to " + request.getRequestURI());
-            Authentication authentication = authenticationService.authorizeUser(request);
+            Authentication authentication = authorizationService.authorizeUser(request);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("User [" + ((UserDetailsImpl) authentication.getPrincipal()).getUsername() + "] authorized.");
             filterChain.doFilter(request, response);

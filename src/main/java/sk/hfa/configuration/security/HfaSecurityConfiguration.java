@@ -22,7 +22,7 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import sk.hfa.auth.service.interfaces.IAuthenticationService;
+import sk.hfa.auth.service.interfaces.IAuthorizationService;
 import sk.hfa.configuration.security.filters.AuthorizationFilter;
 
 import java.util.Collections;
@@ -34,15 +34,15 @@ import java.util.Collections;
 public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationEntryPoint authenticationEntryPoint;
-    private final IAuthenticationService authenticationService;
+    private final IAuthorizationService authorizationService;
 
     @Value("${hfa.server.security.permit-patterns}")
     private String[] publicApiPatterns;
 
     public HfaSecurityConfiguration(AuthenticationEntryPoint authenticationEntryPoint,
-                                    @Lazy IAuthenticationService authenticationService) {
+                                    @Lazy IAuthorizationService authorizationService) {
         this.authenticationEntryPoint = authenticationEntryPoint;
-        this.authenticationService = authenticationService;
+        this.authorizationService = authorizationService;
     }
 
     @Bean
@@ -102,7 +102,7 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private AuthorizationFilter createAuthorizationFilter() {
-        return new AuthorizationFilter(authenticationService);
+        return new AuthorizationFilter(authorizationService);
     }
 
 }
