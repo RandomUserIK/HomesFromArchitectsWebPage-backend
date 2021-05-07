@@ -17,7 +17,6 @@ import sk.hfa.projects.domain.throwable.ProjectNotFoundException;
 import sk.hfa.projects.services.interfaces.IProjectService;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -49,7 +48,7 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public Page<Project> getAllOnPage(int page, int size,Predicate predicate) {
+    public Page<Project> getAllOnPage(int page, int size, Predicate predicate) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Project> result = projectRepository.findAll(predicate, pageRequest);
 
