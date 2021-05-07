@@ -46,9 +46,11 @@ public class ProjectController {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> getAllOnPage(@RequestParam("page") int page) {
+    public ResponseEntity<MessageResource> getAllOnPage(@RequestParam("page") int page,
+                                                        @RequestParam("size") int size,
+                                                        @QuerydslPredicate(root = Project.class) Predicate predicate) {
         log.info("Fetching projects on the page [" + page + "]");
-        Page<Project> result = projectService.getAllOnPage(page);
+        Page<Project> result = projectService.getAllOnPage(page, size, predicate);
         MessageResource responseBody = ProjectPageMessageResource.build(result);
         return ResponseEntity.ok(responseBody);
     }
