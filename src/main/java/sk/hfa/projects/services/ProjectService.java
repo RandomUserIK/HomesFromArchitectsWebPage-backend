@@ -49,9 +49,9 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public Page<Project> getAllOnPage(int page) {
-        PageRequest pageRequest = PageRequest.of(page, ELEMENTS_PER_PAGE);
-        Page<Project> result = getAll(pageRequest);
+    public Page<Project> getAllOnPage(int page, int size,Predicate predicate) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<Project> result = projectRepository.findAll(predicate, pageRequest);
 
         if (page > result.getTotalPages())
             throw new InvalidPageableRequestException(INVALID_PAGEABLE_MESSAGE);

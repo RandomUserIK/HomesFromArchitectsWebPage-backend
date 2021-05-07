@@ -15,7 +15,7 @@ public interface IProjectService {
 
     Project findById(Long id);
 
-    Page<Project> getAllOnPage(int page);
+    Page<Project> getAllOnPage(int page,int size,Predicate predicate);
 
     Page<Project> getAll(Pageable pageable);
 
