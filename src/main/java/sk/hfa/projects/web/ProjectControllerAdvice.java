@@ -1,6 +1,7 @@
 package sk.hfa.projects.web;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,6 +26,14 @@ public class ProjectControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<MessageResource> handleIllegalArgumentException(IllegalArgumentException ex) {
+        log.error(ex.getMessage(), ex);
+        MessageResource responseBody = ErrorMessageResource.build("Bad request", ex.getMessage(),
+                                                                    HttpStatus.BAD_REQUEST.value());
+        return ResponseEntity.badRequest().body(responseBody);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<MessageResource> handleIllegalArgumentException(EmptyResultDataAccessException ex) {
         log.error(ex.getMessage(), ex);
         MessageResource responseBody = ErrorMessageResource.build("Bad request", ex.getMessage(),
                                                                     HttpStatus.BAD_REQUEST.value());

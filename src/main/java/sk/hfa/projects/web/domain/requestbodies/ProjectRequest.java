@@ -36,8 +36,7 @@ public abstract class ProjectRequest {
 
     private String energeticClass;
 
-    @JsonDeserialize(using = GarageTypeDeserializer.class)
-    private Boolean hasGarage;
+    private String hasGarage;
 
     private Integer persons;
 

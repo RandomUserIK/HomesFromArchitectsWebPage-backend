@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.services.interfaces.IProjectService;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
-import sk.hfa.projects.web.domain.responsebodies.ProjectMessageResource;
+import sk.hfa.projects.web.domain.responsebodies.DeleteProjectMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectPageMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
@@ -35,12 +35,20 @@ public class ProjectController {
         return ResponseEntity.ok(project);
     }
 
-    // TODO:
+    // TODO: Prerobit na MessageResource
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Project> getProject(@PathVariable long id) {
         Project project = projectService.findById(id);
         // MessageResource responseBody = new ProjectMessageResource(project);
         return ResponseEntity.ok(project);
+    }
+
+    // TODO: @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource> deleteProject(@PathVariable long id) {
+        projectService.deleteById(id);
+        MessageResource responseBody = new DeleteProjectMessageResource("Project successfully deleted");
+        return ResponseEntity.ok(responseBody);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
