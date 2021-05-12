@@ -36,7 +36,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             log.info("Authorizing access to " + request.getRequestURI());
             Authentication authentication = authorizationService.authorizeUser(request);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("User [" + ((UserDetailsImpl) authentication.getPrincipal()).getUsername() + "] authorized.");
+            log.info("User [" + authentication.getPrincipal() + "] authorized.");
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException |
                  IllegalArgumentException | InvalidJwtTokenException ex) {

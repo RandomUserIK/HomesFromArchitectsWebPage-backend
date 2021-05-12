@@ -97,7 +97,7 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private void setCsrf(HttpSecurity http) throws Exception {
-        http.csrf().ignoringAntMatchers(String.join(",", publicApiPatterns)) //NOSONAR
+        http.csrf().ignoringAntMatchers("/api/projects/**", "/api/images/**", String.join(",", publicApiPatterns)) //NOSONAR
                    .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
     }
 
