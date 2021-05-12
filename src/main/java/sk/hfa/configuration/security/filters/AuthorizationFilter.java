@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
-import sk.hfa.auth.domain.UserDetailsImpl;
 import sk.hfa.auth.domain.throwable.InvalidJwtTokenException;
 import sk.hfa.auth.service.interfaces.IAuthorizationService;
 
