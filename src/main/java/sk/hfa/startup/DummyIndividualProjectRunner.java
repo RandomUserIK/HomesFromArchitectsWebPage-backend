@@ -13,7 +13,6 @@ import sk.hfa.projects.services.interfaces.IProjectService;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 
 @Slf4j
 @Component
