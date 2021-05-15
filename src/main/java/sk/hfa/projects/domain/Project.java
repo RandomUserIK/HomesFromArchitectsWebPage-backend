@@ -34,7 +34,7 @@ public abstract class Project {
     @ElementCollection
     private List<String> imagePaths;
 
-    private Boolean hasGarage;
+    private String hasGarage;
 
     private Integer persons;
 

@@ -16,7 +16,7 @@ public class CommonProjectRequest extends ProjectRequest {
 
     private Integer rooms;
 
-    private String entryOrientation;
+    private List<String> entryOrientation;
 
     private String heatingSource;
 

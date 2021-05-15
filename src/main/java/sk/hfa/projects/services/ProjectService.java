@@ -17,7 +17,6 @@ import sk.hfa.projects.domain.throwable.ProjectNotFoundException;
 import sk.hfa.projects.services.interfaces.IProjectService;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -46,6 +45,13 @@ public class ProjectService implements IProjectService {
 
         return projectRepository.findById(id).orElseThrow(() ->
                 new ProjectNotFoundException("Project not found on the given ID: [" + id.toString() + "]"));
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        if (Objects.isNull(id))
+            throw new IllegalArgumentException("Invalid identifier provided");
+        projectRepository.deleteById(id);
     }
 
     @Override
