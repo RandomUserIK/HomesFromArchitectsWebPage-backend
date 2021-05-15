@@ -12,6 +12,7 @@ import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.services.interfaces.IProjectService;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 import sk.hfa.projects.web.domain.responsebodies.DeleteProjectMessageResource;
+import sk.hfa.projects.web.domain.responsebodies.ProjectMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectPageMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
@@ -45,6 +46,8 @@ public class ProjectController {
         return ResponseEntity.ok(responseBody);
     }
 
+    // TODO: configure security to let through the requests of tyep GET for URL: /api/projects/{id:[0-9]+}
+    // TODO: configure security to authorize the requests of tyep DELETE for URL: /api/projects/{id:[0-9]+}
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> deleteProject(@PathVariable long id) {
