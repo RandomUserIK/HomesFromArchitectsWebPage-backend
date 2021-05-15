@@ -48,6 +48,13 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
+    public void deleteById(Long id) {
+        if (Objects.isNull(id))
+            throw new IllegalArgumentException("Invalid identifier provided");
+        projectRepository.deleteById(id);
+    }
+
+    @Override
     public Page<Project> getAllOnPage(int page, int size, Predicate predicate) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Project> result = projectRepository.findAll(predicate, pageRequest);

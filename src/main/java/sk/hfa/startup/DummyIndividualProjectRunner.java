@@ -13,7 +13,6 @@ import sk.hfa.projects.services.interfaces.IProjectService;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 
 @Slf4j
 @Component
@@ -49,13 +48,13 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
             ts3.setText("Rodinný dom je navrhnutý z keramických tvárnic, ktoré možno zameniť za pórobetón. " +
                     "Stropy sú monolitické betónové. Vykurovanie je podlahové.");
             Project commonProject = new CommonProject();
-            commonProject.setCategory(Category.INTERIOR_DESIGN);
-            commonProject.setTitle("Palisander");
+            commonProject.setCategory(Category.COMMON);
+            commonProject.setTitle("Palisander " + i);
             commonProject.setPersons(6);
             commonProject.setBuiltUpArea(198.72);
             ((CommonProject) commonProject).setTotalLivingArea(231.30);
             commonProject.setEnergeticClass("A0");
-            ((CommonProject) commonProject).setEntryOrientation("S, V, Z");
+            ((CommonProject) commonProject).setEntryOrientation(Arrays.asList("S", "J", "V"));
             ((CommonProject) commonProject).setSelfHelpBuildPrice(145500.0);
             ((CommonProject) commonProject).setOnKeyPrice(220000.0);
             ((CommonProject) commonProject).setBasicProjectPrice(2550.0);
@@ -64,11 +63,12 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
             commonProject.setUsableArea(131.72);
             commonProject.setTitleImage(titleImage.getFile().getPath());
             ((CommonProject) commonProject).setRoofPitch(1.5);
+            commonProject.setHasGarage("Nie");
             ((CommonProject) commonProject).setMinimumParcelWidth(20.0);
             ((CommonProject) commonProject).setHeatingSource("tepelné čerpadlo");
             ((CommonProject) commonProject).setHeatingType("podlahové vykurovanie");
-            ((CommonProject) commonProject).setFloorPlanImagePaths(Collections.singletonList("floor_plan.png"));
-            commonProject.setImagePaths(Arrays.asList("slide1.png", "slide2.png"));
+            ((CommonProject) commonProject).setFloorPlanImagePaths(Arrays.asList(titleImage.getFile().getPath(), titleImage.getFile().getPath()));
+            commonProject.setImagePaths(Arrays.asList(titleImage.getFile().getPath(), titleImage.getFile().getPath()));
             commonProject.setTextSections(Arrays.asList(ts1, ts2, ts3));
             commonProject = projectService.save(commonProject);
             log.info("New project id: " + commonProject.getId());

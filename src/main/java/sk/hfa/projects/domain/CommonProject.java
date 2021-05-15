@@ -25,7 +25,8 @@ public class CommonProject extends Project {
 
     private Integer rooms;
 
-    private String entryOrientation;
+    @ElementCollection
+    private List<String> entryOrientation;
 
     private String heatingSource;
 
