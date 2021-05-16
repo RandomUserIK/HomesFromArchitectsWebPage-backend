@@ -15,8 +15,12 @@ import sk.hfa.projects.services.interfaces.IImageService;
 import sk.hfa.projects.services.interfaces.IProjectService;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -25,6 +29,7 @@ public class ImageService implements IImageService {
 
     private static final String UPLOAD_FAILED_MESSAGE = "Failed to upload the provided image.";
     private static final String FETCH_FAILED_MESSAGE = "Failed to fetch file system resource by the provided location.";
+    private static final String DELETE_FAILED_MESSAGE = "Failed to delete image file.";
 
     private final IProjectService projectService;
     private final FileSystemRepository fileSystemRepository;
@@ -72,7 +77,7 @@ public class ImageService implements IImageService {
             throw new IllegalArgumentException("Invalid image type");
         }
     }
-    
+
     private String saveImage(Project project, MultipartFile file, ImageType imageType) {
         String imageFilePath = "";
         try {
@@ -84,6 +89,31 @@ public class ImageService implements IImageService {
             throw new ImageUploadException(UPLOAD_FAILED_MESSAGE);
         }
         return imageFilePath;
+    }
+
+    @Override
+    public void deleteImages(Long projectId) {
+        Project project = projectService.findById(projectId);
+
+        if (project instanceof CommonProject) {
+            deleteImagesByPaths(((CommonProject) project).getFloorPlanImagePaths());
+            ((CommonProject) project).setFloorPlanImagePaths(null);
+        }
+        deleteImagesByPaths(project.getImagePaths());
+        project.setImagePaths(null);
+        deleteImagesByPaths(Collections.singletonList(project.getTitleImage()));
+        project.setTitleImage(null);
+        projectService.save(project);
+    }
+
+    private void deleteImagesByPaths(List<String> paths) {
+        for (String path : paths) {
+            try {
+                Files.delete(Paths.get(path));
+            } catch (IOException ex) {
+                log.error(DELETE_FAILED_MESSAGE, ex);
+            }
+        }
     }
 
     private void saveImagePathToSpecifiedAttribute(ImageType imageType, Project project, String imageFilePath) {
