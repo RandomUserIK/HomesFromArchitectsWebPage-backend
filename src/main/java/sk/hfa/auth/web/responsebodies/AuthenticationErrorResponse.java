@@ -4,11 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
+import sk.hfa.web.domain.responsebodies.MessageResource;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class AuthenticationErrorResponse {
+public class AuthenticationErrorResponse implements MessageResource {
 
     private String title;
 

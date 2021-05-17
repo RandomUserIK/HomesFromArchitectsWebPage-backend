@@ -55,7 +55,7 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public Page<Project> getAllOnPage(int page, int size,Predicate predicate) {
+    public Page<Project> getAllOnPage(int page, int size, Predicate predicate) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Project> result = projectRepository.findAll(predicate, pageRequest);
 

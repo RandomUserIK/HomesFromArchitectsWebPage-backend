@@ -7,12 +7,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.services.interfaces.IImageService;
 import sk.hfa.projects.services.interfaces.IProjectService;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 import sk.hfa.projects.web.domain.responsebodies.DeleteProjectMessageResource;
+import sk.hfa.projects.web.domain.responsebodies.ProjectMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectPageMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
@@ -30,30 +32,34 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-
-    // TODO: Prerobit na MessageResource
-    // TODO: @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Project> createProject(@RequestBody ProjectRequest request) {
+    public ResponseEntity<MessageResource> createProject(@RequestBody ProjectRequest request) {
+        log.info("Creating a new project.");
         Project project = projectService.build(request);
         if (project.getId() != null) {
             imageService.deleteImages(project.getId());
         }
         project = projectService.save(project);
-        return ResponseEntity.ok(project);
+        MessageResource responseBody = new ProjectMessageResource(project);
+        log.info("The project with the ID: [" + project.getId() + "] was successfully created.");
+        return ResponseEntity.ok(responseBody);
     }
 
-    // TODO: Prerobit na MessageResource
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Project> getProject(@PathVariable long id) {
+    public ResponseEntity<MessageResource> getProject(@PathVariable long id) {
+        log.info("Fetching the project with the ID: " + id);
         Project project = projectService.findById(id);
-        // MessageResource responseBody = new ProjectMessageResource(project);
-        return ResponseEntity.ok(project);
+        MessageResource responseBody = new ProjectMessageResource(project);
+        return ResponseEntity.ok(responseBody);
     }
 
-    // TODO: @PreAuthorize("hasRole('ADMIN')")
+    // TODO: configure security to let through the requests of tyep GET for URL: /api/projects/{id:[0-9]+}
+    // TODO: configure security to authorize the requests of tyep DELETE for URL: /api/projects/{id:[0-9]+}
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> deleteProject(@PathVariable long id) {
+        log.info("Deleting the project with the ID: [" + id + "]");
         projectService.deleteById(id);
         MessageResource responseBody = new DeleteProjectMessageResource("Project successfully deleted");
         return ResponseEntity.ok(responseBody);
@@ -63,6 +69,7 @@ public class ProjectController {
     public ResponseEntity<MessageResource> getAllOnPage(@RequestParam("page") int page,
                                                         @RequestParam("size") int size,
                                                         @QuerydslPredicate(root = Project.class) Predicate predicate) {
+        log.info("Fetching projects on the page [" + page + "]");
         Page<Project> result = projectService.getAllOnPage(page, size, predicate);
         MessageResource responseBody = ProjectPageMessageResource.build(result);
         return ResponseEntity.ok(responseBody);
@@ -71,6 +78,7 @@ public class ProjectController {
     @GetMapping(path = "/filter", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> getAllOnPageAndQuery(@RequestParam("page") int page,
                                                                 @QuerydslPredicate(root = Project.class) Predicate predicate) {
+        log.info("Fetching projects on the page [" + page + "] and filtering on custom query [" + predicate.toString() + "].");
         Page<Project> result = projectService.getAllOnPageAndQuery(page, predicate);
         MessageResource responseBody = ProjectPageMessageResource.build(result);
         return ResponseEntity.ok(responseBody);
