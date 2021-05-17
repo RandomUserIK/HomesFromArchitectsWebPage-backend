@@ -12,4 +12,5 @@ public interface IImageService {
 
     ImageType getImageType(String imageType);
 
+    void deleteImages(Long projectId);
 }
