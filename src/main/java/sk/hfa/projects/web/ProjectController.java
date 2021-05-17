@@ -2,6 +2,7 @@ package sk.hfa.projects.web;
 
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.MediaType;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.hfa.projects.domain.Project;
+import sk.hfa.projects.services.interfaces.IImageService;
 import sk.hfa.projects.services.interfaces.IProjectService;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 import sk.hfa.projects.web.domain.responsebodies.DeleteProjectMessageResource;
@@ -21,6 +23,9 @@ import sk.hfa.web.domain.responsebodies.MessageResource;
 @RequestMapping(path = "/api/projects")
 public class ProjectController {
 
+    @Autowired
+    private IImageService imageService;
+
     private final IProjectService projectService;
 
     public ProjectController(IProjectService projectService) {
@@ -32,6 +37,9 @@ public class ProjectController {
     public ResponseEntity<MessageResource> createProject(@RequestBody ProjectRequest request) {
         log.info("Creating a new project.");
         Project project = projectService.build(request);
+        if (project.getId() != null) {
+            imageService.deleteImages(project.getId());
+        }
         project = projectService.save(project);
         MessageResource responseBody = new ProjectMessageResource(project);
         log.info("The project with the ID: [" + project.getId() + "] was successfully created.");
