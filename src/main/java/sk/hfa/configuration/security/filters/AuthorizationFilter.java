@@ -33,12 +33,17 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
             log.info("Authorizing access to " + request.getRequestURI());
+            //TODO fix images 401 error
+            if (request.getQueryString() != null && !request.getQueryString().isEmpty()) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             Authentication authentication = authorizationService.authorizeUser(request);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("User [" + authentication.getPrincipal() + "] authorized.");
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException | UnsupportedJwtException | MalformedJwtException | SignatureException |
-                 IllegalArgumentException | InvalidJwtTokenException ex) {
+                IllegalArgumentException | InvalidJwtTokenException ex) {
             log.error(UNAUTHORIZED, ex);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, UNAUTHORIZED);
         }
