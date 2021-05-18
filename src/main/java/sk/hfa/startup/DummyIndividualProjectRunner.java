@@ -18,7 +18,7 @@ import java.util.Arrays;
 @Component
 public class DummyIndividualProjectRunner implements CommandLineRunner {
 
-    @Value("classpath:images/title.png")
+    @Value("classpath:title.png")
     private Resource titleImage;
 
     private final IProjectService projectService;

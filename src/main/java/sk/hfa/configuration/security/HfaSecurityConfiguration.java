@@ -93,7 +93,9 @@ public class HfaSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers(publicApiPatterns); // NOSONAR
+        web.ignoring().antMatchers(HttpMethod.GET).and() // NOSONAR
+                .ignoring().antMatchers(HttpMethod.OPTIONS).and() // NOSONAR
+                .ignoring().antMatchers(publicApiPatterns); // NOSONAR
     }
 
     private void setCsrf(HttpSecurity http) throws Exception {
