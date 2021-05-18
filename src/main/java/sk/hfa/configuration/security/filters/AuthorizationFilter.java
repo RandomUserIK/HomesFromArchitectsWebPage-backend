@@ -32,12 +32,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         try {
-            log.info("Authorizing access to " + request.getRequestURI());
-            //TODO fix images 401 error
-            if (request.getQueryString() != null && !request.getQueryString().isEmpty()) {
-                filterChain.doFilter(request, response);
-                return;
-            }
+            log.info("Authorizing access to " + request.getMethod() + " " + request.getRequestURI());
             Authentication authentication = authorizationService.authorizeUser(request);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             log.info("User [" + authentication.getPrincipal() + "] authorized.");

@@ -2,7 +2,6 @@ package sk.hfa.projects.web;
 
 import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.MediaType;
@@ -23,13 +22,12 @@ import sk.hfa.web.domain.responsebodies.MessageResource;
 @RequestMapping(path = "/api/projects")
 public class ProjectController {
 
-    @Autowired
-    private IImageService imageService;
-
     private final IProjectService projectService;
+    private final IImageService imageService;
 
-    public ProjectController(IProjectService projectService) {
+    public ProjectController(IProjectService projectService, IImageService imageService) {
         this.projectService = projectService;
+        this.imageService = imageService;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -54,8 +52,6 @@ public class ProjectController {
         return ResponseEntity.ok(responseBody);
     }
 
-    // TODO: configure security to let through the requests of tyep GET for URL: /api/projects/{id:[0-9]+}
-    // TODO: configure security to authorize the requests of tyep DELETE for URL: /api/projects/{id:[0-9]+}
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> deleteProject(@PathVariable long id) {
