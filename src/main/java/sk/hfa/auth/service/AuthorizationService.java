@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import sk.hfa.auth.domain.throwable.InvalidJwtTokenException;
 import sk.hfa.auth.service.interfaces.IAuthorizationService;
 import sk.hfa.configuration.security.jwt.service.interfaces.IJwtService;
+import sk.hfa.util.Constants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
@@ -15,8 +16,6 @@ import java.util.Set;
 
 @Service
 public class AuthorizationService implements IAuthorizationService {
-
-    private static final String TOKEN_TYPE = "Bearer ";
 
     private final IJwtService jwtService;
 
@@ -27,10 +26,10 @@ public class AuthorizationService implements IAuthorizationService {
     @Override
     public Authentication authorizeUser(HttpServletRequest request) {
         String jwtHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (Objects.isNull(jwtHeader) || !jwtHeader.startsWith(TOKEN_TYPE))
+        if (Objects.isNull(jwtHeader) || !jwtHeader.startsWith(Constants.TOKEN_TYPE))
             throw new IllegalArgumentException("JWT Token not found");
 
-        String token = jwtHeader.replace(TOKEN_TYPE, "");
+        String token = jwtHeader.replace(Constants.TOKEN_TYPE, "");
         if (!jwtService.isValid(token))
             throw new InvalidJwtTokenException("Invalid JWT Token provided.");
 

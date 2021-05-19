@@ -16,15 +16,13 @@ import sk.hfa.projects.domain.throwable.InvalidProjectRequestException;
 import sk.hfa.projects.domain.throwable.ProjectNotFoundException;
 import sk.hfa.projects.services.interfaces.IProjectService;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
+import sk.hfa.util.Constants;
 
 import java.util.Objects;
 
 @Service
 public class ProjectService implements IProjectService {
 
-    public static final int ELEMENTS_PER_PAGE = 10;
-
-    private static final String INVALID_PAGEABLE_MESSAGE = "Invalid pageable request";
     private static final String INVALID_CATEGORY_MESSAGE = "Invalid category provided";
 
     private final ProjectRepository projectRepository;
@@ -41,16 +39,16 @@ public class ProjectService implements IProjectService {
     @Override
     public Project findById(Long id) {
         if (Objects.isNull(id))
-            throw new IllegalArgumentException("Invalid identifier provided");
+            throw new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE);
 
         return projectRepository.findById(id).orElseThrow(() ->
-                new ProjectNotFoundException("Project not found on the given ID: [" + id.toString() + "]"));
+                new ProjectNotFoundException("Project not found on the given ID: [" + id + "]"));
     }
 
     @Override
     public void deleteById(Long id) {
         if (Objects.isNull(id))
-            throw new IllegalArgumentException("Invalid identifier provided");
+            throw new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE);
         projectRepository.deleteById(id);
     }
 
@@ -60,7 +58,7 @@ public class ProjectService implements IProjectService {
         Page<Project> result = projectRepository.findAll(predicate, pageRequest);
 
         if (page > result.getTotalPages())
-            throw new InvalidPageableRequestException(INVALID_PAGEABLE_MESSAGE);
+            throw new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE);
 
         return result;
     }
@@ -72,11 +70,11 @@ public class ProjectService implements IProjectService {
 
     @Override
     public Page<Project> getAllOnPageAndQuery(int page, Predicate predicate) {
-        PageRequest pageRequest = PageRequest.of(page, ELEMENTS_PER_PAGE);
+        PageRequest pageRequest = PageRequest.of(page, Constants.ELEMENTS_PER_PAGE);
         Page<Project> result = projectRepository.findAll(predicate, pageRequest);
 
         if (page > result.getTotalPages())
-            throw new InvalidPageableRequestException(INVALID_PAGEABLE_MESSAGE);
+            throw new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE);
 
         return result;
     }

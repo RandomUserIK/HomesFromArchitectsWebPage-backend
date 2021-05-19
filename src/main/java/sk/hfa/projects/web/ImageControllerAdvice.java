@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import sk.hfa.projects.domain.throwable.FetchFileSystemResourceException;
 import sk.hfa.projects.domain.throwable.ImageUploadException;
-import sk.hfa.projects.web.domain.responsebodies.ErrorMessageResource;
+import sk.hfa.web.domain.responsebodies.ErrorMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
 import java.io.IOException;
