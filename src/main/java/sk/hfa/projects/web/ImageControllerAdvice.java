@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import sk.hfa.projects.domain.throwable.FetchFileSystemResourceException;
 import sk.hfa.projects.domain.throwable.ImageUploadException;
+import sk.hfa.util.Constants;
 import sk.hfa.web.domain.responsebodies.ErrorMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
@@ -31,14 +32,14 @@ public class ImageControllerAdvice {
     @ExceptionHandler
     public ResponseEntity<MessageResource> handleIOException(IOException ex) {
         log.error(ex.getMessage(), ex);
-        MessageResource responseBody = ErrorMessageResource.build("Internal server error", ex.getMessage(),
-                                                                        HttpStatus.INTERNAL_SERVER_ERROR.value());
+        MessageResource responseBody = ErrorMessageResource.build(Constants.INTERNAL_SERVER_ERROR_TITLE, ex.getMessage(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseBody);
     }
 
     private ResponseEntity<MessageResource> buildBadRequestResponse(String message) {
-        MessageResource responseBody = ErrorMessageResource.build("Bad request", message,
-                                                                        HttpStatus.BAD_REQUEST.value());
+        MessageResource responseBody = ErrorMessageResource.build(Constants.BAD_REQUEST_TITLE, message,
+                HttpStatus.BAD_REQUEST.value());
         return ResponseEntity.badRequest().body(responseBody);
     }
 

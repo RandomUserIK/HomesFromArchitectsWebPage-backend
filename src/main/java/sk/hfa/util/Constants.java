@@ -12,6 +12,10 @@ public final class Constants {
 
     public static final String TOKEN_TYPE = "Bearer ";
 
+    public static final String BAD_REQUEST_TITLE = "Bad request";
+
+    public static final String INTERNAL_SERVER_ERROR_TITLE = "Internal server error";
+
     private Constants() {
     }
 

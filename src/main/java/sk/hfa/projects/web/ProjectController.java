@@ -12,9 +12,9 @@ import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.services.interfaces.IImageService;
 import sk.hfa.projects.services.interfaces.IProjectService;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
-import sk.hfa.projects.web.domain.responsebodies.DeleteProjectMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectPageMessageResource;
+import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
 @Slf4j
@@ -57,7 +57,7 @@ public class ProjectController {
     public ResponseEntity<MessageResource> deleteProject(@PathVariable long id) {
         log.info("Deleting the project with the ID: [" + id + "]");
         projectService.deleteById(id);
-        MessageResource responseBody = new DeleteProjectMessageResource("Project successfully deleted");
+        MessageResource responseBody = new DeleteEntityMessageResource("Project successfully deleted");
         return ResponseEntity.ok(responseBody);
     }
 

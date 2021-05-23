@@ -3,7 +3,6 @@ package sk.hfa.projects.services;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sk.hfa.projects.domain.CommonProject;
 import sk.hfa.projects.domain.IndividualProject;
@@ -61,11 +60,6 @@ public class ProjectService implements IProjectService {
             throw new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE);
 
         return result;
-    }
-
-    @Override
-    public Page<Project> getAll(Pageable pageable) {
-        return projectRepository.findAll(pageable);
     }
 
     @Override

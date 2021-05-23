@@ -9,7 +9,6 @@ import sk.hfa.blog.domain.BlogArticle;
 import sk.hfa.blog.domain.repositories.BlogArticleRepository;
 import sk.hfa.blog.domain.throwable.BlogArticleNotFoundException;
 import sk.hfa.blog.services.interfaces.IBlogService;
-import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.domain.throwable.InvalidPageableRequestException;
 import sk.hfa.util.Constants;
 
@@ -27,6 +26,9 @@ public class BlogService implements IBlogService {
 
     @Override
     public BlogArticle save(BlogArticle blogArticle) {
+        if (Objects.isNull(blogArticle))
+            throw new IllegalArgumentException("Invalid blog article provided");
+
         return blogArticleRepository.save(blogArticle);
     }
 
@@ -56,11 +58,6 @@ public class BlogService implements IBlogService {
             throw new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE);
 
         return result;
-    }
-
-    @Override
-    public Page<BlogArticle> getAll(Pageable pageable) {
-        return blogArticleRepository.findAll(pageable);
     }
 
 }
