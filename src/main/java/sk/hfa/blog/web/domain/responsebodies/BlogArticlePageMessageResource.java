@@ -22,7 +22,7 @@ public class BlogArticlePageMessageResource implements MessageResource {
 
     private int elementsPerPage;
 
-    private List<BlogArticle> projects;
+    private List<BlogArticle> blogArticles;
 
     public static BlogArticlePageMessageResource build(Page<BlogArticle> page) {
         if (Objects.isNull(page))
@@ -30,7 +30,7 @@ public class BlogArticlePageMessageResource implements MessageResource {
 
         return BlogArticlePageMessageResource.builder()
                 .currentPage(page.getNumber())
-                .projects(page.getContent())
+                .blogArticles(page.getContent())
                 .totalElements(page.getTotalElements())
                 .elementsPerPage(Constants.ELEMENTS_PER_PAGE)
                 .build();
