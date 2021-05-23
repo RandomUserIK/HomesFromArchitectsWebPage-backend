@@ -3,7 +3,7 @@ package sk.hfa.projects.web.domain.responsebodies;
 import lombok.Data;
 
 @Data
-public class InstagramRefreshTokenResponse {
+public class InstagramRefreshTokenResource {
 
     private String access_token;
     private String token_type;

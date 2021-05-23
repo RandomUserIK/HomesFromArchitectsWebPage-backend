@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class InstagramBodyResponse {
+public class InstagramBodyResource {
 
-    private List<InstagramBodyValueResponse> data;
+    private List<InstagramBodyValueResource> data;
 }

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import sk.hfa.instagram.domain.InstagramToken;
 import sk.hfa.instagram.domain.service.interfaces.IInstagramTokenService;
 import sk.hfa.projects.web.InstagramTokenClient;
-import sk.hfa.projects.web.domain.responsebodies.InstagramRefreshTokenResponse;
+import sk.hfa.projects.web.domain.responsebodies.InstagramRefreshTokenResource;
 
 @Component
 public class InstagramTokenCron {
@@ -33,7 +33,7 @@ public class InstagramTokenCron {
     }
 
     private void setNewInstagramTokenData(InstagramToken instagramToken,
-                                          InstagramRefreshTokenResponse instagramRefreshTokenResponse) {
+                                          InstagramRefreshTokenResource instagramRefreshTokenResponse) {
         instagramToken.setInstagramToken(instagramRefreshTokenResponse.getAccess_token());
         instagramToken.setRefreshSuccessful(true);
         instagramTokenService.save(instagramToken);
@@ -41,7 +41,7 @@ public class InstagramTokenCron {
 
     private void refreshToken(InstagramToken instagramToken) {
         try {
-            InstagramRefreshTokenResponse instagramRefreshTokenResponse = instagramTokenClient
+            InstagramRefreshTokenResource instagramRefreshTokenResponse = instagramTokenClient
                     .refreshToken(instagramToken.getInstagramToken());
             setNewInstagramTokenData(instagramToken, instagramRefreshTokenResponse);
         } catch (Exception exception) {

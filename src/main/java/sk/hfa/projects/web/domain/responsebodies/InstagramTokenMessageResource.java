@@ -9,5 +9,5 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class InstagramTokenMessageResource implements MessageResource{
-    private List<InstagramBodyValueResponse> instagramData;
+    private List<InstagramBodyValueResource> data;
 }

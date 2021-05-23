@@ -6,9 +6,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import sk.hfa.projects.web.domain.responsebodies.InstagramBodyResponse;
-import sk.hfa.projects.web.domain.responsebodies.InstagramBodyValueResponse;
-import sk.hfa.projects.web.domain.responsebodies.InstagramRefreshTokenResponse;
+import sk.hfa.projects.web.domain.responsebodies.InstagramBodyResource;
+import sk.hfa.projects.web.domain.responsebodies.InstagramBodyValueResource;
+import sk.hfa.projects.web.domain.responsebodies.InstagramRefreshTokenResource;
 
 import java.util.List;
 import java.util.Objects;
@@ -27,9 +27,9 @@ public class InstagramTokenClient {
         this.restTemplate = restTemplateBuilder.build();
     }
 
-    List<InstagramBodyValueResponse> getInstagramPosts(String token, Long limit) {
+    List<InstagramBodyValueResource> getInstagramPosts(String token, Long limit) {
         String instagramUrl = url + "me/media?fields=caption,media_url&access_token=" + token;
-        ResponseEntity<InstagramBodyResponse> responseBodies = restTemplate.exchange(instagramUrl, HttpMethod.GET, null, InstagramBodyResponse.class);
+        ResponseEntity<InstagramBodyResource> responseBodies = restTemplate.exchange(instagramUrl, HttpMethod.GET, null, InstagramBodyResource.class);
         return Objects.requireNonNull(responseBodies.getBody()).getData().stream()
                 .filter(instagramBodyValueResponse ->
                         !instagramBodyValueResponse.getMedia_url().contains("video"))
@@ -37,9 +37,9 @@ public class InstagramTokenClient {
                 .collect(Collectors.toList());
     }
 
-    public InstagramRefreshTokenResponse refreshToken(String token){
+    public InstagramRefreshTokenResource refreshToken(String token){
         String instagramUrl = url + "refresh_access_token?grant_type=ig_refresh_token&access_token="+token;
-        ResponseEntity<InstagramRefreshTokenResponse> responseBodies = restTemplate.exchange(instagramUrl, HttpMethod.GET, null, InstagramRefreshTokenResponse.class);
+        ResponseEntity<InstagramRefreshTokenResource> responseBodies = restTemplate.exchange(instagramUrl, HttpMethod.GET, null, InstagramRefreshTokenResource.class);
         return responseBodies.getBody();
     }
 

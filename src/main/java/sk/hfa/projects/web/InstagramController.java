@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import sk.hfa.instagram.domain.InstagramToken;
 import sk.hfa.instagram.domain.service.interfaces.IInstagramTokenService;
-import sk.hfa.projects.web.domain.responsebodies.InstagramBodyValueResponse;
+import sk.hfa.projects.web.domain.responsebodies.InstagramBodyValueResource;
 import sk.hfa.projects.web.domain.responsebodies.InstagramTokenMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
@@ -30,7 +30,7 @@ public class InstagramController {
     @GetMapping()
     public ResponseEntity<MessageResource> getInstagramPosts(@RequestParam("limit") long limit) {
         InstagramToken instagramToken = instagramTokenService.findToken();
-        List<InstagramBodyValueResponse> returnEntity = instagramTokenClient.getInstagramPosts(instagramToken.getInstagramToken(), limit);
+        List<InstagramBodyValueResource> returnEntity = instagramTokenClient.getInstagramPosts(instagramToken.getInstagramToken(), limit);
         return ResponseEntity.ok(new InstagramTokenMessageResource(returnEntity));
     }
 
