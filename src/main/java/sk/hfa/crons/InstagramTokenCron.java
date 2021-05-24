@@ -34,7 +34,7 @@ public class InstagramTokenCron {
 
     private void setNewInstagramTokenData(InstagramToken instagramToken,
                                           InstagramRefreshTokenResource instagramRefreshTokenResponse) {
-        instagramToken.setInstagramToken(instagramRefreshTokenResponse.getAccess_token());
+        instagramToken.setToken(instagramRefreshTokenResponse.getAccessToken());
         instagramToken.setRefreshSuccessful(true);
         instagramTokenService.save(instagramToken);
     }
@@ -42,7 +42,7 @@ public class InstagramTokenCron {
     private void refreshToken(InstagramToken instagramToken) {
         try {
             InstagramRefreshTokenResource instagramRefreshTokenResponse = instagramTokenClient
-                    .refreshToken(instagramToken.getInstagramToken());
+                    .refreshToken(instagramToken.getToken());
             setNewInstagramTokenData(instagramToken, instagramRefreshTokenResponse);
         } catch (Exception exception) {
             instagramToken.setRefreshSuccessful(false);

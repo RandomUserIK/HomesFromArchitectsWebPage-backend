@@ -32,7 +32,7 @@ public class InstagramTokenClient {
         ResponseEntity<InstagramBodyResource> responseBodies = restTemplate.exchange(instagramUrl, HttpMethod.GET, null, InstagramBodyResource.class);
         return Objects.requireNonNull(responseBodies.getBody()).getData().stream()
                 .filter(instagramBodyValueResponse ->
-                        !instagramBodyValueResponse.getMedia_url().contains("video"))
+                        !instagramBodyValueResponse.getMediaUrl().contains("video"))
                 .limit(limit)
                 .collect(Collectors.toList());
     }

@@ -1,12 +1,16 @@
 package sk.hfa.projects.web.domain.responsebodies;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class InstagramRefreshTokenResource {
 
-    private String access_token;
-    private String token_type;
-    private int expires_in;
+    @JsonProperty("access_token")
+    private String accessToken;
+    @JsonProperty("token_type")
+    private String tokenType;
+    @JsonProperty("expires_in")
+    private int expiresIn;
 
 }

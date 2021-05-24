@@ -14,6 +14,6 @@ import javax.persistence.Id;
 public class InstagramToken {
 
     @Id
-    private String instagramToken;
+    private String token;
     private boolean refreshSuccessful;
 }

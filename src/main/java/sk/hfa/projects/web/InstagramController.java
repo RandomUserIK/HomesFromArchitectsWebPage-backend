@@ -30,7 +30,7 @@ public class InstagramController {
     @GetMapping()
     public ResponseEntity<MessageResource> getInstagramPosts(@RequestParam("limit") long limit) {
         InstagramToken instagramToken = instagramTokenService.findToken();
-        List<InstagramBodyValueResource> returnEntity = instagramTokenClient.getInstagramPosts(instagramToken.getInstagramToken(), limit);
+        List<InstagramBodyValueResource> returnEntity = instagramTokenClient.getInstagramPosts(instagramToken.getToken(), limit);
         return ResponseEntity.ok(new InstagramTokenMessageResource(returnEntity));
     }
 
