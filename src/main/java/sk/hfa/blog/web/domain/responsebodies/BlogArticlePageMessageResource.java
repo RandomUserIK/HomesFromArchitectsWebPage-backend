@@ -5,11 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.Page;
 import sk.hfa.blog.domain.BlogArticle;
+import sk.hfa.blog.domain.BlogArticleDto;
 import sk.hfa.util.Constants;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Data
 @Builder
@@ -22,7 +24,7 @@ public class BlogArticlePageMessageResource implements MessageResource {
 
     private int elementsPerPage;
 
-    private List<BlogArticle> blogArticles;
+    private List<BlogArticleDto> blogArticles;
 
     public static BlogArticlePageMessageResource build(Page<BlogArticle> page) {
         if (Objects.isNull(page))
@@ -30,7 +32,7 @@ public class BlogArticlePageMessageResource implements MessageResource {
 
         return BlogArticlePageMessageResource.builder()
                 .currentPage(page.getNumber())
-                .blogArticles(page.getContent())
+                .blogArticles(page.getContent().stream().map(BlogArticleDto::build).collect(Collectors.toList()))
                 .totalElements(page.getTotalElements())
                 .elementsPerPage(Constants.ELEMENTS_PER_PAGE)
                 .build();

@@ -1,9 +1,10 @@
 package sk.hfa.blog.domain;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.springframework.util.SerializationUtils;
 
 import javax.persistence.*;
 import java.util.List;
@@ -19,8 +20,21 @@ public class BlogArticle {
     private Long id;
 
     @Lob
-    @Getter
-    @Setter
-    private List<DeltaOperation> ops;
+    private byte[] opsAsByteArray;
+
+    @Transient
+    public List<DeltaOperation> getOps() {
+        return (List<DeltaOperation>) SerializationUtils.deserialize(opsAsByteArray);
+    }
+
+    public void setOps(List<DeltaOperation> ops) {
+        opsAsByteArray = SerializationUtils.serialize(ops);
+    }
+
+    public static BlogArticle build(BlogArticleDto blogArticleDto) {
+        BlogArticle blogArticle = new BlogArticle();
+        blogArticle.setOps(blogArticleDto.getOps());
+        return blogArticle;
+    }
 
 }

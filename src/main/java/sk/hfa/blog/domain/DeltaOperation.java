@@ -4,19 +4,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Map;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeltaOperation {
+public class DeltaOperation implements Serializable {
 
-    private Object insert;
+    private Serializable insert;
 
     private Long delete;
 
     private Long retain;
 
-    private Map<String, Object> attributes;
+    private Map<String, Serializable> attributes;
 
 }
