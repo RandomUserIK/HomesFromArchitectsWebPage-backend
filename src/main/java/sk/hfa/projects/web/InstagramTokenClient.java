@@ -37,8 +37,8 @@ public class InstagramTokenClient {
                 .collect(Collectors.toList());
     }
 
-    public InstagramRefreshTokenResource refreshToken(String token){
-        String instagramUrl = url + "refresh_access_token?grant_type=ig_refresh_token&access_token="+token;
+    public InstagramRefreshTokenResource refreshToken(String token) {
+        String instagramUrl = url + "refresh_access_token?grant_type=ig_refresh_token&access_token=" + token;
         ResponseEntity<InstagramRefreshTokenResource> responseBodies = restTemplate.exchange(instagramUrl, HttpMethod.GET, null, InstagramRefreshTokenResource.class);
         return responseBodies.getBody();
     }

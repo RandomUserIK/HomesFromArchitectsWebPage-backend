@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import sk.hfa.instagram.domain.InstagramToken;
 
 @Repository
-public interface InstagramTokenRepository extends JpaRepository<InstagramToken,String> {
+public interface InstagramTokenRepository extends JpaRepository<InstagramToken, String> {
 }
