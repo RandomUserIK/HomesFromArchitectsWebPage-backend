@@ -27,7 +27,7 @@ public class InstagramTokenClient {
         this.restTemplate = restTemplateBuilder.build();
     }
 
-    List<InstagramBodyValueResource> getInstagramPosts(String token, Long limit) {
+    List<InstagramBodyValueResource> getInstagramPosts(String token, long limit) {
         String instagramUrl = url + "me/media?fields=caption,media_url&access_token=" + token;
         ResponseEntity<InstagramBodyResource> responseBodies = restTemplate.exchange(instagramUrl, HttpMethod.GET, null, InstagramBodyResource.class);
         return Objects.requireNonNull(responseBodies.getBody()).getData().stream()

@@ -27,16 +27,9 @@ public class InstagramTokenCron {
     @Scheduled(cron = "@midnight")
     public void refreshInstagramTokenDailyIfMonthlyRefreshFailed() {
         InstagramToken instagramToken = instagramTokenService.findToken();
-        if(!instagramToken.isRefreshSuccessful()){
+        if (!instagramToken.isRefreshSuccessful()) {
             refreshToken(instagramToken);
         }
-    }
-
-    private void setNewInstagramTokenData(InstagramToken instagramToken,
-                                          InstagramRefreshTokenResource instagramRefreshTokenResponse) {
-        instagramToken.setToken(instagramRefreshTokenResponse.getAccessToken());
-        instagramToken.setRefreshSuccessful(true);
-        instagramTokenService.save(instagramToken);
     }
 
     private void refreshToken(InstagramToken instagramToken) {
@@ -48,5 +41,12 @@ public class InstagramTokenCron {
             instagramToken.setRefreshSuccessful(false);
             instagramTokenService.save(instagramToken);
         }
+    }
+
+    private void setNewInstagramTokenData(InstagramToken instagramToken,
+                                          InstagramRefreshTokenResource instagramRefreshTokenResponse) {
+        instagramToken.setToken(instagramRefreshTokenResponse.getAccessToken());
+        instagramToken.setRefreshSuccessful(true);
+        instagramTokenService.save(instagramToken);
     }
 }
