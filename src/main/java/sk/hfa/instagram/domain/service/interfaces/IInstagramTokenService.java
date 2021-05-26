@@ -6,5 +6,5 @@ public interface IInstagramTokenService {
 
     InstagramToken findToken();
 
-    void save(InstagramToken token);
+    InstagramToken save(InstagramToken token);
 }

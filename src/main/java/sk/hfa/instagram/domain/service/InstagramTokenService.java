@@ -24,16 +24,15 @@ public class InstagramTokenService implements IInstagramTokenService {
     public InstagramToken findToken() {
         List<InstagramToken> instagramToken = instagramTokenRepository.findAll();
         if (instagramToken.isEmpty()) {
-            instagramTokenRepository.save(new InstagramToken(token, true));
-            instagramToken = instagramTokenRepository.findAll();
+            return instagramTokenRepository.save(new InstagramToken(token, true));
         }
         return instagramToken.get(0);
     }
 
     @Override
-    public void save(InstagramToken token) {
+    public InstagramToken save(InstagramToken token) {
         instagramTokenRepository.deleteAll();
-        instagramTokenRepository.save(token);
+        return instagramTokenRepository.save(token);
     }
 
 }
