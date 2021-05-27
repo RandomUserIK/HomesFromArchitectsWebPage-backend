@@ -1,12 +1,12 @@
-package sk.hfa.projects.web;
+package sk.hfa.images.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import sk.hfa.projects.domain.throwable.FetchFileSystemResourceException;
-import sk.hfa.projects.domain.throwable.ImageUploadException;
+import sk.hfa.images.domain.throwable.FetchFileSystemResourceException;
+import sk.hfa.images.domain.throwable.ImageUploadException;
 import sk.hfa.util.Constants;
 import sk.hfa.web.domain.responsebodies.ErrorMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;

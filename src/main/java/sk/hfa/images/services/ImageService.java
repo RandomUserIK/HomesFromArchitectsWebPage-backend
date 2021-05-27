@@ -1,17 +1,19 @@
-package sk.hfa.projects.services;
+package sk.hfa.images.services;
 
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import sk.hfa.blog.domain.BlogArticle;
+import sk.hfa.blog.services.interfaces.IBlogService;
+import sk.hfa.images.domain.enums.ImageType;
+import sk.hfa.images.domain.repositories.FileSystemRepository;
+import sk.hfa.images.domain.throwable.FetchFileSystemResourceException;
+import sk.hfa.images.domain.throwable.ImageUploadException;
+import sk.hfa.images.services.interfaces.IImageService;
 import sk.hfa.projects.domain.CommonProject;
 import sk.hfa.projects.domain.Project;
-import sk.hfa.projects.domain.enums.ImageType;
-import sk.hfa.projects.domain.repositories.FileSystemRepository;
-import sk.hfa.projects.domain.throwable.FetchFileSystemResourceException;
-import sk.hfa.projects.domain.throwable.ImageUploadException;
-import sk.hfa.projects.services.interfaces.IImageService;
 import sk.hfa.projects.services.interfaces.IProjectService;
 
 import java.io.IOException;
@@ -32,27 +34,37 @@ public class ImageService implements IImageService {
     private static final String DELETE_FAILED_MESSAGE = "Failed to delete image file.";
 
     private final IProjectService projectService;
+    private final IBlogService blogService;
     private final FileSystemRepository fileSystemRepository;
 
-    public ImageService(IProjectService projectService, FileSystemRepository fileSystemRepository) {
+    public ImageService(IProjectService projectService,
+                        IBlogService blogService,
+                        FileSystemRepository fileSystemRepository) {
         this.projectService = projectService;
+        this.blogService = blogService;
         this.fileSystemRepository = fileSystemRepository;
     }
 
     @Override
     @Synchronized
-    public String upload(String projectId, MultipartFile file, ImageType imageType) {
-        if (Objects.isNull(file) || Objects.isNull(projectId) || projectId.isEmpty())
+    public String upload(String entityId, MultipartFile file, ImageType imageType) {
+        if (Objects.isNull(file) || Objects.isNull(entityId) || entityId.isEmpty())
             throw new ImageUploadException(UPLOAD_FAILED_MESSAGE);
 
-        Project project;
-        project = projectService.findById(Long.valueOf(projectId));
+        Project project = null;
+        BlogArticle blogArticle = null;
 
-        if (Objects.isNull(project)) {
-            log.warn("Project not found on given ID: [" + projectId + "]");
+        if (imageType != ImageType.BLOG_ARTICLE_TITLE_IMAGE)
+            project = projectService.findById(Long.valueOf(entityId));
+        else
+            blogArticle = blogService.findById(Long.valueOf(entityId));
+
+        if ((imageType != ImageType.BLOG_ARTICLE_TITLE_IMAGE && Objects.isNull(project)) ||
+                ((imageType == ImageType.BLOG_ARTICLE_TITLE_IMAGE && Objects.isNull(blogArticle)))) {
+            log.warn("Entity not found on given ID: [" + entityId + "]");
             throw new ImageUploadException(UPLOAD_FAILED_MESSAGE);
         }
-        return saveImage(project, file, imageType);
+        return saveImage(project, blogArticle, file, imageType);
     }
 
     @Override
@@ -73,22 +85,11 @@ public class ImageService implements IImageService {
             return ImageType.GALLERY_FLOOR_PLANS_IMAGES;
         } else if (imageType.equals(ImageType.GALLERY_IMAGES.getImageType())) {
             return ImageType.GALLERY_IMAGES;
+        } else if (imageType.equals(ImageType.BLOG_ARTICLE_TITLE_IMAGE.getImageType())) {
+            return ImageType.BLOG_ARTICLE_TITLE_IMAGE;
         } else {
             throw new IllegalArgumentException("Invalid image type");
         }
-    }
-
-    private String saveImage(Project project, MultipartFile file, ImageType imageType) {
-        String imageFilePath = "";
-        try {
-            imageFilePath = fileSystemRepository.save(file.getBytes(), file.getOriginalFilename()); // NOSONAR
-            saveImagePathToSpecifiedAttribute(imageType, project, imageFilePath);
-            log.info("Image [" + file.getOriginalFilename() + "] was successfully uploaded.");
-        } catch (IOException ex) {
-            log.error(UPLOAD_FAILED_MESSAGE, ex);
-            throw new ImageUploadException(UPLOAD_FAILED_MESSAGE);
-        }
-        return imageFilePath;
     }
 
     @Override
@@ -104,6 +105,24 @@ public class ImageService implements IImageService {
         deleteImagesByPaths(Collections.singletonList(project.getTitleImage()));
         project.setTitleImage(null);
         projectService.save(project);
+    }
+
+    private String saveImage(Project project, BlogArticle blogArticle, MultipartFile file, ImageType imageType) {
+        String imageFilePath = "";
+        try {
+            imageFilePath = fileSystemRepository.save(file.getBytes(), file.getOriginalFilename()); // NOSONAR
+
+            if (imageType != ImageType.BLOG_ARTICLE_TITLE_IMAGE)
+                saveImagePathToSpecifiedAttribute(imageType, project, imageFilePath);
+            else
+                saveImagePathForGivenBlogArticle(blogArticle, imageFilePath);
+
+            log.info("Image [" + file.getOriginalFilename() + "] was successfully uploaded.");
+        } catch (IOException ex) {
+            log.error(UPLOAD_FAILED_MESSAGE, ex);
+            throw new ImageUploadException(UPLOAD_FAILED_MESSAGE);
+        }
+        return imageFilePath;
     }
 
     private void deleteImagesByPaths(List<String> paths) {
@@ -128,6 +147,11 @@ public class ImageService implements IImageService {
             project.getImagePaths().add(imageFilePath);
         }
         projectService.save(project);
+    }
+
+    private void saveImagePathForGivenBlogArticle(BlogArticle blogArticle, String imageFilePath) {
+        blogArticle.setTitleImage(imageFilePath);
+        this.blogService.save(blogArticle);
     }
 
 }

@@ -1,4 +1,4 @@
-package sk.hfa.projects.domain.repositories;
+package sk.hfa.images.domain.repositories;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Repository;
@@ -14,7 +14,6 @@ public class FileSystemRepository {
 
     private static final String RESOURCES_DIR = FileSystemRepository.class.getResource("/").getPath();
 
-    // TODO:
     public String save(byte[] content, String imageName) throws IOException { // NOSONAR
         Path newFile = Paths.get(RESOURCES_DIR + new Date().getTime() + "-" + imageName); // NOSONAR
         Files.createDirectories(newFile.getParent()); // NOSONAR
