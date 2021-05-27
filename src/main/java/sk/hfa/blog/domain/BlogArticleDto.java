@@ -1,9 +1,6 @@
 package sk.hfa.blog.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,11 +10,17 @@ import java.util.List;
 @AllArgsConstructor
 public class BlogArticleDto {
 
-    private List<DeltaOperation> ops;
+    private List<DeltaOperation> content;
+
+    private String title;
+
+    private String titleImage;
 
     public static BlogArticleDto build(BlogArticle blogArticle) {
         return BlogArticleDto.builder()
-                .ops(blogArticle.getOps())
+                .title(blogArticle.getTitle())
+                .titleImage(blogArticle.getTitleImage())
+                .content(blogArticle.getContent())
                 .build();
     }
 
