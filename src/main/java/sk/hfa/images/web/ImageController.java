@@ -32,7 +32,7 @@ public class ImageController {
     public ResponseEntity<MessageResource> uploadImage(@RequestParam("entityId") String entityId,
                                                        @RequestParam("file") MultipartFile file,
                                                        @RequestParam("type") String imageType) {
-        log.info("Uploading an image of type: [" + imageType + "] to the project with the ID: [" + entityId + "].");
+        log.info("Uploading an image of type: [" + imageType + "] to the entity with the ID: [" + entityId + "].");
         ImageType imageTypeEnum = imageService.getImageType(imageType);
         String uploadedFilePath = imageService.upload(entityId, file, imageTypeEnum);
         MessageResource responseBody = new ImageUploadMessageResource(uploadedFilePath);
