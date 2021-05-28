@@ -36,7 +36,7 @@ public class ProjectController {
         log.info("Creating a new project.");
         Project project = projectService.build(request);
         if (project.getId() != null) {
-            imageService.deleteImages(project.getId());
+            imageService.deleteProjectImages(project.getId());
         }
         project = projectService.save(project);
         MessageResource responseBody = new ProjectMessageResource(project);

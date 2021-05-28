@@ -3,12 +3,12 @@ package sk.hfa.blog.services;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import sk.hfa.blog.domain.BlogArticle;
 import sk.hfa.blog.domain.repositories.BlogArticleRepository;
 import sk.hfa.blog.domain.throwable.BlogArticleNotFoundException;
 import sk.hfa.blog.services.interfaces.IBlogService;
+import sk.hfa.images.services.ImageService;
 import sk.hfa.projects.domain.throwable.InvalidPageableRequestException;
 import sk.hfa.util.Constants;
 
@@ -18,9 +18,11 @@ import java.util.Objects;
 @Service
 public class BlogService implements IBlogService {
 
+    private final ImageService imageService;
     private final BlogArticleRepository blogArticleRepository;
 
-    public BlogService(BlogArticleRepository blogArticleRepository) {
+    public BlogService(ImageService imageService, BlogArticleRepository blogArticleRepository) {
+        this.imageService = imageService;
         this.blogArticleRepository = blogArticleRepository;
     }
 
@@ -46,6 +48,7 @@ public class BlogService implements IBlogService {
         if (Objects.isNull(id))
             throw new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE);
 
+        imageService.deleteBlogArticleImage(id);
         blogArticleRepository.deleteById(id);
     }
 

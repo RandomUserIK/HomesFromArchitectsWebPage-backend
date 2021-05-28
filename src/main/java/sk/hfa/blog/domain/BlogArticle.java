@@ -42,7 +42,7 @@ public class BlogArticle {
 
     public static BlogArticle build(BlogArticleDto blogArticleDto) {
         BlogArticle blogArticle = new BlogArticle();
-        blogArticle.setId(blogArticle.getId());
+        blogArticle.setId(blogArticleDto.getId());
         blogArticle.setTitle(blogArticleDto.getTitle());
         blogArticle.setTitleImage(blogArticleDto.getTitleImage());
         blogArticle.setOps(blogArticleDto.getContent());

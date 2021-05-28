@@ -36,7 +36,6 @@ public class ImageController {
         ImageType imageTypeEnum = imageService.getImageType(imageType);
         String uploadedFilePath = imageService.upload(entityId, file, imageTypeEnum);
         MessageResource responseBody = new ImageUploadMessageResource(uploadedFilePath);
-        log.info("Provided image was successfully uploaded.");
         return ResponseEntity.ok(responseBody);
     }
 

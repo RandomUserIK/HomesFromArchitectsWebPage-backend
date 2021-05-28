@@ -2,6 +2,7 @@ package sk.hfa.images.services;
 
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +39,7 @@ public class ImageService implements IImageService {
     private final FileSystemRepository fileSystemRepository;
 
     public ImageService(IProjectService projectService,
-                        IBlogService blogService,
+                        @Lazy IBlogService blogService,
                         FileSystemRepository fileSystemRepository) {
         this.projectService = projectService;
         this.blogService = blogService;
@@ -93,7 +94,7 @@ public class ImageService implements IImageService {
     }
 
     @Override
-    public void deleteImages(Long projectId) {
+    public void deleteProjectImages(Long projectId) {
         Project project = projectService.findById(projectId);
 
         if (project instanceof CommonProject) {
@@ -105,6 +106,16 @@ public class ImageService implements IImageService {
         deleteImagesByPaths(Collections.singletonList(project.getTitleImage()));
         project.setTitleImage(null);
         projectService.save(project);
+    }
+
+    @Override
+    public void deleteBlogArticleImage(Long blogArticleId) {
+        BlogArticle blogArticle = blogService.findById(blogArticleId);
+        if (Objects.isNull(blogArticle.getTitleImage()))
+            return;
+        deleteImagesByPaths(Collections.singletonList(blogArticle.getTitleImage()));
+        blogArticle.setTitleImage(null);
+        blogService.save(blogArticle);
     }
 
     private String saveImage(Project project, BlogArticle blogArticle, MultipartFile file, ImageType imageType) {

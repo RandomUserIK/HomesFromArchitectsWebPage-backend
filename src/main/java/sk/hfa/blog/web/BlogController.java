@@ -12,27 +12,41 @@ import sk.hfa.blog.services.interfaces.IBlogService;
 import sk.hfa.blog.web.domain.requestbodies.BlogArticleRequest;
 import sk.hfa.blog.web.domain.responsebodies.BlogArticleMessageResource;
 import sk.hfa.blog.web.domain.responsebodies.BlogArticlePageMessageResource;
+import sk.hfa.images.services.interfaces.IImageService;
 import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
+
+import java.util.Objects;
 
 @Slf4j
 @RestController
 @RequestMapping(path = "/api/blog")
 public class BlogController {
 
+    private final IImageService imageService;
     private final IBlogService blogService;
 
-    public BlogController(IBlogService blogService) {
+    public BlogController(IImageService imageService, IBlogService blogService) {
+        this.imageService = imageService;
         this.blogService = blogService;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> createBlogArticle(@RequestBody BlogArticleRequest request) {
-        log.info("Creating a new blog article.");
+        String operation = "was successfully created.";
+        String message = "Creating a new blog article.";
+
+        if (!Objects.isNull(request.getBlogArticle().getId())) {
+            imageService.deleteBlogArticleImage(request.getBlogArticle().getId());
+            message = "Updating an existing blog article.";
+            operation = "was successfully updated.";
+        }
+
+        log.info(message);
         BlogArticle blogArticle = blogService.save(BlogArticle.build(request.getBlogArticle()));
         MessageResource responseBody = new BlogArticleMessageResource(BlogArticleDto.build(blogArticle));
-        log.info("The blog article with the ID: [" + blogArticle.getId() + "] was successfully created.");
+        log.info("The blog article with the ID: [" + blogArticle.getId() + "] " + operation);
         return ResponseEntity.ok(responseBody);
     }
 
@@ -50,6 +64,7 @@ public class BlogController {
         log.info("Deleting the blog article with the ID: [" + id + "]");
         blogService.deleteById(id);
         MessageResource responseBody = new DeleteEntityMessageResource("Blog article was successfully deleted");
+        log.info("Blog article with the ID: [" + id + "] was successfully deleted");
         return ResponseEntity.ok(responseBody);
     }
 
