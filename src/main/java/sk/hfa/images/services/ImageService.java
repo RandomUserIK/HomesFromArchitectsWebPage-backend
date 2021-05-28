@@ -61,7 +61,7 @@ public class ImageService implements IImageService {
             blogArticle = blogService.findById(Long.valueOf(entityId));
 
         if ((imageType != ImageType.BLOG_ARTICLE_TITLE_IMAGE && Objects.isNull(project)) ||
-                ((imageType == ImageType.BLOG_ARTICLE_TITLE_IMAGE && Objects.isNull(blogArticle)))) {
+                (imageType == ImageType.BLOG_ARTICLE_TITLE_IMAGE && Objects.isNull(blogArticle))) {
             log.warn("Entity not found on given ID: [" + entityId + "]");
             throw new ImageUploadException(UPLOAD_FAILED_MESSAGE);
         }
