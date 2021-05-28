@@ -30,7 +30,7 @@ public abstract class ProjectRequest {
     private Long id;
 
     @Length(min = 0,
-            max = 15,
+            max = 50,
             message = "Title must have number of chars between 0, 50")
     private String title;
 
@@ -44,8 +44,9 @@ public abstract class ProjectRequest {
             message = "Energetic class must be in range from A to G or A0 / A1")
     private String energeticClass;
 
-    @Pattern(regexp = "^(Áno|Nie)$",
-            message = "Project garage question answear must be Áno or Nie")
+    @Pattern(regexp = "Áno|Nie",
+            flags = Pattern.Flag.CANON_EQ,
+            message = "Project garage question answer must be Áno or Nie")
     private String hasGarage;
 
     @Range(min = 0,
