@@ -16,6 +16,8 @@ public class BlogArticleDto {
 
     private String titleImage;
 
+    private String description;
+
     private List<DeltaOperation> content;
 
     public static BlogArticleDto build(BlogArticle blogArticle) {
@@ -23,6 +25,7 @@ public class BlogArticleDto {
                 .id(blogArticle.getId())
                 .title(blogArticle.getTitle())
                 .titleImage(blogArticle.getTitleImage())
+                .description(blogArticle.getDescription())
                 .content(blogArticle.getContent())
                 .build();
     }
