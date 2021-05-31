@@ -139,6 +139,10 @@ public class ImageService implements IImageService {
     private void deleteImagesByPaths(List<String> paths) {
         for (String path : paths) {
             try {
+                if (!Files.exists(Paths.get(path))) {
+                    log.warn("Cannot remove file [" + path + "] because it does not exist.");
+                    return;
+                }
                 Files.delete(Paths.get(path));
             } catch (IOException ex) {
                 log.error(DELETE_FAILED_MESSAGE, ex);

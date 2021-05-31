@@ -1,9 +1,11 @@
 package sk.hfa.projects.services;
 
 import com.querydsl.core.types.Predicate;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import sk.hfa.images.services.interfaces.IImageService;
 import sk.hfa.projects.domain.CommonProject;
 import sk.hfa.projects.domain.IndividualProject;
 import sk.hfa.projects.domain.InteriorDesignProject;
@@ -25,9 +27,12 @@ public class ProjectService implements IProjectService {
     private static final String INVALID_CATEGORY_MESSAGE = "Invalid category provided";
 
     private final ProjectRepository projectRepository;
+    private final IImageService imageService;
 
-    public ProjectService(ProjectRepository projectRepository) {
+    public ProjectService(ProjectRepository projectRepository,
+                          @Lazy IImageService imageService) {
         this.projectRepository = projectRepository;
+        this.imageService = imageService;
     }
 
     @Override
@@ -48,6 +53,8 @@ public class ProjectService implements IProjectService {
     public void deleteById(Long id) {
         if (Objects.isNull(id))
             throw new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE);
+
+        imageService.deleteProjectImages(id);
         projectRepository.deleteById(id);
     }
 
