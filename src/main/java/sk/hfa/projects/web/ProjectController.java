@@ -17,6 +17,8 @@ import sk.hfa.projects.web.domain.responsebodies.ProjectPageMessageResource;
 import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequestMapping(path = "/api/projects")
@@ -32,7 +34,7 @@ public class ProjectController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> createProject(@RequestBody ProjectRequest request) {
+    public ResponseEntity<MessageResource> createProject(@Valid @RequestBody ProjectRequest request) {
         log.info("Creating a new project.");
         Project project = projectService.build(request);
         if (project.getId() != null) {
