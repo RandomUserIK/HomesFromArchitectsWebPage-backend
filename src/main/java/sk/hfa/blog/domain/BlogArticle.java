@@ -1,6 +1,9 @@
 package sk.hfa.blog.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.util.SerializationUtils;
 
 import javax.persistence.*;
@@ -14,6 +17,7 @@ public class BlogArticle {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Getter
+    @Setter
     private Long id;
 
     @Getter
@@ -38,6 +42,7 @@ public class BlogArticle {
 
     public static BlogArticle build(BlogArticleDto blogArticleDto) {
         BlogArticle blogArticle = new BlogArticle();
+        blogArticle.setId(blogArticleDto.getId());
         blogArticle.setTitle(blogArticleDto.getTitle());
         blogArticle.setTitleImage(blogArticleDto.getTitleImage());
         blogArticle.setOps(blogArticleDto.getContent());

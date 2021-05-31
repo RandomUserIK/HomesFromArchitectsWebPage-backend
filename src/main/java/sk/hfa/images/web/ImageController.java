@@ -1,4 +1,4 @@
-package sk.hfa.projects.web;
+package sk.hfa.images.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
@@ -9,9 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sk.hfa.projects.domain.enums.ImageType;
-import sk.hfa.projects.services.interfaces.IImageService;
-import sk.hfa.projects.web.domain.responsebodies.ImageUploadMessageResource;
+import sk.hfa.images.domain.enums.ImageType;
+import sk.hfa.images.services.interfaces.IImageService;
+import sk.hfa.images.web.domain.responsebodies.ImageUploadMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
 import java.io.IOException;
@@ -29,14 +29,13 @@ public class ImageController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path="/upload", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MessageResource> uploadImage(@RequestParam("projectId") String projectId,
+    public ResponseEntity<MessageResource> uploadImage(@RequestParam("entityId") String entityId,
                                                        @RequestParam("file") MultipartFile file,
                                                        @RequestParam("type") String imageType) {
-        log.info("Uploading an image of type: [" + imageType + "] to the project with the ID: [" + projectId + "].");
+        log.info("Uploading an image of type: [" + imageType + "] to the entity with the ID: [" + entityId + "].");
         ImageType imageTypeEnum = imageService.getImageType(imageType);
-        String uploadedFilePath = imageService.upload(projectId, file, imageTypeEnum);
+        String uploadedFilePath = imageService.upload(entityId, file, imageTypeEnum);
         MessageResource responseBody = new ImageUploadMessageResource(uploadedFilePath);
-        log.info("Provided image was successfully uploaded.");
         return ResponseEntity.ok(responseBody);
     }
 

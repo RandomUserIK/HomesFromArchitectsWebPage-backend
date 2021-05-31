@@ -1,4 +1,4 @@
-package sk.hfa.projects.web.domain.responsebodies;
+package sk.hfa.images.web.domain.responsebodies;
 
 import lombok.Data;
 import lombok.AllArgsConstructor;

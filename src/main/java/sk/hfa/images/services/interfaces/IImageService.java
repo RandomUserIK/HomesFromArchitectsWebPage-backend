@@ -1,16 +1,19 @@
-package sk.hfa.projects.services.interfaces;
+package sk.hfa.images.services.interfaces;
 
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
-import sk.hfa.projects.domain.enums.ImageType;
+import sk.hfa.images.domain.enums.ImageType;
 
 public interface IImageService {
 
-    String upload(String projectId, MultipartFile file, ImageType imageType);
+    String upload(String entityId, MultipartFile file, ImageType imageType);
 
     FileSystemResource findFileSystemResourceByPath(String location);
 
     ImageType getImageType(String imageType);
 
-    void deleteImages(Long projectId);
+    void deleteProjectImages(Long projectId);
+
+    void deleteBlogArticleImage(Long blogArticleId);
+
 }

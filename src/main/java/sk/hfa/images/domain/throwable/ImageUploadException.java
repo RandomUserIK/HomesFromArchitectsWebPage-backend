@@ -1,4 +1,4 @@
-package sk.hfa.projects.domain.throwable;
+package sk.hfa.images.domain.throwable;
 
 public class ImageUploadException extends RuntimeException {
 
