@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import sk.hfa.projects.web.domain.responsebodies.ErrorMessageResource;
+import sk.hfa.web.domain.responsebodies.ErrorMessageResource;
 import sk.hfa.recaptcha.domain.throwable.RecaptchaException;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 

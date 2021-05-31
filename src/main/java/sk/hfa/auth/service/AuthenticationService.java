@@ -12,13 +12,12 @@ import sk.hfa.auth.service.interfaces.IAuthenticationService;
 import sk.hfa.auth.web.requestbodies.AuthenticationRequest;
 import sk.hfa.auth.web.responsebodies.AuthenticationResponse;
 import sk.hfa.configuration.security.jwt.service.interfaces.IJwtService;
+import sk.hfa.util.Constants;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
 @Slf4j
 @Service
 public class AuthenticationService implements IAuthenticationService {
-
-    private static final String TOKEN_TYPE = "Bearer ";
 
     private final AuthenticationManager authenticationManager;
     private final IJwtService jwtService;
@@ -42,7 +41,7 @@ public class AuthenticationService implements IAuthenticationService {
 
         log.info("User [" + authenticationRequest.getUsername() + "] successfully authenticated.");
         String token = jwtService.tokenFrom(authentication);
-        return AuthenticationResponse.build((UserDetailsImpl) authentication.getPrincipal(), jwtExpiration, TOKEN_TYPE + token);
+        return AuthenticationResponse.build((UserDetailsImpl) authentication.getPrincipal(), jwtExpiration, Constants.TOKEN_TYPE + token);
     }
 
 }
