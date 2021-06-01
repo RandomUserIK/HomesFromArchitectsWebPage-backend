@@ -81,7 +81,7 @@ public class BlogController {
     @GetMapping(path = "/galleryPreview", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> getAllOnPageForGalleryPreview(@RequestParam("page") int page,
                                                                          @RequestParam("size") int size) {
-        log.info("Fetching blog articles on the page [" + page + "]");
+        log.info("Fetching blog articles for public gallery preview on the page [" + page + "]");
         Page<BlogArticle> result = blogService.getAllOnPage(page, size);
         MessageResource responseBody = BlogArticleGalleryPreviewPageMessageResource.build(result);
         return ResponseEntity.ok(responseBody);
