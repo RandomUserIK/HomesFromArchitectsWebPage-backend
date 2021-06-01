@@ -10,6 +10,7 @@ import sk.hfa.blog.domain.BlogArticle;
 import sk.hfa.blog.domain.BlogArticleDto;
 import sk.hfa.blog.services.interfaces.IBlogService;
 import sk.hfa.blog.web.domain.requestbodies.BlogArticleRequest;
+import sk.hfa.blog.web.domain.responsebodies.BlogArticleGalleryPreviewPageMessageResource;
 import sk.hfa.blog.web.domain.responsebodies.BlogArticleMessageResource;
 import sk.hfa.blog.web.domain.responsebodies.BlogArticlePageMessageResource;
 import sk.hfa.images.services.interfaces.IImageService;
@@ -74,6 +75,15 @@ public class BlogController {
         log.info("Fetching blog articles on the page [" + page + "]");
         Page<BlogArticle> result = blogService.getAllOnPage(page, size);
         MessageResource responseBody = BlogArticlePageMessageResource.build(result);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    @GetMapping(path = "/galleryPreview", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource> getAllOnPageForGalleryPreview(@RequestParam("page") int page,
+                                                                         @RequestParam("size") int size) {
+        log.info("Fetching blog articles on the page [" + page + "]");
+        Page<BlogArticle> result = blogService.getAllOnPage(page, size);
+        MessageResource responseBody = BlogArticleGalleryPreviewPageMessageResource.build(result);
         return ResponseEntity.ok(responseBody);
     }
 
