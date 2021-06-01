@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.domain.Page;
 import sk.hfa.blog.domain.BlogArticle;
-import sk.hfa.blog.domain.BlogArticleDto;
 import sk.hfa.blog.domain.BlogArticleGalleryElementDto;
 import sk.hfa.util.Constants;
 import sk.hfa.web.domain.responsebodies.MessageResource;
