@@ -4,9 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.util.SerializationUtils;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Entity
@@ -22,11 +24,19 @@ public class BlogArticle {
 
     @Getter
     @Setter
+    @NotBlank
+    @Length(max = 50, message = "Blog article title can have at most 50 letters")
     private String title;
 
     @Getter
     @Setter
     private String titleImage;
+
+    @Getter
+    @Setter
+    @NotBlank
+    @Length(max = 200, message = "Blog article description can have at most 200 letters")
+    private String description;
 
     @Lob
     private byte[] opsAsByteArray;
@@ -45,6 +55,7 @@ public class BlogArticle {
         blogArticle.setId(blogArticleDto.getId());
         blogArticle.setTitle(blogArticleDto.getTitle());
         blogArticle.setTitleImage(blogArticleDto.getTitleImage());
+        blogArticle.setDescription(blogArticleDto.getDescription());
         blogArticle.setOps(blogArticleDto.getContent());
         return blogArticle;
     }

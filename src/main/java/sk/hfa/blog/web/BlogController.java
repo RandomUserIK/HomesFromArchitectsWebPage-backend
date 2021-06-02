@@ -45,7 +45,7 @@ public class BlogController {
 
         log.info(message);
         BlogArticle blogArticle = blogService.save(BlogArticle.build(request.getBlogArticle()));
-        MessageResource responseBody = new BlogArticleMessageResource(BlogArticleDto.build(blogArticle));
+        MessageResource responseBody = new BlogArticleMessageResource(BlogArticleDto.build(blogArticle, false));
         log.info("The blog article with the ID: [" + blogArticle.getId() + "] " + operation);
         return ResponseEntity.ok(responseBody);
     }
@@ -54,7 +54,7 @@ public class BlogController {
     public ResponseEntity<MessageResource> getBlogArticle(@PathVariable long id) {
         log.info("Fetching the blog article with the ID: " + id);
         BlogArticle blogArticle = blogService.findById(id);
-        MessageResource responseBody = new BlogArticleMessageResource(BlogArticleDto.build(blogArticle));
+        MessageResource responseBody = new BlogArticleMessageResource(BlogArticleDto.build(blogArticle, false));
         return ResponseEntity.ok(responseBody);
     }
 
@@ -70,10 +70,11 @@ public class BlogController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> getAllOnPage(@RequestParam("page") int page,
-                                                        @RequestParam("size") int size) {
+                                                        @RequestParam("size") int size,
+                                                        @RequestParam("isGalleryPreview") boolean isGalleryPreview) {
         log.info("Fetching blog articles on the page [" + page + "]");
         Page<BlogArticle> result = blogService.getAllOnPage(page, size);
-        MessageResource responseBody = BlogArticlePageMessageResource.build(result);
+        MessageResource responseBody = BlogArticlePageMessageResource.build(result, isGalleryPreview);
         return ResponseEntity.ok(responseBody);
     }
 
