@@ -26,13 +26,15 @@ public class BlogArticlePageMessageResource implements MessageResource {
 
     private List<BlogArticleDto> blogArticles;
 
-    public static BlogArticlePageMessageResource build(Page<BlogArticle> page) {
+    public static BlogArticlePageMessageResource build(Page<BlogArticle> page, boolean isGalleryPreview) {
         if (Objects.isNull(page))
             throw new IllegalArgumentException(Constants.INVALID_PAGE_MESSAGE);
 
         return BlogArticlePageMessageResource.builder()
                 .currentPage(page.getNumber())
-                .blogArticles(page.getContent().stream().map(BlogArticleDto::build).collect(Collectors.toList()))
+                .blogArticles(page.getContent().stream()
+                        .map(blogArticle -> BlogArticleDto.build(blogArticle, isGalleryPreview))
+                        .collect(Collectors.toList()))
                 .totalElements(page.getTotalElements())
                 .elementsPerPage(Constants.ELEMENTS_PER_PAGE)
                 .build();

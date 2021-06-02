@@ -10,7 +10,6 @@ import sk.hfa.blog.domain.BlogArticle;
 import sk.hfa.blog.domain.BlogArticleDto;
 import sk.hfa.blog.services.interfaces.IBlogService;
 import sk.hfa.blog.web.domain.requestbodies.BlogArticleRequest;
-import sk.hfa.blog.web.domain.responsebodies.BlogArticleGalleryPreviewPageMessageResource;
 import sk.hfa.blog.web.domain.responsebodies.BlogArticleMessageResource;
 import sk.hfa.blog.web.domain.responsebodies.BlogArticlePageMessageResource;
 import sk.hfa.images.services.interfaces.IImageService;
@@ -46,7 +45,7 @@ public class BlogController {
 
         log.info(message);
         BlogArticle blogArticle = blogService.save(BlogArticle.build(request.getBlogArticle()));
-        MessageResource responseBody = new BlogArticleMessageResource(BlogArticleDto.build(blogArticle));
+        MessageResource responseBody = new BlogArticleMessageResource(BlogArticleDto.build(blogArticle, false));
         log.info("The blog article with the ID: [" + blogArticle.getId() + "] " + operation);
         return ResponseEntity.ok(responseBody);
     }
@@ -55,7 +54,7 @@ public class BlogController {
     public ResponseEntity<MessageResource> getBlogArticle(@PathVariable long id) {
         log.info("Fetching the blog article with the ID: " + id);
         BlogArticle blogArticle = blogService.findById(id);
-        MessageResource responseBody = new BlogArticleMessageResource(BlogArticleDto.build(blogArticle));
+        MessageResource responseBody = new BlogArticleMessageResource(BlogArticleDto.build(blogArticle, false));
         return ResponseEntity.ok(responseBody);
     }
 
@@ -71,19 +70,11 @@ public class BlogController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> getAllOnPage(@RequestParam("page") int page,
-                                                        @RequestParam("size") int size) {
+                                                        @RequestParam("size") int size,
+                                                        @RequestParam("isGalleryPreview") boolean isGalleryPreview) {
         log.info("Fetching blog articles on the page [" + page + "]");
         Page<BlogArticle> result = blogService.getAllOnPage(page, size);
-        MessageResource responseBody = BlogArticlePageMessageResource.build(result);
-        return ResponseEntity.ok(responseBody);
-    }
-
-    @GetMapping(path = "/galleryPreview", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> getAllOnPageForGalleryPreview(@RequestParam("page") int page,
-                                                                         @RequestParam("size") int size) {
-        log.info("Fetching blog articles for public gallery preview on the page [" + page + "]");
-        Page<BlogArticle> result = blogService.getAllOnPage(page, size);
-        MessageResource responseBody = BlogArticleGalleryPreviewPageMessageResource.build(result);
+        MessageResource responseBody = BlogArticlePageMessageResource.build(result, isGalleryPreview);
         return ResponseEntity.ok(responseBody);
     }
 

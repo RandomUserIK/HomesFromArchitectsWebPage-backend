@@ -2,6 +2,7 @@ package sk.hfa.blog.domain;
 
 import lombok.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -20,13 +21,13 @@ public class BlogArticleDto {
 
     private List<DeltaOperation> content;
 
-    public static BlogArticleDto build(BlogArticle blogArticle) {
+    public static BlogArticleDto build(BlogArticle blogArticle, boolean isGalleryPreview) {
         return BlogArticleDto.builder()
                 .id(blogArticle.getId())
                 .title(blogArticle.getTitle())
                 .titleImage(blogArticle.getTitleImage())
                 .description(blogArticle.getDescription())
-                .content(blogArticle.getContent())
+                .content(isGalleryPreview ? Collections.emptyList() : blogArticle.getContent())
                 .build();
     }
 
