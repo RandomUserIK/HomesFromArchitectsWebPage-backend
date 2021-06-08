@@ -27,10 +27,7 @@ public class InteriorDesignProject extends Project {
                 .category(Category.INTERIOR_DESIGN)
                 .textSections(request.getTextSections())
                 .imagePaths(request.getImagePaths())
-                .hasGarage(request.getHasGarage())
                 .persons(request.getPersons())
-                .energeticClass(request.getEnergeticClass())
-                .builtUpArea(request.getBuiltUpArea())
                 .usableArea(request.getUsableArea())
                 .build();
     }
