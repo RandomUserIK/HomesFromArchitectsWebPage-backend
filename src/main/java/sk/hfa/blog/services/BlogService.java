@@ -12,7 +12,7 @@ import sk.hfa.images.services.ImageService;
 import sk.hfa.projects.domain.throwable.InvalidPageableRequestException;
 import sk.hfa.util.Constants;
 
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -63,4 +63,16 @@ public class BlogService implements IBlogService {
         return result;
     }
 
+    @Override
+    public List<BlogArticle> getRandomBlogs(int size) {
+        List<BlogArticle> articles = blogArticleRepository.findAll();
+        if (size >= articles.size())
+            return articles;
+        return getRandomArticles(articles, size);
+    }
+
+    private List<BlogArticle> getRandomArticles(List<BlogArticle> articles, int size) {
+        Collections.shuffle(articles);
+        return articles.subList(0, size);
+    }
 }
