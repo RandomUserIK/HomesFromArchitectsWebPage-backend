@@ -29,7 +29,7 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws IOException {
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 30; i++) {
             TextSection ts1 = new TextSection();
             ts1.setTitle("");
             ts1.setText("Rodinný dom Palisander patrí medzi nadštandardné dvojpodlažné šesťizbové rodinné domy. " +
