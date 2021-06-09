@@ -87,7 +87,7 @@ public class BlogController {
         log.info("Fetching random blog articles");
         List<BlogArticle> articleList = blogService.getRandomBlogs(size);
         MessageResource responseBody = BlogArticlePageMessageResource.build(
-                new PageImpl<BlogArticle>(articleList,
+                new PageImpl<>(articleList,
                         PageRequest.of(0, size,Sort.by("id")),
                         articleList.size()),
                 false);
