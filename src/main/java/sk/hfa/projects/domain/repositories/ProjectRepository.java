@@ -28,11 +28,11 @@ public interface ProjectRepository extends JpaRepository<Project, Long>, Queryds
     @Override
     default void customize(QuerydslBindings bindings, QProject qProject) {
         bindings.bind(qProject.title).first(StringExpression::containsIgnoreCase);
-        bindings.bind(qProject.persons).first(SimpleExpression::eq);
         bindings.bind(qProject.category).first(SimpleExpression::eq);
         bindings.bind(qProject.hasGarage).first(SimpleExpression::eq);
+        bindings.bind((qProject.as(QCommonProject.class)).hasStorey).first(StringExpression::eq);
         bindings.bind((qProject.as(QCommonProject.class)).rooms).first((path, value) ->
-                (value == 4 || value == 5) ? path.eq(value) : path.goe(value)
+                (value <= 5) ? path.eq(value) : path.goe(value)
         );
     }
 
