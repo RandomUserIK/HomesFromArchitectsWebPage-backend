@@ -15,6 +15,6 @@ public interface IBlogService {
 
     Page<BlogArticle> getAllOnPage(int page, int size);
 
-    List<BlogArticle> getRandomBlogs(int size);
+    Page<BlogArticle> getRandomBlogs(int size);
 
 }

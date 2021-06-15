@@ -2,9 +2,6 @@ package sk.hfa.blog.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,7 +16,6 @@ import sk.hfa.images.services.interfaces.IImageService;
 import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
-import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -82,14 +78,11 @@ public class BlogController {
         return ResponseEntity.ok(responseBody);
     }
 
-    @GetMapping(path="/random",produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/random", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MessageResource> getRandomBlogs(@RequestParam("size") int size) {
         log.info("Fetching random blog articles");
-        List<BlogArticle> articleList = blogService.getRandomBlogs(size);
         MessageResource responseBody = BlogArticlePageMessageResource.build(
-                new PageImpl<>(articleList,
-                        PageRequest.of(0, size,Sort.by("id")),
-                        articleList.size()),
+                blogService.getRandomBlogs(size),
                 false);
         return ResponseEntity.ok(responseBody);
     }
