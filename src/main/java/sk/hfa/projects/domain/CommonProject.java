@@ -32,6 +32,8 @@ public class CommonProject extends Project {
 
     private String heatingType;
 
+    private String hasStorey;
+
     private Double selfHelpBuildPrice;
 
     private Double onKeyPrice;
@@ -62,6 +64,7 @@ public class CommonProject extends Project {
                 .textSections(request.getTextSections())
                 .imagePaths(request.getImagePaths())
                 .hasGarage(request.getHasGarage())
+                .hasStorey(((CommonProjectRequest) request).getHasStorey())
                 .persons(request.getPersons())
                 .rooms(((CommonProjectRequest) request).getRooms())
                 .energeticClass(request.getEnergeticClass())
