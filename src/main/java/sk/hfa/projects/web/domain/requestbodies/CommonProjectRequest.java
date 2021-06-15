@@ -22,6 +22,8 @@ public class CommonProjectRequest extends ProjectRequest {
 
     private String heatingType;
 
+    private String hasStorey;
+
     private Double selfHelpBuildPrice;
 
     private Double onKeyPrice;
