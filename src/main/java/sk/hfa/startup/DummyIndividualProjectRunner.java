@@ -71,7 +71,7 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
             commonProject.setImagePaths(Arrays.asList(titleImage.getFile().getPath(), titleImage.getFile().getPath()));
             commonProject.setTextSections(Arrays.asList(ts1, ts2, ts3));
             commonProject = projectService.save(commonProject);
-            log.info("New project id:  " + commonProject.getId());
+            log.info("New project id: " + commonProject.getId());
         }
     }
 

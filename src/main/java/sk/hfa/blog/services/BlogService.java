@@ -2,7 +2,9 @@ package sk.hfa.blog.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.hfa.blog.domain.BlogArticle;
 import sk.hfa.blog.domain.repositories.BlogArticleRepository;
@@ -12,6 +14,8 @@ import sk.hfa.images.services.ImageService;
 import sk.hfa.projects.domain.throwable.InvalidPageableRequestException;
 import sk.hfa.util.Constants;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 @Slf4j
@@ -63,4 +67,22 @@ public class BlogService implements IBlogService {
         return result;
     }
 
+    @Override
+    public Page<BlogArticle> getRandomBlogs(int size) {
+        List<BlogArticle> articles = blogArticleRepository.findAll();
+        if (size >= articles.size())
+            return this.prepareRandomBlogs(articles, size);
+        return this.prepareRandomBlogs(getRandomArticles(articles, size), size);
+    }
+
+    private Page<BlogArticle> prepareRandomBlogs(List<BlogArticle> articleList, int size) {
+        return new PageImpl<>(articleList,
+                PageRequest.of(0, size, Sort.by("id")),
+                articleList.size());
+    }
+
+    private List<BlogArticle> getRandomArticles(List<BlogArticle> articles, int size) {
+        Collections.shuffle(articles);
+        return articles.subList(0, size);
+    }
 }

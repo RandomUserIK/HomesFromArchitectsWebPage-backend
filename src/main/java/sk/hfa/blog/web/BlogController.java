@@ -78,4 +78,13 @@ public class BlogController {
         return ResponseEntity.ok(responseBody);
     }
 
+    @GetMapping(path = "/random", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MessageResource> getRandomBlogs(@RequestParam("size") int size) {
+        log.info("Fetching random blog articles");
+        MessageResource responseBody = BlogArticlePageMessageResource.build(
+                blogService.getRandomBlogs(size),
+                false);
+        return ResponseEntity.ok(responseBody);
+    }
+
 }
