@@ -131,6 +131,23 @@
 			<version>1.2.3</version>
 		</dependency>
 
+		<!-- Google -->
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-content</artifactId>
+			<version>v2.1-rev14-1.25.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.oauth-client</groupId>
+			<artifactId>google-oauth-client-jetty</artifactId>
+			<version>1.23.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.apis</groupId>
+			<artifactId>google-api-services-manufacturers</artifactId>
+			<version>v1-rev79-1.23.0</version>
+		</dependency>
+
 		<!-- Unit test dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
