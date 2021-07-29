@@ -61,7 +61,7 @@ public class GoogleProductsConfiguration {
             return JacksonFactory.getDefaultInstance()
                     .fromInputStream(merchantInfoResource.getInputStream(), MerchantInfo.class);
         } catch (IOException | NullPointerException ex) {
-            log.warn("Failed to parse merchant-info.json file.", ex);
+            log.error("Failed to parse merchant-info.json file.", ex);
             System.exit(-1);
         }
         return null;
