@@ -4,8 +4,8 @@ import sk.hfa.projects.domain.Project;
 
 public interface IGoogleProductsService {
 
-    void createGoogleProduct(Project project);
+    String createGoogleProduct(Project project);
 
-    void removeGoogleProduct(String productId);
+    void removeGoogleProduct(String googleProductId);
 
 }

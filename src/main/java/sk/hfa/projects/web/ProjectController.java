@@ -18,6 +18,7 @@ import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
 import javax.validation.Valid;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -37,7 +38,7 @@ public class ProjectController {
     public ResponseEntity<MessageResource> createProject(@Valid @RequestBody ProjectRequest request) {
         log.info("Creating a new project.");
         Project project = projectService.build(request);
-        if (project.getId() != null) {
+        if (!Objects.isNull(project.getId())) {
             imageService.deleteProjectImages(project.getId());
         }
         project = projectService.save(project);

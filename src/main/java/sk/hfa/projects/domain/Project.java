@@ -3,6 +3,7 @@ package sk.hfa.projects.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.StringUtils;
 import sk.hfa.projects.domain.enums.Category;
 
 import javax.persistence.*;
@@ -44,9 +45,23 @@ public abstract class Project {
 
     private Double usableArea;
 
+    private String googleProductId;
+
     protected Project() {
         textSections = new ArrayList<>();
         imagePaths = new ArrayList<>();
+    }
+
+    public String getDescription() {
+        if (Objects.isNull(textSections) || textSections.isEmpty())
+            return null;
+
+        StringBuilder stringBuilder = new StringBuilder();
+        textSections.stream().forEach(textSection -> {
+            if (!StringUtils.isBlank(textSection.getText()))
+                stringBuilder.append(textSection.getText()).append("\n\n");
+        });
+        return stringBuilder.toString();
     }
 
     @Override
