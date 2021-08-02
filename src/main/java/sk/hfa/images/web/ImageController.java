@@ -52,4 +52,17 @@ public class ImageController {
                 .body(new InputStreamResource(imageResource.getInputStream()));
     }
 
+    @GetMapping(path = "title",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<InputStreamResource> getImageById(@RequestParam("id") String id,@RequestParam("type") String entityType) throws IOException {
+        log.info("Fetching the image with project id : [" + id + "].");
+        FileSystemResource imageResource = imageService.findFileSystemResourceByEntityId(Long.valueOf(id),entityType);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + (imageResource.getFilename()));
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(new InputStreamResource(imageResource.getInputStream()));
+    }
+
 }

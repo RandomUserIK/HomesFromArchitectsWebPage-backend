@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import sk.hfa.blog.domain.BlogArticle;
 import sk.hfa.blog.services.interfaces.IBlogService;
 import sk.hfa.images.domain.enums.ImageType;
+import sk.hfa.images.domain.enums.TitleImageEntityType;
 import sk.hfa.images.domain.repositories.FileSystemRepository;
 import sk.hfa.images.domain.throwable.FetchFileSystemResourceException;
 import sk.hfa.images.domain.throwable.ImageUploadException;
@@ -77,6 +78,27 @@ public class ImageService implements IImageService {
             throw new FetchFileSystemResourceException(FETCH_FAILED_MESSAGE);
         }
     }
+
+    @Override
+    public FileSystemResource findFileSystemResourceByEntityId(Long Id, String type) {
+        TitleImageEntityType entityType = getTitleImageEntityType(type);
+        if (TitleImageEntityType.PROJECT.getEntityType().equals(entityType.getEntityType())) {
+            return findFileSystemResourceByPath(projectService.findById(Id).getTitleImage());
+        } else {
+            return findFileSystemResourceByPath(blogService.findById(Id).getTitleImage());
+        }
+    }
+
+    private TitleImageEntityType getTitleImageEntityType(String type) {
+        if (type.equals(TitleImageEntityType.PROJECT.getEntityType())) {
+            return TitleImageEntityType.PROJECT;
+        } else if (type.equals(TitleImageEntityType.BLOG.getEntityType())) {
+            return TitleImageEntityType.BLOG;
+        } else {
+            throw new IllegalArgumentException("Invalid image type");
+        }
+    }
+
 
     @Override
     public ImageType getImageType(String imageType) {
