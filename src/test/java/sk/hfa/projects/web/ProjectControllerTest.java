@@ -7,13 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,15 +27,15 @@ import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 import sk.hfa.projects.web.domain.responsebodies.ProjectMessageResource;
 import sk.hfa.util.Constants;
-import sk.hfa.web.domain.responsebodies.ErrorMessageResource;
+import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
 import java.io.IOException;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -44,18 +43,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Slf4j
 @SpringBootTest
-@AutoConfigureMockMvc
+@ActiveProfiles("test")
+@AutoConfigureMockMvc(addFilters = false)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestPropertySource("classpath:application.properties")
+@TestPropertySource("classpath:application-test.properties")
 class ProjectControllerTest {
 
     private static final String ENDPOINT = "/api/projects";
-
-    @Value("${hfa.server.admin.username}")
-    private String username;
-
-    @Value("${hfa.server.admin.password}")
-    private String password;
 
     @Autowired
     private WebApplicationContext wac;
@@ -86,7 +80,6 @@ class ProjectControllerTest {
 
         mvc.perform(get(ENDPOINT + "/1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(httpBasic(username, password))
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -108,7 +101,6 @@ class ProjectControllerTest {
 
         mvc.perform(get(ENDPOINT + "/1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(httpBasic(username, password))
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -129,7 +121,63 @@ class ProjectControllerTest {
 
         mvc.perform(get(ENDPOINT + "/1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(httpBasic(username, password))
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().string(containsString(response)))
+                .andReturn();
+    }
+
+    @Test
+    void testDeleteProjectWithValidId() throws Exception {
+        Mockito.doNothing().when(projectService).deleteById(1L);
+        Mockito.doNothing().when(imageService).deleteProjectImages(1L);
+        final MessageResource response = new DeleteEntityMessageResource("Project successfully deleted");
+
+        mvc.perform(delete(ENDPOINT + "/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().string(containsString(mapper.writeValueAsString(response))))
+                .andReturn();
+    }
+
+    @Test
+    void testDeleteProjectWithNullId() throws Exception {
+        Mockito.doThrow(new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE)).when(projectService).deleteById(1L);
+        Mockito.doNothing().when(imageService).deleteProjectImages(1L);
+        final String response = getErrorMessageResourceAsStringWithoutTimestamp(
+                Constants.BAD_REQUEST_TITLE,
+                Constants.INVALID_IDENTIFIER_MESSAGE,
+                HttpStatus.BAD_REQUEST.value()
+        );
+
+        mvc.perform(delete(ENDPOINT + "/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().string(containsString(response)))
+                .andReturn();
+    }
+
+    @Test
+    void testDeleteProjectWithInvalidId() throws Exception {
+        final String message = "Project not found on the given ID: [1]";
+        Mockito.doThrow(new ProjectNotFoundException(message)).when(projectService).deleteById(1L);
+        Mockito.doNothing().when(imageService).deleteProjectImages(1L);
+        final String response = getErrorMessageResourceAsStringWithoutTimestamp(
+                Constants.INTERNAL_SERVER_ERROR_TITLE,
+                message,
+                HttpStatus.INTERNAL_SERVER_ERROR.value()
+        );
+
+        mvc.perform(delete(ENDPOINT + "/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isInternalServerError())
