@@ -10,7 +10,7 @@ import sk.hfa.blog.domain.BlogArticle;
 import sk.hfa.blog.domain.repositories.BlogArticleRepository;
 import sk.hfa.blog.domain.throwable.BlogArticleNotFoundException;
 import sk.hfa.blog.services.interfaces.IBlogService;
-import sk.hfa.images.services.ImageService;
+import sk.hfa.images.services.interfaces.IImageService;
 import sk.hfa.projects.domain.throwable.InvalidPageableRequestException;
 import sk.hfa.util.Constants;
 
@@ -22,10 +22,10 @@ import java.util.Objects;
 @Service
 public class BlogService implements IBlogService {
 
-    private final ImageService imageService;
+    private final IImageService imageService;
     private final BlogArticleRepository blogArticleRepository;
 
-    public BlogService(ImageService imageService, BlogArticleRepository blogArticleRepository) {
+    public BlogService(IImageService imageService, BlogArticleRepository blogArticleRepository) {
         this.imageService = imageService;
         this.blogArticleRepository = blogArticleRepository;
     }
