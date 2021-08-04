@@ -7,7 +7,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,9 +40,7 @@ import sk.hfa.web.domain.responsebodies.MessageResource;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -441,6 +438,38 @@ class ProjectControllerTest {
                 .when(projectService).getAllOnPage(-1, 1, new BooleanBuilder());
 
         mvc.perform(get(ENDPOINT + "?page=-1&size=1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().string(containsString(response)))
+                .andReturn();
+    }
+
+    @Test
+    void testGetAllOnPageAndQueryWithValidParameters() throws Exception {
+        final MessageResource response = ProjectPageMessageResource.build(getDummyPage());
+        doReturn(getDummyPage()).when(projectService).getAllOnPageAndQuery(0, new BooleanBuilder());
+
+        mvc.perform(get(ENDPOINT + "/filter?page=0")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().string(containsString(mapper.writeValueAsString(response))))
+                .andReturn();
+    }
+
+    @Test
+    void testGetAllOnPageAndQueryWithInvalidParameters() throws Exception {
+        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.INTERNAL_SERVER_ERROR_TITLE,
+                Constants.INVALID_PAGEABLE_MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR.value());
+        doThrow(new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE))
+                .when(projectService).getAllOnPageAndQuery(-1, new BooleanBuilder());
+
+        mvc.perform(get(ENDPOINT + "/filter?page=-1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .with(csrf()))
                 .andDo(print())
