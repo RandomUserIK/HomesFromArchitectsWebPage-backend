@@ -9,6 +9,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 import sk.hfa.projects.domain.TextSection;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +65,7 @@ public abstract class ProjectRequest {
             message = "Usable area must be in range between 0 and 999999")
     private Double usableArea;
 
+    @Valid
     private List<TextSection> textSections = new ArrayList<>();
 
     private List<String> imagePaths = new ArrayList<>();
