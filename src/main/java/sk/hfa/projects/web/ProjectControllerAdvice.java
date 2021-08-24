@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import sk.hfa.google.products.domain.throwable.ProductNotDeletedException;
+import sk.hfa.google.products.domain.throwable.ProductNotInsertedException;
 import sk.hfa.projects.domain.throwable.InvalidPageableRequestException;
 import sk.hfa.projects.domain.throwable.InvalidProjectRequestException;
 import sk.hfa.projects.domain.throwable.ProjectNotFoundException;
@@ -50,6 +52,18 @@ public class ProjectControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<MessageResource> handleProjectNotFoundException(ProjectNotFoundException ex) {
+        log.error(ex.getMessage(), ex);
+        return buildInternalServerErrorMessageResource(ex.getMessage());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<MessageResource> handleGoogleProductNotInserted(ProductNotInsertedException ex) {
+        log.error(ex.getMessage(), ex);
+        return buildInternalServerErrorMessageResource(ex.getMessage());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<MessageResource> handleGoogleProductNotDeleted(ProductNotDeletedException ex) {
         log.error(ex.getMessage(), ex);
         return buildInternalServerErrorMessageResource(ex.getMessage());
     }

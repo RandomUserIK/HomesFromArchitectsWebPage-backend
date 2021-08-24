@@ -1,10 +1,12 @@
 package sk.hfa.projects.services;
 
 import com.querydsl.core.types.Predicate;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import sk.hfa.google.products.services.interfaces.IGoogleProductsService;
 import sk.hfa.images.services.interfaces.IImageService;
 import sk.hfa.projects.domain.CommonProject;
 import sk.hfa.projects.domain.IndividualProject;
@@ -28,16 +30,27 @@ public class ProjectService implements IProjectService {
 
     private final ProjectRepository projectRepository;
     private final IImageService imageService;
+    private final IGoogleProductsService googleProductsService;
 
     public ProjectService(ProjectRepository projectRepository,
+                          IGoogleProductsService googleProductsService,
                           @Lazy IImageService imageService) {
         this.projectRepository = projectRepository;
         this.imageService = imageService;
+        this.googleProductsService = googleProductsService;
     }
 
     @Override
     public Project save(Project project) {
-        return projectRepository.save(project);
+        project = projectRepository.save(project);
+        String googleProductId = googleProductsService.createGoogleProduct(project);
+
+        if (StringUtils.isBlank(project.getGoogleProductId())) {
+            project.setGoogleProductId(googleProductId);
+            project = projectRepository.save(project);
+        }
+
+        return project;
     }
 
     @Override
@@ -54,6 +67,8 @@ public class ProjectService implements IProjectService {
         if (Objects.isNull(id))
             throw new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE);
 
+        Project project = findById(id);
+        googleProductsService.removeGoogleProduct(project.getGoogleProductId());
         imageService.deleteProjectImages(id);
         projectRepository.deleteById(id);
     }
@@ -109,7 +124,7 @@ public class ProjectService implements IProjectService {
     }
 
     private boolean isValidCategory(String category) {
-        return getCategory(category) != null;
+        return !Objects.isNull(getCategory(category));
     }
 
 }
