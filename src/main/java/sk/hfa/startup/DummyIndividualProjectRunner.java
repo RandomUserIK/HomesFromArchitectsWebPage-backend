@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -49,13 +50,13 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
     public void run(String... args) throws IOException {
         FileUtils.cleanDirectory(new File(UPLOAD_PATH));
 
-        for (int i = 0; i < 0; i++) {
+        for (int i = 0; i < 20; i++) {
 
             Image dummyImage1 = createImage(dummyImageResource1);
             Image dummyImage2 = createImage(dummyImageResource2);
             Image dummyImage3 = createImage(dummyImageResource3);
-            List<Image> dummyImages1 = Arrays.asList(dummyImage2);
-            List<Image> dummyImages2 = Arrays.asList(dummyImage3);
+            List<Image> dummyImages1 = Collections.singletonList(dummyImage2);
+            List<Image> dummyImages2 = Collections.singletonList(dummyImage3);
 
             TextSection ts1 = new TextSection();
             ts1.setTitle("");
