@@ -7,7 +7,7 @@ import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 
 public interface IProjectService {
 
-    Project save(Project project);
+    Project save(ProjectRequest project);
 
     Project findById(Long id);
 
@@ -17,6 +17,6 @@ public interface IProjectService {
 
     Page<Project> getAllOnPageAndQuery(int page, Predicate predicate);
 
-    Project build(ProjectRequest request);
+    Project update(ProjectRequest request);
 
 }

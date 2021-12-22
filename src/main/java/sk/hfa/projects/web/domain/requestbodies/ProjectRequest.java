@@ -5,10 +5,13 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
+import org.springframework.web.multipart.MultipartFile;
 import sk.hfa.projects.domain.TextSection;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         visible = true,
@@ -25,16 +29,15 @@ import java.util.List;
         @JsonSubTypes.Type(value = IndividualProjectRequest.class, name = "INDIVIDUAL"),
         @JsonSubTypes.Type(value = InteriorProjectRequest.class, name = "INTERIOR_DESIGN")
 })
-public abstract class ProjectRequest {
+public class ProjectRequest {
 
     private Long id;
 
-    @Length(min = 0,
-            max = 50,
+    @Length(max = 50,
             message = "Title must have number of chars between 0, 50")
     private String title;
 
-    private String titleImage;
+    private String titleImagePath;
 
     @Pattern(regexp = "^(COMMON|INDIVIDUAL|INTERIOR_DESIGN)$",
             message = "Category must be one of these : COMMON, INDIVIDUAL, INTERIOR_DESIGN")
@@ -66,6 +69,12 @@ public abstract class ProjectRequest {
 
     private List<TextSection> textSections = new ArrayList<>();
 
-    private List<String> imagePaths = new ArrayList<>();
+    private List<String> galleryImagePaths = new ArrayList<>();
+
+    @NotNull
+    private MultipartFile titleImageFile;
+
+    @NotNull
+    private List<MultipartFile> galleryImageFiles;
 
 }

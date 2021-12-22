@@ -1,10 +1,13 @@
 package sk.hfa.projects.services;
 
 import com.querydsl.core.types.Predicate;
+import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import sk.hfa.images.domain.Image;
 import sk.hfa.images.services.interfaces.IImageService;
 import sk.hfa.projects.domain.CommonProject;
 import sk.hfa.projects.domain.IndividualProject;
@@ -13,18 +16,21 @@ import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.domain.enums.Category;
 import sk.hfa.projects.domain.repositories.ProjectRepository;
 import sk.hfa.projects.domain.throwable.InvalidPageableRequestException;
-import sk.hfa.projects.domain.throwable.InvalidProjectRequestException;
 import sk.hfa.projects.domain.throwable.ProjectNotFoundException;
 import sk.hfa.projects.services.interfaces.IProjectService;
+import sk.hfa.projects.util.ProjectUtils;
+import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
+import sk.hfa.projects.web.domain.requestbodies.IndividualProjectRequest;
+import sk.hfa.projects.web.domain.requestbodies.InteriorProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 import sk.hfa.util.Constants;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
 public class ProjectService implements IProjectService {
 
-    private static final String INVALID_CATEGORY_MESSAGE = "Invalid category provided";
 
     private final ProjectRepository projectRepository;
     private final IImageService imageService;
@@ -35,9 +41,29 @@ public class ProjectService implements IProjectService {
         this.imageService = imageService;
     }
 
+    /**
+     * Persist project request and also persist respective images and upload them to files system.
+     *
+     * @param request Project request.
+     * @return Persisted project
+     */
     @Override
-    public Project save(Project project) {
+    @Transactional
+    public Project save(ProjectRequest request) {
+        ProjectUtils.validateProjectRequest(request);
+        Category projectCategory = ProjectUtils.validateAndGetCategory(request);
+        Project project = build(request, projectCategory);
         return projectRepository.save(project);
+    }
+
+    @Override
+    @Transactional
+    public Project update(ProjectRequest request) {
+        ProjectUtils.validateProjectRequest(request);
+        Category projectCategory = ProjectUtils.validateAndGetCategory(request);
+        Project oldProject = findById(request.getId());
+        deleteImages(oldProject);
+        return projectRepository.save(build(request, projectCategory));
     }
 
     @Override
@@ -50,11 +76,13 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         if (Objects.isNull(id))
             throw new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE);
 
-        imageService.deleteProjectImages(id);
+        Project project = projectRepository.getOne(id);
+        deleteImages(project);
         projectRepository.deleteById(id);
     }
 
@@ -80,36 +108,27 @@ public class ProjectService implements IProjectService {
         return result;
     }
 
-    @Override
-    public Project build(ProjectRequest request) {
-        if (Objects.isNull(request))
-            throw new InvalidProjectRequestException("Invalid request body");
+    private Project build(ProjectRequest request, Category projectCategory) {
+        Image titleImage = imageService.save(request.getTitleImageFile());
+        List<Image> galleryImages = imageService.save(request.getGalleryImageFiles());
 
-        if (!isValidCategory(request.getCategory()))
-            throw new IllegalArgumentException(INVALID_CATEGORY_MESSAGE);
-
-        Category projectCategory = getCategory(request.getCategory());
-        if (Category.COMMON.equals(projectCategory))
-            return CommonProject.build(request);
-        else if (Category.INDIVIDUAL.equals(projectCategory))
-            return IndividualProject.build(request);
-        else
-            return InteriorDesignProject.build(request);
+        if (Category.COMMON.equals(projectCategory)) {
+            List<Image> floorPlanImages = imageService.save(((CommonProjectRequest) request).getFloorPlanImageFiles());
+            return CommonProject.build((CommonProjectRequest) request, titleImage, galleryImages, floorPlanImages);
+        } else if (Category.INDIVIDUAL.equals(projectCategory)) {
+            return IndividualProject.build((IndividualProjectRequest) request, titleImage, galleryImages);
+        } else {
+            int o = 0/0;
+            return InteriorDesignProject.build((InteriorProjectRequest) request, titleImage, galleryImages);
+        }
     }
 
-    private Category getCategory(String category) {
-        if (Category.COMMON.name().equals(category))
-            return Category.COMMON;
-        else if (Category.INDIVIDUAL.name().equals(category))
-            return Category.INDIVIDUAL;
-        else if (Category.INTERIOR_DESIGN.name().equals(category))
-            return Category.INTERIOR_DESIGN;
-
-        return null;
-    }
-
-    private boolean isValidCategory(String category) {
-        return getCategory(category) != null;
+    private void deleteImages(Project project) {
+        imageService.deleteImage(project.getTitleImage());
+        imageService.deleteImages(project.getGalleryImages());
+        if (Category.COMMON.equals(project.getCategory())) {
+            imageService.deleteImages(((CommonProject) Hibernate.unproxy(project)).getFloorPlanImages());
+        }
     }
 
 }

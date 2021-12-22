@@ -1,19 +1,19 @@
 package sk.hfa.projects.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import sk.hfa.images.domain.Image;
 import sk.hfa.projects.domain.enums.Category;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Data
 @Entity
 @SuperBuilder
-@AllArgsConstructor
+@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Project {
 
@@ -23,7 +23,8 @@ public abstract class Project {
 
     private String title;
 
-    private String titleImage;
+    @OneToOne
+    private Image titleImage;
 
     @Enumerated
     private Category category;
@@ -31,8 +32,8 @@ public abstract class Project {
     @OneToMany(cascade = CascadeType.ALL)
     private List<TextSection> textSections;
 
-    @ElementCollection
-    private List<String> imagePaths;
+    @OneToMany(cascade = CascadeType.REMOVE)
+    private List<Image> galleryImages;
 
     private String hasGarage;
 
@@ -43,11 +44,6 @@ public abstract class Project {
     private Double builtUpArea;
 
     private Double usableArea;
-
-    protected Project() {
-        textSections = new ArrayList<>();
-        imagePaths = new ArrayList<>();
-    }
 
     @Override
     public boolean equals(Object other) {

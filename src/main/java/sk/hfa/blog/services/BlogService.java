@@ -52,7 +52,7 @@ public class BlogService implements IBlogService {
         if (Objects.isNull(id))
             throw new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE);
 
-        imageService.deleteBlogArticleImage(id);
+//        imageService.deleteBlogArticleImage(id); todo blog
         blogArticleRepository.deleteById(id);
     }
 

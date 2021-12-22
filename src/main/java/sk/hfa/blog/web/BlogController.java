@@ -38,7 +38,7 @@ public class BlogController {
         String message = "Creating a new blog article.";
 
         if (!Objects.isNull(request.getBlogArticle().getId())) {
-            imageService.deleteBlogArticleImage(request.getBlogArticle().getId());
+//            imageService.deleteBlogArticleImage(request.getBlogArticle().getId()); todo blog
             message = "Updating an existing blog article.";
             operation = "was successfully updated.";
         }
