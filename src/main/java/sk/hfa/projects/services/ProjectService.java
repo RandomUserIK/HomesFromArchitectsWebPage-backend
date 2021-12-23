@@ -118,7 +118,6 @@ public class ProjectService implements IProjectService {
         } else if (Category.INDIVIDUAL.equals(projectCategory)) {
             return IndividualProject.build((IndividualProjectRequest) request, titleImage, galleryImages);
         } else {
-            int o = 0/0;
             return InteriorDesignProject.build((InteriorProjectRequest) request, titleImage, galleryImages);
         }
     }

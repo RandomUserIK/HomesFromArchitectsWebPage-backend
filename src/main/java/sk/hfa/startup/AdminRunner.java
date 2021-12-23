@@ -33,7 +33,7 @@ public class AdminRunner implements CommandLineRunner {
     public void run(String... args) {
         if (userService.findByUsername("admin").isPresent())
             return;
-        log.info("Creating dummy admin user...");
+        log.info("Creating admin user.");
         User adminUser = new User(username, password);
         Role adminRole = new Role("ROLE_ADMIN");
         adminRole = roleService.save(adminRole);
@@ -41,7 +41,7 @@ public class AdminRunner implements CommandLineRunner {
         adminRole.getUsers().add(adminUser);
         userService.saveUser(adminUser);
         roleService.save(adminRole);
-        log.info("Dummy admin user successfully created.");
+        log.info("Admin user was successfully created.");
     }
 
 }

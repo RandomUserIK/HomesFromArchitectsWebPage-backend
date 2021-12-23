@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.Range;
 import org.springframework.web.multipart.MultipartFile;
 import sk.hfa.projects.domain.TextSection;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
@@ -67,6 +68,7 @@ public class ProjectRequest {
             message = "Usable area must be in range between 0 and 999999")
     private Double usableArea;
 
+    @Valid
     private List<TextSection> textSections = new ArrayList<>();
 
     private List<String> galleryImagePaths = new ArrayList<>();
