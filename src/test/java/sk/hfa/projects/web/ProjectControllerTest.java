@@ -48,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+// TODO fix tests
 @Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
@@ -140,7 +141,7 @@ class ProjectControllerTest {
     @Test
     void testDeleteProjectWithValidId() throws Exception {
         doNothing().when(projectService).deleteById(PROJECT_ID);
-        doNothing().when(imageService).deleteProjectImages(PROJECT_ID);
+        doNothing().when(imageService).deleteImages(null);
         final MessageResource response = new DeleteEntityMessageResource("Project successfully deleted");
 
         mvc.perform(delete(ENDPOINT + "/" + PROJECT_ID)
@@ -156,7 +157,7 @@ class ProjectControllerTest {
     @Test
     void testDeleteProjectWithNullId() throws Exception {
         doThrow(new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE)).when(projectService).deleteById(PROJECT_ID);
-        doNothing().when(imageService).deleteProjectImages(PROJECT_ID);
+        doNothing().when(imageService).deleteImages(null);
         final String response = getErrorMessageResourceAsStringWithoutTimestamp(
                 Constants.BAD_REQUEST_TITLE,
                 Constants.INVALID_IDENTIFIER_MESSAGE,
@@ -176,7 +177,7 @@ class ProjectControllerTest {
     @Test
     void testDeleteProjectWithInvalidId() throws Exception {
         doThrow(new ProjectNotFoundException(PROJECT_NOT_FOUND_MESSAGE)).when(projectService).deleteById(PROJECT_ID);
-        doNothing().when(imageService).deleteProjectImages(PROJECT_ID);
+        doNothing().when(imageService).deleteImages(null);
         final String response = getErrorMessageResourceAsStringWithoutTimestamp(
                 Constants.INTERNAL_SERVER_ERROR_TITLE,
                 PROJECT_NOT_FOUND_MESSAGE,
@@ -198,9 +199,9 @@ class ProjectControllerTest {
         final Project project = getDummyProject();
         final ProjectRequest request = getDummyProjectRequest();
         final MessageResource response = new ProjectMessageResource(project);
-        doReturn(project).when(projectService).save(project);
-        doReturn(project).when(projectService).build(request);
-        doNothing().when(imageService).deleteProjectImages(PROJECT_ID);
+        doReturn(project).when(projectService).save(request);
+        doNothing().when(imageService).deleteImage(null);
+        doNothing().when(imageService).deleteImages(null);
 
         mvc.perform(post(ENDPOINT)
                         .content(mapper.writeValueAsString(request))

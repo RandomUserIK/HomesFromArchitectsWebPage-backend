@@ -29,6 +29,9 @@ public abstract class Project {
     @Enumerated
     private Category category;
 
+    // TODO how is this field set
+    private String description;
+
     @OneToMany(cascade = CascadeType.ALL)
     private List<TextSection> textSections;
 
