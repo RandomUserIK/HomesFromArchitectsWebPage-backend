@@ -1,6 +1,7 @@
 package sk.hfa.auth.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,7 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final IUserService userService;
 
-    public UserDetailsServiceImpl(IUserService userService) {
+    public UserDetailsServiceImpl(@Lazy IUserService userService) {
         this.userService = userService;
     }
 

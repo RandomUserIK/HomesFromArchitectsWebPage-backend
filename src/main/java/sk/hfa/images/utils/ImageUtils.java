@@ -9,14 +9,16 @@ import java.io.IOException;
 
 public class ImageUtils {
 
+    private ImageUtils() {}
+
     private static final String UPLOAD_PATH = System.getProperty("user.dir") + File.separator + "images" + File.separator;
 
     public static String getFullPath(Image image) {
         return UPLOAD_PATH + image.getId() + "." + image.getExtension();
     }
 
-    public static void uploadImageToFileSystem(MultipartFile multipartFile, Image Image) {
-        File imageFile = getImageFile(Image);
+    public static void uploadImageToFileSystem(MultipartFile multipartFile, Image image) {
+        File imageFile = getImageFile(image);
         try {
             multipartFile.transferTo(imageFile);
         } catch (IOException ex) {
