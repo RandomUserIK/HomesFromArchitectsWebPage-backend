@@ -17,6 +17,8 @@ import sk.hfa.projects.domain.repositories.ProjectRepository;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -48,7 +50,10 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws IOException {
-        FileUtils.cleanDirectory(new File(UPLOAD_PATH));
+        if (!Files.exists(Paths.get(UPLOAD_PATH)))
+            Files.createDirectory(Paths.get(UPLOAD_PATH));
+        else
+            FileUtils.cleanDirectory(new File(UPLOAD_PATH));
 
         for (int i = 0; i < 20; i++) {
 
