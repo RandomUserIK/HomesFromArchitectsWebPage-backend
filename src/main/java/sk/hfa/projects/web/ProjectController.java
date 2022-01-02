@@ -33,55 +33,39 @@ public class ProjectController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(value = "/individual",produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/individual", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResource> createIndividualProject(@Valid IndividualProjectRequest request) {
         return createProject(request);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(value = "/common",produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/common", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResource> createCommonProjectRequest(@Valid CommonProjectRequest request) {
         return createProject(request);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(value = "/interior_design",produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/interior_design", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResource> createInteriorProjectRequest(@Valid InteriorProjectRequest request) {
         return createProject(request);
     }
 
-    private ResponseEntity<MessageResource> createProject(ProjectRequest request) {
-        log.info("Creating a new project.");
-        Project project = projectService.save(request);
-        MessageResource responseBody = new ProjectMessageResource(project);
-        log.info("The project with the ID: [" + project.getId() + "] was successfully created.");
-        return ResponseEntity.ok(responseBody);
-    }
-
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping(value = "/individual",produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/individual", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResource> updateIndividualProject(@Valid IndividualProjectRequest request) {
         return updateProject(request);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping(value = "/common",produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/common", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResource> updateCommonProjectRequest(@Valid CommonProjectRequest request) {
         return updateProject(request);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping(value = "/interior_design",produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/interior_design", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MessageResource> updateInteriorProjectRequest(@Valid InteriorProjectRequest request) {
         return updateProject(request);
-    }
-
-    private ResponseEntity<MessageResource> updateProject(ProjectRequest request) {
-        log.info("Creating a new project.");
-        Project project = projectService.update(request);
-        MessageResource responseBody = new ProjectMessageResource(project);
-        log.info("The project with the ID: [" + project.getId() + "] was successfully created.");
-        return ResponseEntity.ok(responseBody);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -117,6 +101,22 @@ public class ProjectController {
         log.info("Fetching projects on the page [" + page + "] and filtering on custom query [" + predicate.toString() + "].");
         Page<Project> result = projectService.getAllOnPageAndQuery(page, predicate);
         MessageResource responseBody = ProjectPageMessageResource.build(result);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    private ResponseEntity<MessageResource> createProject(ProjectRequest request) {
+        log.info("Creating a new project.");
+        Project project = projectService.save(request);
+        MessageResource responseBody = new ProjectMessageResource(project);
+        log.info("The project with the ID: [" + project.getId() + "] was successfully created.");
+        return ResponseEntity.ok(responseBody);
+    }
+
+    private ResponseEntity<MessageResource> updateProject(ProjectRequest request) {
+        log.info("Creating a new project.");
+        Project project = projectService.update(request);
+        MessageResource responseBody = new ProjectMessageResource(project);
+        log.info("The project with the ID: [" + project.getId() + "] was successfully created.");
         return ResponseEntity.ok(responseBody);
     }
 
