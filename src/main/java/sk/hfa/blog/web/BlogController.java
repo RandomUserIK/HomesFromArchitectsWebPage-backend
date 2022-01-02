@@ -12,41 +12,39 @@ import sk.hfa.blog.services.interfaces.IBlogService;
 import sk.hfa.blog.web.domain.requestbodies.BlogArticleRequest;
 import sk.hfa.blog.web.domain.responsebodies.BlogArticleMessageResource;
 import sk.hfa.blog.web.domain.responsebodies.BlogArticlePageMessageResource;
-import sk.hfa.images.services.interfaces.IImageService;
 import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
-
-import java.util.Objects;
 
 @Slf4j
 @RestController
 @RequestMapping(path = "/api/blog")
 public class BlogController {
 
-    private final IImageService imageService;
     private final IBlogService blogService;
 
-    public BlogController(IImageService imageService, IBlogService blogService) {
-        this.imageService = imageService;
+    public BlogController(IBlogService blogService) {
         this.blogService = blogService;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> createBlogArticle(@RequestBody BlogArticleRequest request) {
-        String operation = "was successfully created.";
-        String message = "Creating a new blog article.";
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MessageResource> createBlogArticle(@RequestBody BlogArticleDto request) {
+        log.info("Creating a new blog article.");
+        BlogArticle blogArticle = blogService.save(request);
+        blogArticle.getContent().clear();
+        MessageResource responseBody = new BlogArticleMessageResource(blogArticle);
+        log.info("The blog article with the ID: [" + blogArticle.getId() + "] was successfully created.");
+        return ResponseEntity.ok(responseBody);
+    }
 
-        if (!Objects.isNull(request.getBlogArticle().getId())) {
-//            imageService.deleteBlogArticleImage(request.getBlogArticle().getId()); todo blog
-            message = "Updating an existing blog article.";
-            operation = "was successfully updated.";
-        }
-
-        log.info(message);
-        BlogArticle blogArticle = blogService.save(BlogArticle.build(request.getBlogArticle()));
-        MessageResource responseBody = new BlogArticleMessageResource(BlogArticleDto.build(blogArticle, false));
-        log.info("The blog article with the ID: [" + blogArticle.getId() + "] " + operation);
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MessageResource> updateBlogArticle(@RequestBody BlogArticleRequest request) {
+        log.info("Updating an existing blog article.");
+        BlogArticle blogArticle = blogService.save(request.getBlogArticle());
+        blogArticle.getContent().clear();
+        MessageResource responseBody = new BlogArticleMessageResource(blogArticle);
+        log.info("The blog article with the ID: [" + blogArticle.getId() + "] was successfully updated.");
         return ResponseEntity.ok(responseBody);
     }
 
@@ -54,7 +52,8 @@ public class BlogController {
     public ResponseEntity<MessageResource> getBlogArticle(@PathVariable long id) {
         log.info("Fetching the blog article with the ID: " + id);
         BlogArticle blogArticle = blogService.findById(id);
-        MessageResource responseBody = new BlogArticleMessageResource(BlogArticleDto.build(blogArticle, false));
+        blogArticle.getContent().clear();
+        MessageResource responseBody = new BlogArticleMessageResource(blogArticle);
         return ResponseEntity.ok(responseBody);
     }
 

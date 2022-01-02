@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.util.SerializationUtils;
+import sk.hfa.images.domain.Image;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -30,7 +31,8 @@ public class BlogArticle {
 
     @Getter
     @Setter
-    private String titleImage;
+    @OneToOne
+    private Image titleImage;
 
     @Getter
     @Setter
@@ -50,11 +52,11 @@ public class BlogArticle {
         opsAsByteArray = SerializationUtils.serialize(ops);
     }
 
-    public static BlogArticle build(BlogArticleDto blogArticleDto) {
+    public static BlogArticle build(BlogArticleDto blogArticleDto, Image titleImage) {
         BlogArticle blogArticle = new BlogArticle();
         blogArticle.setId(blogArticleDto.getId());
         blogArticle.setTitle(blogArticleDto.getTitle());
-        blogArticle.setTitleImage(blogArticleDto.getTitleImage());
+        blogArticle.setTitleImage(titleImage);
         blogArticle.setDescription(blogArticleDto.getDescription());
         blogArticle.setOps(blogArticleDto.getContent());
         return blogArticle;
