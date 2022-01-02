@@ -9,9 +9,10 @@ import java.io.IOException;
 
 public class ImageUtils {
 
-    private ImageUtils() {}
-
     private static final String UPLOAD_PATH = System.getProperty("user.dir") + File.separator + "images" + File.separator;
+
+    private ImageUtils() {
+    }
 
     public static String getFullPath(Image image) {
         return UPLOAD_PATH + image.getId() + "." + image.getExtension();

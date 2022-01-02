@@ -10,6 +10,8 @@ public class ProjectUtils {
 
     private static final String INVALID_CATEGORY_MESSAGE = "Invalid category provided";
 
+    private ProjectUtils() {
+    }
 
     public static void validateProjectRequest(ProjectRequest request) {
         if (Objects.isNull(request))
@@ -24,7 +26,6 @@ public class ProjectUtils {
 
         return projectCategory;
     }
-
 
     private static Category getCategory(String category) {
         if (Category.COMMON.name().equals(category))
