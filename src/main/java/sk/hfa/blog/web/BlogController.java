@@ -28,7 +28,7 @@ public class BlogController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MessageResource> createBlogArticle(@RequestBody BlogArticleDto request) {
+    public ResponseEntity<MessageResource> createBlogArticle(BlogArticleDto request) {
         log.info("Creating a new blog article.");
         BlogArticle blogArticle = blogService.save(request);
         blogArticle.getContent().clear();
