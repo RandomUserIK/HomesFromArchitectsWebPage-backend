@@ -63,7 +63,7 @@ public class BlogArticle {
         blogArticle.setTitleImage(titleImage);
         blogArticle.setDescription(blogArticleDto.getDescription());
         try {
-            blogArticle.setOps((List<DeltaOperation>) (new ObjectMapper().readValue(blogArticleDto.getContent(), List.class)));
+            blogArticle.setOps(new ObjectMapper().readValue(blogArticleDto.getContent(), List.class));
         } catch (JsonProcessingException | NullPointerException ex) {
             throw new BlogArticleProcessingException(ex.getMessage());
         }
