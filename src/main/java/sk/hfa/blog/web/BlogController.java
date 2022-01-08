@@ -1,5 +1,6 @@
 package sk.hfa.blog.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -9,11 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import sk.hfa.blog.domain.BlogArticle;
 import sk.hfa.blog.domain.BlogArticleDto;
 import sk.hfa.blog.services.interfaces.IBlogService;
-import sk.hfa.blog.web.domain.requestbodies.BlogArticleRequest;
 import sk.hfa.blog.web.domain.responsebodies.BlogArticleMessageResource;
 import sk.hfa.blog.web.domain.responsebodies.BlogArticlePageMessageResource;
 import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -28,10 +30,9 @@ public class BlogController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MessageResource> createBlogArticle(BlogArticleDto request) {
+    public ResponseEntity<MessageResource> createBlogArticle(@Valid BlogArticleDto request) throws JsonProcessingException {
         log.info("Creating a new blog article.");
         BlogArticle blogArticle = blogService.save(request);
-        blogArticle.getContent().clear();
         MessageResource responseBody = new BlogArticleMessageResource(blogArticle);
         log.info("The blog article with the ID: [" + blogArticle.getId() + "] was successfully created.");
         return ResponseEntity.ok(responseBody);
@@ -39,10 +40,9 @@ public class BlogController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MessageResource> updateBlogArticle(@RequestBody BlogArticleRequest request) {
+    public ResponseEntity<MessageResource> updateBlogArticle(@Valid  BlogArticleDto request) throws JsonProcessingException {
         log.info("Updating an existing blog article.");
-        BlogArticle blogArticle = blogService.save(request.getBlogArticle());
-        blogArticle.getContent().clear();
+        BlogArticle blogArticle = blogService.save(request);
         MessageResource responseBody = new BlogArticleMessageResource(blogArticle);
         log.info("The blog article with the ID: [" + blogArticle.getId() + "] was successfully updated.");
         return ResponseEntity.ok(responseBody);

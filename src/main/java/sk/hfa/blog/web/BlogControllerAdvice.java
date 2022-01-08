@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import sk.hfa.blog.domain.throwable.BlogArticleNotFoundException;
+import sk.hfa.blog.domain.throwable.BlogArticleProcessingException;
 import sk.hfa.projects.domain.throwable.InvalidPageableRequestException;
 import sk.hfa.util.Constants;
 import sk.hfa.web.domain.responsebodies.ErrorMessageResource;
@@ -31,6 +32,12 @@ public class BlogControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<MessageResource> handleBlogArticleNotFoundException(BlogArticleNotFoundException ex) {
+        log.error(ex.getMessage(), ex);
+        return buildInternalServerErrorMessageResource(ex.getMessage());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<MessageResource> handleBlogArticleProcessingException(BlogArticleProcessingException ex) {
         log.error(ex.getMessage(), ex);
         return buildInternalServerErrorMessageResource(ex.getMessage());
     }

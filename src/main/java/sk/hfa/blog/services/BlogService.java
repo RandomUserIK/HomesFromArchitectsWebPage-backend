@@ -1,5 +1,6 @@
 package sk.hfa.blog.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -33,7 +34,7 @@ public class BlogService implements IBlogService {
     }
 
     @Override
-    public BlogArticle save(BlogArticleDto blogArticleDto) {
+    public BlogArticle save(BlogArticleDto blogArticleDto) throws JsonProcessingException {
         if (Objects.isNull(blogArticleDto))
             throw new IllegalArgumentException("Invalid blog article provided");
 

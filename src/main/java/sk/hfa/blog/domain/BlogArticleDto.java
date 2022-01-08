@@ -6,7 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
@@ -16,12 +17,16 @@ public class BlogArticleDto {
 
     private Long id;
 
+    @NotBlank
     private String title;
 
+    @NotNull
     private MultipartFile titleImage;
 
+    @NotBlank
     private String description;
 
-    private List<DeltaOperation> content;
+    @NotBlank
+    private String content;
 
 }
