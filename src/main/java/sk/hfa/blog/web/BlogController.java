@@ -33,17 +33,17 @@ public class BlogController {
     public ResponseEntity<MessageResource> createBlogArticle(@Valid BlogArticleDto request) throws JsonProcessingException {
         log.info("Creating a new blog article.");
         BlogArticle blogArticle = blogService.save(request);
-        MessageResource responseBody = new BlogArticleMessageResource(blogArticle);
+        final MessageResource responseBody = new BlogArticleMessageResource(blogArticle);
         log.info("The blog article with the ID: [" + blogArticle.getId() + "] was successfully created.");
         return ResponseEntity.ok(responseBody);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<MessageResource> updateBlogArticle(@Valid  BlogArticleDto request) throws JsonProcessingException {
+    public ResponseEntity<MessageResource> updateBlogArticle(@Valid BlogArticleDto request) throws JsonProcessingException {
         log.info("Updating an existing blog article.");
         BlogArticle blogArticle = blogService.save(request);
-        MessageResource responseBody = new BlogArticleMessageResource(blogArticle);
+        final MessageResource responseBody = new BlogArticleMessageResource(blogArticle);
         log.info("The blog article with the ID: [" + blogArticle.getId() + "] was successfully updated.");
         return ResponseEntity.ok(responseBody);
     }
@@ -53,7 +53,7 @@ public class BlogController {
         log.info("Fetching the blog article with the ID: " + id);
         BlogArticle blogArticle = blogService.findById(id);
         blogArticle.getContent().clear();
-        MessageResource responseBody = new BlogArticleMessageResource(blogArticle);
+        final MessageResource responseBody = new BlogArticleMessageResource(blogArticle);
         return ResponseEntity.ok(responseBody);
     }
 

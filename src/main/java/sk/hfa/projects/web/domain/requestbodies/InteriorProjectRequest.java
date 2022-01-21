@@ -13,7 +13,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 public class InteriorProjectRequest extends ProjectRequest {
 
-    // todo
     private boolean interior;
 
 }

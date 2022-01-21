@@ -32,7 +32,9 @@ public abstract class Project {
     // TODO how is this field set
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<TextSection> textSections;
 
     @OneToMany(cascade = CascadeType.REMOVE)

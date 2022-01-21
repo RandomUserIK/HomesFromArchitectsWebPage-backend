@@ -68,8 +68,7 @@ public class ProjectRequest {
             message = "Usable area must be in range between 0 and 999999")
     private Double usableArea;
 
-    @Valid
-    private List<TextSection> textSections = new ArrayList<>();
+    private String textSections;
 
     private List<String> galleryImagePaths = new ArrayList<>();
 

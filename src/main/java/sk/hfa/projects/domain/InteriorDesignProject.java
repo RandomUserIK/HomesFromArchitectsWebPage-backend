@@ -1,8 +1,6 @@
 package sk.hfa.projects.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import sk.hfa.images.domain.Image;
 import sk.hfa.projects.domain.enums.Category;
@@ -13,11 +11,12 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import java.util.List;
 
-@Data
+
 @Entity
+@Getter
+@Setter
 @SuperBuilder
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class InteriorDesignProject extends Project {
 
@@ -27,7 +26,7 @@ public class InteriorDesignProject extends Project {
                 .title(request.getTitle())
                 .titleImage(titleImage)
                 .category(Category.INTERIOR_DESIGN)
-                .textSections(request.getTextSections())
+                .textSections(null)
                 .galleryImages(galleryImages)
                 .persons(request.getPersons())
                 .usableArea(request.getUsableArea())

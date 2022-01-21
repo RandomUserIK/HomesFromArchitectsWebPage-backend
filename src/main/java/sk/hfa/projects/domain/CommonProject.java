@@ -1,8 +1,6 @@
 package sk.hfa.projects.domain;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import sk.hfa.images.domain.Image;
 import sk.hfa.projects.domain.enums.Category;
@@ -11,11 +9,11 @@ import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
 import javax.persistence.*;
 import java.util.List;
 
-@Data
 @Entity
+@Getter
+@Setter
 @SuperBuilder
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class CommonProject extends Project {
 
@@ -56,7 +54,7 @@ public class CommonProject extends Project {
                 .title(request.getTitle())
                 .titleImage(titleImage)
                 .category(Category.COMMON)
-                .textSections(request.getTextSections())
+                .textSections(null)
                 .galleryImages(galleryImages)
                 .hasGarage(request.getHasGarage())
                 .hasStorey(request.getHasStorey())

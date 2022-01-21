@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sk.hfa.images.services.interfaces.IImageService;
 
-import java.io.IOException;
-
 @Slf4j
 @RestController
 @RequestMapping(path = "/api/images")
@@ -22,7 +20,7 @@ public class ImageController {
     }
 
     @GetMapping(path = "/{imagePath}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public byte[] getImage(@PathVariable Long imagePath) throws IOException {
+    public byte[] getImage(@PathVariable Long imagePath) {
         log.info("Fetching the image: [" + imagePath + "].");
         return imageService.getImage(imagePath);
     }

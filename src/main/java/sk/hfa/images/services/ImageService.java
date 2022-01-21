@@ -56,8 +56,10 @@ public class ImageService implements IImageService {
 
     @Override
     public void deleteImage(Image image) {
-        File file = ImageUtils.getImageFile(image);
-        if (!file.delete()) {
+        Path imagePath = Paths.get(ImageUtils.getFullPath(image));
+        try {
+            Files.delete(imagePath);
+        } catch (IOException e) {
             throw new FetchFileSystemResourceException("Could delete image file with id [" + image.getId() + "] " +
                     "and title [" + image.getTitle() + "]");
         }

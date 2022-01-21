@@ -27,6 +27,7 @@ import sk.hfa.util.Constants;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ProjectService implements IProjectService {
@@ -78,11 +79,12 @@ public class ProjectService implements IProjectService {
     @Override
     @Transactional
     public void deleteById(Long id) {
-        if (Objects.isNull(id))
+        Optional<Project> project = projectRepository.findById(id);
+
+        if (!project.isPresent())
             throw new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE);
 
-        Project project = projectRepository.getOne(id);
-        deleteImages(project);
+        deleteImages(project.get());
         projectRepository.deleteById(id);
     }
 

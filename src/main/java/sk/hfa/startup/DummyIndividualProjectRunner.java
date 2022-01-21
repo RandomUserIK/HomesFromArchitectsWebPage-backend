@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -35,6 +34,12 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
 
     @Value("classpath:3.webp")
     private Resource dummyImageResource3;
+
+    @Value("classpath:4.webp")
+    private Resource dummyImageResource4;
+
+    @Value("classpath:5.webp")
+    private Resource dummyImageResource5;
 
     private static final String UPLOAD_PATH = System.getProperty("user.dir") + File.separator + "images" + File.separator;
 
@@ -56,12 +61,15 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
             FileUtils.cleanDirectory(new File(UPLOAD_PATH));
 
         for (int i = 0; i < 20; i++) {
+            Image dummyTitleImage = createImage(dummyImageResource1);
 
-            Image dummyImage1 = createImage(dummyImageResource1);
-            Image dummyImage2 = createImage(dummyImageResource2);
-            Image dummyImage3 = createImage(dummyImageResource3);
-            List<Image> dummyImages1 = Collections.singletonList(dummyImage2);
-            List<Image> dummyImages2 = Collections.singletonList(dummyImage3);
+            Image dummyGalleryImage1 = createImage(dummyImageResource2);
+            Image dummyGalleryImage2 = createImage(dummyImageResource3);
+            Image dummyFloorPlanImage1 = createImage(dummyImageResource4);
+            Image dummyFloorPlanImage2 = createImage(dummyImageResource5);
+
+            List<Image> dummyGalleryImages = Arrays.asList(dummyGalleryImage1, dummyGalleryImage2);
+            List<Image> dummyFloorPlanImages = Arrays.asList(dummyFloorPlanImage1, dummyFloorPlanImage2);
 
             TextSection ts1 = new TextSection();
             ts1.setTitle("");
@@ -100,9 +108,9 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
             commonProject.setHeatingSource("tepelné čerpadlo");
             commonProject.setHeatingType("podlahové vykurovanie");
             commonProject.setTextSections(Arrays.asList(ts1, ts2, ts3));
-            commonProject.setTitleImage(dummyImage1);
-            commonProject.setGalleryImages(dummyImages1);
-            commonProject.setFloorPlanImages(dummyImages2);
+            commonProject.setTitleImage(dummyTitleImage);
+            commonProject.setGalleryImages(dummyGalleryImages);
+            commonProject.setFloorPlanImages(dummyFloorPlanImages);
             commonProject = projectRepository.save(commonProject);
             log.info("New project id: " + commonProject.getId());
         }
