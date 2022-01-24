@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import sk.hfa.images.domain.Image;
 import sk.hfa.images.domain.throwable.FetchFileSystemResourceException;
+import sk.hfa.images.domain.throwable.ImageNotFoundException;
 import sk.hfa.images.repositories.ImageRepository;
 import sk.hfa.images.services.interfaces.IImageService;
 import sk.hfa.images.utils.ImageUtils;
@@ -16,6 +17,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -28,8 +30,11 @@ public class ImageService implements IImageService {
     }
 
     public byte[] getImage(Long imageId) {
-        Image image = imageRepository.getOne(imageId);
-        String fullPath = ImageUtils.getFullPath(image);
+        Optional<Image> image = imageRepository.findById(imageId);
+        if (!image.isPresent()) {
+            throw new ImageNotFoundException("Image with id: [" + imageId + "] does not exist");
+        }
+        String fullPath = ImageUtils.getFullPath(image.get());
         Path path = Paths.get(fullPath);
         try {
             return Files.readAllBytes(path);
