@@ -2,6 +2,7 @@ package sk.hfa.blog.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -39,7 +40,13 @@ public class BlogService implements IBlogService {
             throw new IllegalArgumentException("Invalid blog article provided");
 
         Image titleImage = imageService.save(blogArticleDto.getTitleImage());
-        return blogArticleRepository.save(BlogArticle.build(blogArticleDto, titleImage));
+        try {
+            return blogArticleRepository.save(BlogArticle.build(blogArticleDto, titleImage));
+        } catch (DataAccessException exception) {
+            imageService.deleteImage(titleImage);
+            log.error("Failed to save the provided article.", exception);
+            throw new IllegalArgumentException("Invalid blog article provided");
+        }
     }
 
     @Override
@@ -57,8 +64,8 @@ public class BlogService implements IBlogService {
             throw new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE);
 
         BlogArticle blogArticle = findById(id);
-        imageService.deleteImage(blogArticle.getTitleImage());
         blogArticleRepository.deleteById(id);
+        imageService.deleteImage(blogArticle.getTitleImage());
     }
 
     @Override
