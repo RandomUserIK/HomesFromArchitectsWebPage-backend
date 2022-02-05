@@ -1,20 +1,19 @@
 package sk.hfa.projects.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.StringUtils;
+import sk.hfa.images.domain.Image;
 import sk.hfa.projects.domain.enums.Category;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Data
 @Entity
 @SuperBuilder
-@AllArgsConstructor
+@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public abstract class Project {
 
@@ -24,16 +23,22 @@ public abstract class Project {
 
     private String title;
 
-    private String titleImage;
+    @OneToOne
+    private Image titleImage;
 
     @Enumerated
     private Category category;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    // TODO how is this field set
+    private String description;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<TextSection> textSections;
 
-    @ElementCollection
-    private List<String> imagePaths;
+    @OneToMany(cascade = CascadeType.REMOVE)
+    private List<Image> galleryImages;
 
     private String hasGarage;
 
@@ -44,25 +49,6 @@ public abstract class Project {
     private Double builtUpArea;
 
     private Double usableArea;
-
-    private String googleProductId;
-
-    protected Project() {
-        textSections = new ArrayList<>();
-        imagePaths = new ArrayList<>();
-    }
-
-    public String getDescription() {
-        if (Objects.isNull(textSections) || textSections.isEmpty())
-            return null;
-
-        StringBuilder stringBuilder = new StringBuilder();
-        textSections.stream().forEach(textSection -> {
-            if (!StringUtils.isBlank(textSection.getText()))
-                stringBuilder.append(textSection.getText()).append("\n\n");
-        });
-        return stringBuilder.toString();
-    }
 
     @Override
     public boolean equals(Object other) {

@@ -1,25 +1,19 @@
 package sk.hfa.projects.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import sk.hfa.images.domain.Image;
 import sk.hfa.projects.domain.enums.Category;
 import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
-import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import java.util.ArrayList;
+import javax.persistence.*;
 import java.util.List;
 
-@Data
 @Entity
+@Getter
+@Setter
 @SuperBuilder
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class CommonProject extends Project {
 
@@ -48,39 +42,38 @@ public class CommonProject extends Project {
 
     private Double minimumParcelWidth;
 
-    @ElementCollection
-    private List<String> floorPlanImagePaths;
+    @OneToMany(cascade = CascadeType.REMOVE)
+    private List<Image> floorPlanImages;
 
-    public CommonProject() {
-        floorPlanImagePaths = new ArrayList<>();
-    }
-
-    public static Project build(ProjectRequest request) {
+    public static Project build(CommonProjectRequest request,
+                                Image titleImage,
+                                List<Image> galleryImages,
+                                List<Image> floorPlanImages) {
         return CommonProject.builder()
                 .id(request.getId())
                 .title(request.getTitle())
-                .titleImage(request.getTitleImage())
+                .titleImage(titleImage)
                 .category(Category.COMMON)
-                .textSections(request.getTextSections())
-                .imagePaths(request.getImagePaths())
+                .textSections(null)
+                .galleryImages(galleryImages)
                 .hasGarage(request.getHasGarage())
-                .hasStorey(((CommonProjectRequest) request).getHasStorey())
+                .hasStorey(request.getHasStorey())
                 .persons(request.getPersons())
-                .rooms(((CommonProjectRequest) request).getRooms())
+                .rooms(request.getRooms())
                 .energeticClass(request.getEnergeticClass())
-                .entryOrientation(((CommonProjectRequest) request).getEntryOrientation())
-                .heatingSource(((CommonProjectRequest) request).getHeatingSource())
-                .heatingType(((CommonProjectRequest) request).getHeatingType())
-                .floorPlanImagePaths(((CommonProjectRequest) request).getFloorPlanImagePaths())
+                .entryOrientation(request.getEntryOrientation())
+                .heatingSource(request.getHeatingSource())
+                .heatingType(request.getHeatingType())
+                .floorPlanImages(floorPlanImages)
                 .builtUpArea(request.getBuiltUpArea())
                 .usableArea(request.getUsableArea())
-                .selfHelpBuildPrice(((CommonProjectRequest) request).getSelfHelpBuildPrice())
-                .onKeyPrice(((CommonProjectRequest) request).getOnKeyPrice())
-                .basicProjectPrice(((CommonProjectRequest) request).getBasicProjectPrice())
-                .extendedProjectPrice(((CommonProjectRequest) request).getExtendedProjectPrice())
-                .totalLivingArea(((CommonProjectRequest) request).getTotalLivingArea())
-                .roofPitch(((CommonProjectRequest) request).getRoofPitch())
-                .minimumParcelWidth(((CommonProjectRequest) request).getMinimumParcelWidth())
+                .selfHelpBuildPrice(request.getSelfHelpBuildPrice())
+                .onKeyPrice(request.getOnKeyPrice())
+                .basicProjectPrice(request.getBasicProjectPrice())
+                .extendedProjectPrice(request.getExtendedProjectPrice())
+                .totalLivingArea(request.getTotalLivingArea())
+                .roofPitch(request.getRoofPitch())
+                .minimumParcelWidth(request.getMinimumParcelWidth())
                 .build();
     }
 

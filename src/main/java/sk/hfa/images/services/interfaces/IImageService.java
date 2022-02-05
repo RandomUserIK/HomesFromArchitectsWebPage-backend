@@ -1,19 +1,21 @@
 package sk.hfa.images.services.interfaces;
 
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.web.multipart.MultipartFile;
-import sk.hfa.images.domain.enums.ImageType;
+import sk.hfa.images.domain.Image;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public interface IImageService {
 
-    String upload(String entityId, MultipartFile file, ImageType imageType);
+    byte[] getImage(@Nullable Long imageId);
 
-    FileSystemResource findFileSystemResourceByPath(String location);
+    Image save(@NotNull MultipartFile multipartFile);
 
-    ImageType getImageType(String imageType);
+    List<Image> save(@NotNull List<MultipartFile> multipartFiles);
 
-    void deleteProjectImages(Long projectId);
+    void deleteImage(@NotNull Image image);
 
-    void deleteBlogArticleImage(Long blogArticleId);
-
+    void deleteImages(@NotNull List<Image> images);
 }

@@ -1,15 +1,19 @@
 package sk.hfa.blog.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import sk.hfa.blog.domain.BlogArticle;
+import sk.hfa.blog.domain.BlogArticleDto;
 import sk.hfa.blog.domain.repositories.BlogArticleRepository;
 import sk.hfa.blog.domain.throwable.BlogArticleNotFoundException;
 import sk.hfa.blog.services.interfaces.IBlogService;
+import sk.hfa.images.domain.Image;
 import sk.hfa.images.services.interfaces.IImageService;
 import sk.hfa.projects.domain.throwable.InvalidPageableRequestException;
 import sk.hfa.util.Constants;
@@ -31,11 +35,18 @@ public class BlogService implements IBlogService {
     }
 
     @Override
-    public BlogArticle save(BlogArticle blogArticle) {
-        if (Objects.isNull(blogArticle))
+    public BlogArticle save(BlogArticleDto blogArticleDto) throws JsonProcessingException {
+        if (Objects.isNull(blogArticleDto))
             throw new IllegalArgumentException("Invalid blog article provided");
 
-        return blogArticleRepository.save(blogArticle);
+        Image titleImage = imageService.save(blogArticleDto.getTitleImage());
+        try {
+            return blogArticleRepository.save(BlogArticle.build(blogArticleDto, titleImage));
+        } catch (DataAccessException exception) {
+            imageService.deleteImage(titleImage);
+            log.error("Failed to save the provided article.", exception);
+            throw new IllegalArgumentException("Invalid blog article provided");
+        }
     }
 
     @Override
@@ -52,8 +63,9 @@ public class BlogService implements IBlogService {
         if (Objects.isNull(id))
             throw new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE);
 
-        imageService.deleteBlogArticleImage(id);
+        BlogArticle blogArticle = findById(id);
         blogArticleRepository.deleteById(id);
+        imageService.deleteImage(blogArticle.getTitleImage());
     }
 
     @Override

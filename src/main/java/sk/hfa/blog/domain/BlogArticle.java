@@ -1,11 +1,14 @@
 package sk.hfa.blog.domain;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.util.SerializationUtils;
+import sk.hfa.blog.domain.throwable.BlogArticleProcessingException;
+import sk.hfa.images.domain.Image;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -13,7 +16,6 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 public class BlogArticle {
 
     @Id
@@ -30,7 +32,8 @@ public class BlogArticle {
 
     @Getter
     @Setter
-    private String titleImage;
+    @OneToOne
+    private Image titleImage;
 
     @Getter
     @Setter
@@ -50,13 +53,17 @@ public class BlogArticle {
         opsAsByteArray = SerializationUtils.serialize(ops);
     }
 
-    public static BlogArticle build(BlogArticleDto blogArticleDto) {
+    public static BlogArticle build(BlogArticleDto blogArticleDto, Image titleImage) throws JsonProcessingException {
         BlogArticle blogArticle = new BlogArticle();
         blogArticle.setId(blogArticleDto.getId());
         blogArticle.setTitle(blogArticleDto.getTitle());
-        blogArticle.setTitleImage(blogArticleDto.getTitleImage());
+        blogArticle.setTitleImage(titleImage);
         blogArticle.setDescription(blogArticleDto.getDescription());
-        blogArticle.setOps(blogArticleDto.getContent());
+        try {
+            blogArticle.setOps(new ObjectMapper().readValue(blogArticleDto.getContent(), List.class));
+        } catch (JsonProcessingException | NullPointerException ex) {
+            throw new BlogArticleProcessingException(ex.getMessage());
+        }
         return blogArticle;
     }
 

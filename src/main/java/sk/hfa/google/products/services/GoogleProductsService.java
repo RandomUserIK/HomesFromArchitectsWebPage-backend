@@ -76,6 +76,7 @@ public class GoogleProductsService implements IGoogleProductsService {
         googleProduct.setChannel(CHANNEL);
         googleProduct.setContentLanguage(CONTENT_LANGUAGE);
         googleProduct.setTargetCountry(CONTENT_LANGUAGE.toUpperCase(Locale.ROOT));
+        // TODO how is this field set
         googleProduct.setDescription(project.getDescription());
         // TODO: poriesit identifier
         googleProduct.setIdentifierExists(false);
@@ -99,9 +100,9 @@ public class GoogleProductsService implements IGoogleProductsService {
     }
 
     private void setAttributeValues(Product googleProduct, Project project, Map<String, String> fieldMappings, boolean isDefault) {
-        fieldMappings.entrySet().stream().forEach(fieldMappingEntry -> {
+        fieldMappings.forEach((key, value) -> {
             try {
-                CustomAttribute customAttribute = getCustomAttribute(project, fieldMappingEntry.getKey(), fieldMappingEntry.getValue(), isDefault);
+                CustomAttribute customAttribute = getCustomAttribute(project, key, value, isDefault);
                 if (!Objects.isNull(customAttribute))
                     googleProduct.getCustomAttributes().add(customAttribute);
             } catch (NoSuchFieldException | NullPointerException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {

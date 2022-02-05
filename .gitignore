@@ -2,6 +2,7 @@
 .idea/
 target/
 log/
+images/
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup

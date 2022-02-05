@@ -9,8 +9,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.hfa.projects.domain.Project;
-import sk.hfa.images.services.interfaces.IImageService;
+import sk.hfa.projects.domain.TextSection;
 import sk.hfa.projects.services.interfaces.IProjectService;
+import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
+import sk.hfa.projects.web.domain.requestbodies.IndividualProjectRequest;
+import sk.hfa.projects.web.domain.requestbodies.InteriorProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 import sk.hfa.projects.web.domain.responsebodies.ProjectMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectPageMessageResource;
@@ -18,7 +21,7 @@ import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
 import javax.validation.Valid;
-import java.util.Objects;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -26,25 +29,45 @@ import java.util.Objects;
 public class ProjectController {
 
     private final IProjectService projectService;
-    private final IImageService imageService;
 
-    public ProjectController(IProjectService projectService, IImageService imageService) {
+    public ProjectController(IProjectService projectService) {
         this.projectService = projectService;
-        this.imageService = imageService;
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MessageResource> createProject(@Valid @RequestBody ProjectRequest request) {
-        log.info("Creating a new project.");
-        Project project = projectService.build(request);
-        if (!Objects.isNull(project.getId())) {
-            imageService.deleteProjectImages(project.getId());
-        }
-        project = projectService.save(project);
-        MessageResource responseBody = new ProjectMessageResource(project);
-        log.info("The project with the ID: [" + project.getId() + "] was successfully created.");
-        return ResponseEntity.ok(responseBody);
+    @PostMapping(value = "/individual", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MessageResource> createIndividualProject(@Valid IndividualProjectRequest request) {
+        return createProject(request);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(value = "/common", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MessageResource> createCommonProjectRequest(@Valid CommonProjectRequest request) {
+        return createProject(request);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping(value = "/interior_design", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MessageResource> createInteriorProjectRequest(@Valid InteriorProjectRequest request) {
+        return createProject(request);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping(value = "/individual", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MessageResource> updateIndividualProject(@Valid IndividualProjectRequest request) {
+        return updateProject(request);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping(value = "/common", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MessageResource> updateCommonProjectRequest(@Valid CommonProjectRequest request) {
+        return updateProject(request);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping(value = "/interior_design", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MessageResource> updateInteriorProjectRequest(@Valid InteriorProjectRequest request) {
+        return updateProject(request);
     }
 
     @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -80,6 +103,22 @@ public class ProjectController {
         log.info("Fetching projects on the page [" + page + "] and filtering on custom query [" + predicate.toString() + "].");
         Page<Project> result = projectService.getAllOnPageAndQuery(page, predicate);
         MessageResource responseBody = ProjectPageMessageResource.build(result);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    private ResponseEntity<MessageResource> createProject(ProjectRequest request) {
+        log.info("Creating a new project.");
+        Project project = projectService.save(request);
+        MessageResource responseBody = new ProjectMessageResource(project);
+        log.info("The project with the ID: [" + project.getId() + "] was successfully created.");
+        return ResponseEntity.ok(responseBody);
+    }
+
+    private ResponseEntity<MessageResource> updateProject(ProjectRequest request) {
+        log.info("Creating a new project.");
+        Project project = projectService.update(request);
+        MessageResource responseBody = new ProjectMessageResource(project);
+        log.info("The project with the ID: [" + project.getId() + "] was successfully created.");
         return ResponseEntity.ok(responseBody);
     }
 

@@ -1,35 +1,76 @@
 package sk.hfa.startup;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import sk.hfa.images.domain.Image;
+import sk.hfa.images.repositories.ImageRepository;
 import sk.hfa.projects.domain.CommonProject;
-import sk.hfa.projects.domain.Project;
 import sk.hfa.projects.domain.TextSection;
 import sk.hfa.projects.domain.enums.Category;
-import sk.hfa.projects.services.interfaces.IProjectService;
+import sk.hfa.projects.domain.repositories.ProjectRepository;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Component
 public class DummyIndividualProjectRunner implements CommandLineRunner {
 
-    @Value("classpath:title.png")
-    private Resource titleImage;
+    @Value("classpath:1.webp")
+    private Resource dummyImageResource1;
 
-    private final IProjectService projectService;
+    @Value("classpath:2.webp")
+    private Resource dummyImageResource2;
 
-    public DummyIndividualProjectRunner(IProjectService projectService) {
-        this.projectService = projectService;
+    @Value("classpath:3.webp")
+    private Resource dummyImageResource3;
+
+    @Value("classpath:4.webp")
+    private Resource dummyImageResource4;
+
+    @Value("classpath:5.webp")
+    private Resource dummyImageResource5;
+
+    private static final String UPLOAD_PATH = System.getProperty("user.dir") + File.separator + "images" + File.separator;
+
+    private final ProjectRepository projectRepository;
+
+    private final ImageRepository imageRepository;
+
+    public DummyIndividualProjectRunner(ProjectRepository projectService, ImageRepository imageRepository) {
+        this.projectRepository = projectService;
+        this.imageRepository = imageRepository;
     }
 
     @Override
+    @Transactional
     public void run(String... args) throws IOException {
+        if (!Files.exists(Paths.get(UPLOAD_PATH)))
+            Files.createDirectory(Paths.get(UPLOAD_PATH));
+        else
+            FileUtils.cleanDirectory(new File(UPLOAD_PATH));
+
         for (int i = 0; i < 20; i++) {
+            Image dummyTitleImage = createImage(dummyImageResource1);
+
+            Image dummyGalleryImage1 = createImage(dummyImageResource2);
+            Image dummyGalleryImage2 = createImage(dummyImageResource3);
+            Image dummyFloorPlanImage1 = createImage(dummyImageResource4);
+            Image dummyFloorPlanImage2 = createImage(dummyImageResource5);
+
+            List<Image> dummyGalleryImages = Arrays.asList(dummyGalleryImage1, dummyGalleryImage2);
+            List<Image> dummyFloorPlanImages = Arrays.asList(dummyFloorPlanImage1, dummyFloorPlanImage2);
+
             TextSection ts1 = new TextSection();
             ts1.setTitle("");
             ts1.setText("Rodinný dom Palisander patrí medzi nadštandardné dvojpodlažné šesťizbové rodinné domy. " +
@@ -47,31 +88,44 @@ public class DummyIndividualProjectRunner implements CommandLineRunner {
             ts3.setTitle("Technické riešenie");
             ts3.setText("Rodinný dom je navrhnutý z keramických tvárnic, ktoré možno zameniť za pórobetón. " +
                     "Stropy sú monolitické betónové. Vykurovanie je podlahové.");
-            Project commonProject = new CommonProject();
+            CommonProject commonProject = new CommonProject();
             commonProject.setCategory(Category.COMMON);
             commonProject.setTitle("Palisander " + i);
             commonProject.setPersons(6);
             commonProject.setBuiltUpArea(198.72);
-            ((CommonProject) commonProject).setTotalLivingArea(231.30);
+            commonProject.setTotalLivingArea(231.30);
             commonProject.setEnergeticClass("A0");
-            ((CommonProject) commonProject).setEntryOrientation(Arrays.asList("S", "J", "V"));
-            ((CommonProject) commonProject).setSelfHelpBuildPrice(145500.0);
-            ((CommonProject) commonProject).setOnKeyPrice(220000.0);
-            ((CommonProject) commonProject).setBasicProjectPrice(2550.0);
-            ((CommonProject) commonProject).setExtendedProjectPrice(2950.0);
-            ((CommonProject) commonProject).setRooms(6);
+            commonProject.setEntryOrientation(Arrays.asList("S", "J", "V"));
+            commonProject.setSelfHelpBuildPrice(145500.0);
+            commonProject.setOnKeyPrice(220000.0);
+            commonProject.setBasicProjectPrice(2550.0);
+            commonProject.setExtendedProjectPrice(2950.0);
+            commonProject.setRooms(6);
             commonProject.setUsableArea(131.72);
-            commonProject.setTitleImage(titleImage.getFile().getPath());
-            ((CommonProject) commonProject).setRoofPitch(1.5);
+            commonProject.setRoofPitch(1.5);
             commonProject.setHasGarage("Nie");
-            ((CommonProject) commonProject).setMinimumParcelWidth(20.0);
-            ((CommonProject) commonProject).setHeatingSource("tepelné čerpadlo");
-            ((CommonProject) commonProject).setHeatingType("podlahové vykurovanie");
-            ((CommonProject) commonProject).setFloorPlanImagePaths(Arrays.asList(titleImage.getFile().getPath(), titleImage.getFile().getPath()));
-            commonProject.setImagePaths(Arrays.asList(titleImage.getFile().getPath(), titleImage.getFile().getPath()));
+            commonProject.setMinimumParcelWidth(20.0);
+            commonProject.setHeatingSource("tepelné čerpadlo");
+            commonProject.setHeatingType("podlahové vykurovanie");
             commonProject.setTextSections(Arrays.asList(ts1, ts2, ts3));
-            projectService.save(commonProject);
+            commonProject.setTitleImage(dummyTitleImage);
+            commonProject.setGalleryImages(dummyGalleryImages);
+            commonProject.setFloorPlanImages(dummyFloorPlanImages);
+            commonProject = projectRepository.save(commonProject);
+            log.info("New project id: " + commonProject.getId());
         }
+    }
+
+    private Image createImage(Resource dummyImage) throws IOException {
+        Image image = new Image();
+        image.setTitle("test1");
+        image.setExtension("webp");
+        image = imageRepository.save(image);
+        File testFile = new File(UPLOAD_PATH + image.getId() + "." + image.getExtension());
+        try (InputStream inputStream = dummyImage.getInputStream()) {
+            FileUtils.copyInputStreamToFile(inputStream, testFile);
+        }
+        return image;
     }
 
 }
