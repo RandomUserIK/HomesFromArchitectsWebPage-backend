@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import sk.hfa.images.domain.Image;
 import sk.hfa.projects.domain.enums.Category;
+import sk.hfa.projects.util.ProjectUtils;
 import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
 
 import javax.persistence.*;
@@ -15,7 +16,7 @@ import java.util.List;
 @SuperBuilder
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class CommonProject extends Project {
+public class CommonProject extends IndividualProject {
 
     private Integer rooms;
 
@@ -54,7 +55,7 @@ public class CommonProject extends Project {
                 .title(request.getTitle())
                 .titleImage(titleImage)
                 .category(Category.COMMON)
-                .textSections(null)
+                .textSections(ProjectUtils.readTextSections(request.getTextSections()))
                 .galleryImages(galleryImages)
                 .hasGarage(request.getHasGarage())
                 .hasStorey(request.getHasStorey())

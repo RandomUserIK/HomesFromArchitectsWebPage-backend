@@ -2,6 +2,7 @@ package sk.hfa.projects.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import sk.hfa.images.domain.Image;
@@ -18,10 +19,18 @@ import java.util.List;
 @Getter
 @Setter
 @SuperBuilder
+@NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 public class IndividualProject extends Project {
 
+    private Double builtUpArea;
+
+    private Double usableArea;
+
+    private String energeticClass;
+
+    private String hasGarage;
 
 
     public static Project build(IndividualProjectRequest request, Image titleImage, List<Image> galleryImages) {

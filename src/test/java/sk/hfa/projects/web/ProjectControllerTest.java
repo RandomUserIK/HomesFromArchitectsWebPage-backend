@@ -2,12 +2,12 @@ package sk.hfa.projects.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,23 +17,24 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-import sk.hfa.images.services.interfaces.IImageService;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.validation.BindException;
 import sk.hfa.projects.domain.CommonProject;
+import sk.hfa.projects.domain.IndividualProject;
 import sk.hfa.projects.domain.Project;
-import sk.hfa.projects.domain.TextSection;
 import sk.hfa.projects.domain.enums.Category;
 import sk.hfa.projects.domain.throwable.InvalidPageableRequestException;
 import sk.hfa.projects.domain.throwable.ProjectNotFoundException;
 import sk.hfa.projects.services.interfaces.IProjectService;
-import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
-import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 import sk.hfa.projects.web.domain.responsebodies.ProjectMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectPageMessageResource;
+import sk.hfa.projects.web.providers.ProjectControllerArgument;
+import sk.hfa.projects.web.providers.ProjectControllerArgumentsProvider_validRequest_200;
 import sk.hfa.util.Constants;
 import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
@@ -41,15 +42,14 @@ import sk.hfa.web.domain.responsebodies.MessageResource;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Slf4j
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc(addFilters = false)
@@ -62,35 +62,77 @@ class ProjectControllerTest {
     private static final String PROJECT_NOT_FOUND_MESSAGE = "Project not found on the given ID: [" + PROJECT_ID + "]";
 
     @Autowired
-    private WebApplicationContext wac;
+    private MockMvc mockMvc;
 
     @MockBean
     private IProjectService projectService;
 
-    @MockBean
-    private IImageService imageService;
-
-    private MockMvc mvc;
-
-    private ObjectMapper mapper;
-
-    // TODO: add tests for /individual and /interior_design endpoints
-
     @BeforeAll
     public void setup() {
         mapper = new ObjectMapper();
-        mvc = MockMvcBuilders
-                .webAppContextSetup(wac)
-                .apply(springSecurity())
-                .build();
+    }
+
+    private ObjectMapper mapper = new ObjectMapper();
+
+    @ParameterizedTest
+    @ArgumentsSource(ProjectControllerArgumentsProvider_validRequest_200.class)
+    void testCreateIndividualProject_validRequest_200(ProjectControllerArgument projectControllerArgument) throws Exception {
+        final MessageResource response = new ProjectMessageResource(projectControllerArgument.getProject());
+
+        when(projectService.save(any())).thenReturn(projectControllerArgument.getProject());
+
+        mockMvc.perform(projectControllerArgument.getRequestBuilder())
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().string(containsString(mapper.writeValueAsString(response))));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/interior_design", "/individual", "/common"})
+    void testCreateIndividualProject_missingAllMandatoryFields_400(String category) throws Exception {
+        mockMvc.perform(multipart(ENDPOINT + category))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof BindException));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/interior_design", "/individual", "/common"})
+    void testCreateIndividualProject_invalidCategory_400(String category) throws Exception {
+        mockMvc.perform(buildProjectRequestMock(multipart(ENDPOINT + category))
+                        .param("category", "INVALID"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof BindException));
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(ProjectControllerArgumentsProvider_validRequest_200.class)
+    void testUpdateIndividualProject_validRequest_200(ProjectControllerArgument projectControllerArgument) throws Exception {
+        final Project project = getIndividualProjectStub();
+        final MessageResource response = new ProjectMessageResource(project);
+
+        when(projectService.update(any())).thenReturn(project);
+        MockMultipartHttpServletRequestBuilder builder = projectControllerArgument.getRequestBuilder();
+        builder.with(request -> {
+            request.setMethod("PUT");
+            return request;
+        });
+
+        mockMvc.perform(builder.param("id", String.valueOf(PROJECT_ID)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(content().string(containsString(mapper.writeValueAsString(response))));
     }
 
     @Test
-    void testGetProjectWithValidId() throws Exception {
-        doReturn(getDummyProject()).when(projectService).findById(PROJECT_ID);
-        final MessageResource response = new ProjectMessageResource(getDummyProject());
+    void testGetProject_validRequest_200() throws Exception {
+        final MessageResource response = new ProjectMessageResource(getCommonProjectStub());
+        when(projectService.findById(PROJECT_ID)).thenReturn(getCommonProjectStub());
 
-        mvc.perform(get(ENDPOINT + "/" + PROJECT_ID)
+        mockMvc.perform(get(ENDPOINT + "/" + PROJECT_ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .with(csrf()))
                 .andDo(print())
@@ -101,17 +143,18 @@ class ProjectControllerTest {
     }
 
     @Test
-    void testGetProjectWithNullId() throws Exception {
+    void testGetProject_nullId_400() throws Exception {
         // In order to cover with test the initial check in findById method, we must use a concrete ID number.
         // Otherwise, the call to /api/projects/null will result in Bad Request.
-        doThrow(new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE)).when(projectService).findById(PROJECT_ID);
+        when(projectService.findById(PROJECT_ID)).thenThrow(new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE));
+
         final String response = getErrorMessageResourceAsStringWithoutTimestamp(
                 Constants.BAD_REQUEST_TITLE,
                 Constants.INVALID_IDENTIFIER_MESSAGE,
                 HttpStatus.BAD_REQUEST.value()
         );
 
-        mvc.perform(get(ENDPOINT + "/" + PROJECT_ID)
+        mockMvc.perform(get(ENDPOINT + "/" + PROJECT_ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .with(csrf()))
                 .andDo(print())
@@ -122,31 +165,32 @@ class ProjectControllerTest {
     }
 
     @Test
-    void testGetProjectWithInvalidId() throws Exception {
-        doThrow(new ProjectNotFoundException(PROJECT_NOT_FOUND_MESSAGE)).when(projectService).findById(PROJECT_ID);
+    void testGetProject_InvalidId_500() throws Exception {
+        when(projectService.findById(PROJECT_ID)).thenThrow(new ProjectNotFoundException(PROJECT_NOT_FOUND_MESSAGE));
+
         final String response = getErrorMessageResourceAsStringWithoutTimestamp(
-                Constants.INTERNAL_SERVER_ERROR_TITLE,
+                Constants.BAD_REQUEST_TITLE,
                 PROJECT_NOT_FOUND_MESSAGE,
-                HttpStatus.INTERNAL_SERVER_ERROR.value()
+                HttpStatus.BAD_REQUEST.value()
         );
 
-        mvc.perform(get(ENDPOINT + "/" + PROJECT_ID)
+        mockMvc.perform(get(ENDPOINT + "/" + PROJECT_ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .with(csrf()))
                 .andDo(print())
-                .andExpect(status().isInternalServerError())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(content().string(containsString(response)))
                 .andReturn();
     }
 
     @Test
-    void testDeleteProjectWithValidId() throws Exception {
+    void testDeleteProject_validId_200() throws Exception {
         doNothing().when(projectService).deleteById(PROJECT_ID);
-        doNothing().when(imageService).deleteImages(null);
+
         final MessageResource response = new DeleteEntityMessageResource("Project successfully deleted");
 
-        mvc.perform(delete(ENDPOINT + "/" + PROJECT_ID)
+        mockMvc.perform(delete(ENDPOINT + "/" + PROJECT_ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .with(csrf()))
                 .andDo(print())
@@ -157,16 +201,17 @@ class ProjectControllerTest {
     }
 
     @Test
-    void testDeleteProjectWithNullId() throws Exception {
-        doThrow(new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE)).when(projectService).deleteById(PROJECT_ID);
-        doNothing().when(imageService).deleteImages(null);
+    void testDeleteProject_nullId_400() throws Exception {
+        doThrow(new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE))
+                .when(projectService).deleteById(PROJECT_ID);
+
         final String response = getErrorMessageResourceAsStringWithoutTimestamp(
                 Constants.BAD_REQUEST_TITLE,
                 Constants.INVALID_IDENTIFIER_MESSAGE,
                 HttpStatus.BAD_REQUEST.value()
         );
 
-        mvc.perform(delete(ENDPOINT + "/" + PROJECT_ID)
+        mockMvc.perform(delete(ENDPOINT + "/" + PROJECT_ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .with(csrf()))
                 .andDo(print())
@@ -177,37 +222,32 @@ class ProjectControllerTest {
     }
 
     @Test
-    void testDeleteProjectWithInvalidId() throws Exception {
+    void testDeleteProject_invalidId_500() throws Exception {
         doThrow(new ProjectNotFoundException(PROJECT_NOT_FOUND_MESSAGE)).when(projectService).deleteById(PROJECT_ID);
-        doNothing().when(imageService).deleteImages(null);
+
         final String response = getErrorMessageResourceAsStringWithoutTimestamp(
-                Constants.INTERNAL_SERVER_ERROR_TITLE,
+                Constants.BAD_REQUEST_TITLE,
                 PROJECT_NOT_FOUND_MESSAGE,
-                HttpStatus.INTERNAL_SERVER_ERROR.value()
+                HttpStatus.BAD_REQUEST.value()
         );
 
-        mvc.perform(delete(ENDPOINT + "/" + PROJECT_ID)
+        mockMvc.perform(delete(ENDPOINT + "/" + PROJECT_ID)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .with(csrf()))
                 .andDo(print())
-                .andExpect(status().isInternalServerError())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(content().string(containsString(response)))
                 .andReturn();
     }
 
     @Test
-    @Disabled // TODO: fix mvc perform - mock request sent incorrectly
-    void testCreateProjectWithValidRequestBody() throws Exception {
-        final Project project = getDummyProject();
-        final ProjectRequest request = getDummyProjectRequest();
-        final MessageResource response = new ProjectMessageResource(project);
-        doReturn(project).when(projectService).save(request);
-        doNothing().when(imageService).deleteImage(null);
-        doNothing().when(imageService).deleteImages(null);
+    void testGetAllOnPageWith_validParameters_200() throws Exception {
+        final Page<Project> commonProjectPageStub = getCommonProjectPageStub();
+        final MessageResource response = ProjectPageMessageResource.build(commonProjectPageStub);
+        when(projectService.getAllOnPage(0, 1, new BooleanBuilder())).thenReturn(commonProjectPageStub);
 
-        mvc.perform(multipart(ENDPOINT + "/common")
-                        .content(mapper.writeValueAsString(request))
+        mockMvc.perform(get(ENDPOINT + "?page=0&size=1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .with(csrf()))
                 .andDo(print())
@@ -218,15 +258,13 @@ class ProjectControllerTest {
     }
 
     @Test
-    @Disabled // TODO: fix mvc perform - mock request sent incorrectly
-    void testCreateProjectWithInvalidTitle() throws Exception {
-        final ProjectRequest request = getDummyProjectRequest();
+    void testGetAllOnPage_invalidParameters_400() throws Exception {
         final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
-                "Validation failed. Invalid request body.", HttpStatus.BAD_REQUEST.value());
-        request.setTitle(RandomStringUtils.randomAlphabetic(51));
+                Constants.INVALID_PAGEABLE_MESSAGE, HttpStatus.BAD_REQUEST.value());
+        when(projectService.getAllOnPage(-1, 1, new BooleanBuilder()))
+                .thenThrow(new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE));
 
-        mvc.perform(multipart(ENDPOINT + "/common")
-                        .content(mapper.writeValueAsString(request))
+        mockMvc.perform(get(ENDPOINT + "?page=-1&size=1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .with(csrf()))
                 .andDo(print())
@@ -237,207 +275,12 @@ class ProjectControllerTest {
     }
 
     @Test
-    @Disabled // TODO: fix mvc perform - mock request sent incorrectly
-    void testCreateProjectWithInvalidCategory() throws Exception {
-        final ProjectRequest request = getDummyProjectRequest();
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
-                "Validation failed. Invalid request body.", HttpStatus.BAD_REQUEST.value());
-        request.setCategory(RandomStringUtils.randomAlphabetic(5));
+    void testGetAllOnPageAndQuery_validParameters_200() throws Exception {
+        final Page<Project> commonProjectPageStub = getCommonProjectPageStub();
+        final MessageResource response = ProjectPageMessageResource.build(commonProjectPageStub);
+        when(projectService.getAllOnPageAndQuery(0, new BooleanBuilder())).thenReturn(commonProjectPageStub);
 
-        mvc.perform(multipart(ENDPOINT + "/common")
-                        .content(mapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string(containsString(response)))
-                .andReturn();
-    }
-
-    @Test
-    @Disabled // TODO: fix mvc perform - mock request sent incorrectly
-    void testCreateProjectWithInvalidHasGarageValue() throws Exception {
-        final ProjectRequest request = getDummyProjectRequest();
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
-                "Validation failed. Invalid request body.", HttpStatus.BAD_REQUEST.value());
-        request.setHasGarage(RandomStringUtils.randomAlphabetic(5));
-
-        mvc.perform(multipart(ENDPOINT + "/common")
-                        .content(mapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string(containsString(response)))
-                .andReturn();
-    }
-
-    @Test
-    @Disabled // TODO: fix mvc perform - mock request sent incorrectly
-    void testCreateProjectWithInvalidPersonsValue() throws Exception {
-        final ProjectRequest request = getDummyProjectRequest();
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
-                "Validation failed. Invalid request body.", HttpStatus.BAD_REQUEST.value());
-        request.setPersons(150);
-
-        mvc.perform(multipart(ENDPOINT + "/common")
-                        .content(mapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string(containsString(response)))
-                .andReturn();
-    }
-
-    @Test
-    @Disabled // TODO: fix mvc perform - mock request sent incorrectly
-    void testCreateProjectWithNegativePersonsValue() throws Exception {
-        final ProjectRequest request = getDummyProjectRequest();
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
-                "Validation failed. Invalid request body.", HttpStatus.BAD_REQUEST.value());
-        request.setPersons(-150);
-
-        mvc.perform(multipart(ENDPOINT + "/common")
-                        .content(mapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string(containsString(response)))
-                .andReturn();
-    }
-
-    @Test
-    @Disabled // TODO: fix mvc perform - mock request sent incorrectly
-    void testCreateProjectWithInvalidBuiltUpAreaValue() throws Exception {
-        final ProjectRequest request = getDummyProjectRequest();
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
-                "Validation failed. Invalid request body.", HttpStatus.BAD_REQUEST.value());
-        request.setBuiltUpArea(9999999.0);
-
-        mvc.perform(multipart(ENDPOINT + "/common")
-                        .content(mapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string(containsString(response)))
-                .andReturn();
-    }
-
-    @Test
-    @Disabled // TODO: fix mvc perform - mock request sent incorrectly
-    void testCreateProjectWithNegativeBuiltUpAreaValue() throws Exception {
-        final ProjectRequest request = getDummyProjectRequest();
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
-                "Validation failed. Invalid request body.", HttpStatus.BAD_REQUEST.value());
-        request.setBuiltUpArea(-150.0);
-
-        mvc.perform(multipart(ENDPOINT + "/common")
-                        .content(mapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string(containsString(response)))
-                .andReturn();
-    }
-
-    @Test
-    @Disabled // TODO: fix mvc perform - mock request sent incorrectly
-    void testCreateProjectWithInvalidUsableAreaValue() throws Exception {
-        final ProjectRequest request = getDummyProjectRequest();
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
-                "Validation failed. Invalid request body.", HttpStatus.BAD_REQUEST.value());
-        request.setUsableArea(9999999.0);
-
-        mvc.perform(multipart(ENDPOINT + "/common")
-                        .content(mapper.writeValueAsString(request))
-                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                // .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string(containsString(response)))
-                .andReturn();
-    }
-
-    @Test
-    @Disabled // TODO: fix mvc perform - mock request sent incorrectly
-    void testCreateProjectWithNegativeUsableAreaValue() throws Exception {
-        final ProjectRequest request = getDummyProjectRequest();
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
-                "Validation failed. Invalid request body.", HttpStatus.BAD_REQUEST.value());
-        request.setUsableArea(-150.0);
-
-        mvc.perform(multipart(ENDPOINT + "/common")
-                        .content(mapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string(containsString(response)))
-                .andReturn();
-    }
-
-    @Test
-    @Disabled // TODO: fix mvc perform - mock request sent incorrectly
-    void testCreateProjectWithInvalidTextSectionTitle() throws Exception {
-        final TextSection textSection = new TextSection();
-        final ProjectRequest request = getDummyProjectRequest();
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
-                "Validation failed. Invalid request body.", HttpStatus.BAD_REQUEST.value());
-        textSection.setTitle(RandomStringUtils.randomAlphanumeric(101));
-        //todo
-//        request.getTextSections().add(textSection);
-
-        mvc.perform(multipart(ENDPOINT + "/common")
-                        .content(mapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string(containsString(response)))
-                .andReturn();
-    }
-
-    @Test
-    @Disabled // TODO: fix mvc perform - mock request sent incorrectly
-    void testCreateProjectWithInvalidTextSectionText() throws Exception {
-        final TextSection textSection = new TextSection();
-        final ProjectRequest request = getDummyProjectRequest();
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
-                "Validation failed. Invalid request body.", HttpStatus.BAD_REQUEST.value());
-        textSection.setText(RandomStringUtils.randomAlphanumeric(1000));
-        //todo
-//        request.getTextSections().add(textSection);
-
-        mvc.perform(multipart(ENDPOINT + "/common")
-                        .content(mapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string(containsString(response)))
-                .andReturn();
-    }
-
-    @Test
-    void testGetAllOnPageWithValidParameters() throws Exception {
-        final MessageResource response = ProjectPageMessageResource.build(getDummyPage());
-        doReturn(getDummyPage()).when(projectService).getAllOnPage(0, 1, new BooleanBuilder());
-
-        mvc.perform(get(ENDPOINT + "?page=0&size=1")
+        mockMvc.perform(get(ENDPOINT + "/filter?page=0")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .with(csrf()))
                 .andDo(print())
@@ -448,71 +291,63 @@ class ProjectControllerTest {
     }
 
     @Test
-    void testGetAllOnPageWithInvalidParameters() throws Exception {
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.INTERNAL_SERVER_ERROR_TITLE,
-                Constants.INVALID_PAGEABLE_MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR.value());
-        doThrow(new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE))
-                .when(projectService).getAllOnPage(-1, 1, new BooleanBuilder());
+    void testGetAllOnPageAndQuery_invalidParameters_400() throws Exception {
+        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
+                Constants.INVALID_PAGEABLE_MESSAGE, HttpStatus.BAD_REQUEST.value());
+        when(projectService.getAllOnPageAndQuery(1, new BooleanBuilder()))
+                .thenThrow(new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE));
 
-        mvc.perform(get(ENDPOINT + "?page=-1&size=1")
+
+        mockMvc.perform(get(ENDPOINT + "/filter?page=1")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .with(csrf()))
                 .andDo(print())
-                .andExpect(status().isInternalServerError())
+                .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(content().string(containsString(response)))
                 .andReturn();
     }
 
-    @Test
-    void testGetAllOnPageAndQueryWithValidParameters() throws Exception {
-        final MessageResource response = ProjectPageMessageResource.build(getDummyPage());
-        doReturn(getDummyPage()).when(projectService).getAllOnPageAndQuery(0, new BooleanBuilder());
-
-        mvc.perform(get(ENDPOINT + "/filter?page=0")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string(containsString(mapper.writeValueAsString(response))))
-                .andReturn();
+    private Project getCommonProjectStub() {
+        Project commonProjectStub = new CommonProject();
+        commonProjectStub.setCategory(Category.COMMON);
+        commonProjectStub.setId(PROJECT_ID);
+        return commonProjectStub;
     }
 
-    @Test
-    void testGetAllOnPageAndQueryWithInvalidParameters() throws Exception {
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.INTERNAL_SERVER_ERROR_TITLE,
-                Constants.INVALID_PAGEABLE_MESSAGE, HttpStatus.INTERNAL_SERVER_ERROR.value());
-        doThrow(new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE))
-                .when(projectService).getAllOnPageAndQuery(-1, new BooleanBuilder());
-
-        mvc.perform(get(ENDPOINT + "/filter?page=-1")
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(content().string(containsString(response)))
-                .andReturn();
+    private Project getIndividualProjectStub() {
+        Project projectStub = new IndividualProject();
+        projectStub.setCategory(Category.INDIVIDUAL);
+        projectStub.setId(PROJECT_ID);
+        return projectStub;
     }
 
-    private Project getDummyProject() {
-        Project commonProject = new CommonProject();
-        commonProject.setCategory(Category.COMMON);
-        commonProject.setId(PROJECT_ID);
-        return commonProject;
+    private MockMultipartFile getMultipartFileMock(String name) {
+        return new MockMultipartFile(
+                name,
+                "hello.jpeg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "Hello, World!".getBytes()
+        );
     }
 
-    private ProjectRequest getDummyProjectRequest() {
-        ProjectRequest request = new CommonProjectRequest();
-        request.setId(PROJECT_ID);
-        return request;
+    private MockHttpServletRequestBuilder buildProjectRequestMock(MockMultipartHttpServletRequestBuilder builder) {
+        return builder
+                .file(getMultipartFileMock("titleImageFile"))
+                .file(getMultipartFileMock("galleryImageFiles"))
+                .file(getMultipartFileMock("galleryImageFiles"))
+                .param("title", "Test")
+                .param("builtUpArea", "22.01")
+                .param("usableArea", "50.55")
+                .param("persons", "4")
+                .param("energeticClass", "A0")
+                .param("hasGarage", "Áno");
     }
 
-    private Page<Project> getDummyPage() {
-        return new PageImpl<>(Collections.singletonList(getDummyProject()), PageRequest.of(0, 1), 1);
+    private Page<Project> getCommonProjectPageStub() {
+        return new PageImpl<>(Collections.singletonList(getCommonProjectStub()), PageRequest.of(0, 1), 1);
     }
-
+//
     private String getErrorMessageResourceAsStringWithoutTimestamp(String title, String message, int statusCode) {
         // We must omit the timestamp property, since this number is generated each time the build method is called.
         // If we were to include the timestamp property, all such tests would fail due to non-equal timestamp value.

@@ -14,23 +14,12 @@ import java.util.Objects;
 
 public class ProjectUtils {
 
-    private static final String INVALID_CATEGORY_MESSAGE = "Invalid category provided";
-
     private ProjectUtils() {
     }
 
     public static void validateProjectRequest(ProjectRequest request) {
         if (Objects.isNull(request))
             throw new InvalidProjectRequestException("Invalid request body");
-    }
-
-    public static Category validateAndGetCategory(ProjectRequest request) {
-        Category projectCategory = getCategory(request.getCategory());
-
-        if (Objects.isNull(projectCategory))
-            throw new IllegalArgumentException(INVALID_CATEGORY_MESSAGE);
-
-        return projectCategory;
     }
 
     public static List<TextSection> readTextSections(String textSectionsJson) {
@@ -43,15 +32,14 @@ public class ProjectUtils {
         }
     }
 
-    private static Category getCategory(String category) {
-        if (Category.COMMON.name().equals(category))
+    public static Category getCategory(String category) {
+        if (Category.COMMON.name().equals(category)) {
             return Category.COMMON;
-        else if (Category.INDIVIDUAL.name().equals(category))
+        } else if (Category.INDIVIDUAL.name().equals(category)) {
             return Category.INDIVIDUAL;
-        else if (Category.INTERIOR_DESIGN.name().equals(category))
+        } else {
             return Category.INTERIOR_DESIGN;
-
-        return null;
+        }
     }
 
 }

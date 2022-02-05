@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import sk.hfa.projects.domain.Project;
-import sk.hfa.projects.domain.TextSection;
 import sk.hfa.projects.services.interfaces.IProjectService;
 import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.IndividualProjectRequest;
@@ -21,7 +20,6 @@ import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Slf4j
 @RestController

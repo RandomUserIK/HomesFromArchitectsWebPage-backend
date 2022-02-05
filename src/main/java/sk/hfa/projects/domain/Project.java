@@ -29,26 +29,17 @@ public abstract class Project {
     @Enumerated
     private Category category;
 
-    // TODO how is this field set
-    private String description;
+    private Integer persons;
 
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<TextSection> textSections;
 
+    private String description;
+
     @OneToMany(cascade = CascadeType.REMOVE)
     private List<Image> galleryImages;
-
-    private String hasGarage;
-
-    private Integer persons;
-
-    private String energeticClass;
-
-    private Double builtUpArea;
-
-    private Double usableArea;
 
     @Override
     public boolean equals(Object other) {
