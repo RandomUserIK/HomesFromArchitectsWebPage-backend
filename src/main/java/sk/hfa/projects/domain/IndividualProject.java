@@ -1,9 +1,6 @@
 package sk.hfa.projects.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import sk.hfa.images.domain.Image;
 import sk.hfa.projects.domain.enums.Category;

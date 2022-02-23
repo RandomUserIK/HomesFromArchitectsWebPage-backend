@@ -23,6 +23,9 @@ public class ProjectUtils {
     }
 
     public static List<TextSection> readTextSections(String textSectionsJson) {
+        if (Objects.isNull(textSectionsJson)) {
+            return null;
+        }
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             TextSection[] textSections = objectMapper.readValue(textSectionsJson, TextSection[].class);

@@ -25,6 +25,7 @@ public class IndividualProjectRequest extends ProjectRequest {
     private String energeticClass;
 
     @Pattern(regexp = "^(Áno|Nie)$",
+            flags = Pattern.Flag.CANON_EQ,
             message = "Project garage question answer must be Áno or Nie")
     private String hasGarage;
 
