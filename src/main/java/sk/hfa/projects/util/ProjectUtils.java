@@ -9,6 +9,7 @@ import sk.hfa.projects.domain.throwable.TextSectionsProcessingException;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -24,7 +25,7 @@ public class ProjectUtils {
 
     public static List<TextSection> readTextSections(String textSectionsJson) {
         if (Objects.isNull(textSectionsJson)) {
-            return null;
+            return Collections.emptyList();
         }
         try {
             ObjectMapper objectMapper = new ObjectMapper();
