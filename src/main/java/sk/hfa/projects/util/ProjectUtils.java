@@ -18,11 +18,6 @@ public class ProjectUtils {
     private ProjectUtils() {
     }
 
-    public static void validateProjectRequest(ProjectRequest request) {
-        if (Objects.isNull(request))
-            throw new InvalidProjectRequestException("Invalid request body");
-    }
-
     public static List<TextSection> readTextSections(String textSectionsJson) {
         if (Objects.isNull(textSectionsJson)) {
             return Collections.emptyList();

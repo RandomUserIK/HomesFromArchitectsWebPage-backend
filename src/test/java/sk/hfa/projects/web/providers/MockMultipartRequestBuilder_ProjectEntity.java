@@ -7,7 +7,7 @@ import sk.hfa.projects.domain.Project;
 
 @Getter
 @AllArgsConstructor
-public class ProjectControllerArgument {
+public class MockMultipartRequestBuilder_ProjectEntity {
     private Project project;
     private MockMultipartHttpServletRequestBuilder requestBuilder;
 }

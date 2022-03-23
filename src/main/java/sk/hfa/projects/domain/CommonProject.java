@@ -43,7 +43,7 @@ public class CommonProject extends IndividualProject {
 
     private Double minimumParcelWidth;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Image> floorPlanImages;
 
     public static Project build(CommonProjectRequest request,

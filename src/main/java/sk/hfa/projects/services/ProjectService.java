@@ -1,6 +1,7 @@
 package sk.hfa.projects.services;
 
 import com.querydsl.core.types.Predicate;
+import lombok.NonNull;
 import org.hibernate.Hibernate;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -25,9 +26,9 @@ import sk.hfa.projects.web.domain.requestbodies.InteriorProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 import sk.hfa.util.Constants;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class ProjectService implements IProjectService {
@@ -50,28 +51,36 @@ public class ProjectService implements IProjectService {
      */
     @Override
     @Transactional
-    public Project save(ProjectRequest request) {
-        ProjectUtils.validateProjectRequest(request);
+    public Project save(@NonNull ProjectRequest request) {
         Category projectCategory = ProjectUtils.getCategory(request.getCategory());
-        Project project = build(request, projectCategory);
+        Image titleImage = imageService.save(request.getTitleImageFile());
+        List<Image> galleryImages = imageService.save(request.getGalleryImageFiles());
+        Project project;
+
+        if (Category.COMMON.equals(projectCategory)) {
+            List<Image> floorPlanImages = imageService.save(((CommonProjectRequest) request).getFloorPlanImageFiles());
+            project = CommonProject.build((CommonProjectRequest) request, titleImage, galleryImages, floorPlanImages);
+        } else if (Category.INDIVIDUAL.equals(projectCategory)) {
+            project = IndividualProject.build((IndividualProjectRequest) request, titleImage, galleryImages);
+        } else {
+            project = InteriorDesignProject.build((InteriorProjectRequest) request, titleImage, galleryImages);
+        }
         return projectRepository.save(project);
     }
 
     @Override
     @Transactional
-    public Project update(ProjectRequest request) {
-        ProjectUtils.validateProjectRequest(request);
-        Category projectCategory = ProjectUtils.getCategory(request.getCategory());
+    public Project update(@NonNull ProjectRequest request) {
         Project oldProject = findById(request.getId());
         deleteImages(oldProject);
-        return projectRepository.save(build(request, projectCategory));
+        return save(request);
     }
 
     @Override
     public Project findById(Long id) {
-        if (Objects.isNull(id))
+        if (Objects.isNull(id)) {
             throw new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE);
-
+        }
         return projectRepository.findById(id).orElseThrow(() ->
                 new ProjectNotFoundException("Project not found on the given ID: [" + id + "]"));
     }
@@ -79,12 +88,9 @@ public class ProjectService implements IProjectService {
     @Override
     @Transactional
     public void deleteById(Long id) {
-        Optional<Project> project = projectRepository.findById(id);
-
-        if (!project.isPresent())
-            throw new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE);
-
-        deleteImages(project.get());
+        Project project = projectRepository.findById(id).orElseThrow(() ->
+                new ProjectNotFoundException("Project not found on the given ID: [" + id + "]"));
+        deleteImages(project);
         projectRepository.deleteById(id);
     }
 
@@ -93,9 +99,9 @@ public class ProjectService implements IProjectService {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Project> result = projectRepository.findAll(predicate, pageRequest);
 
-        if (page > result.getTotalPages())
+        if (page > result.getTotalPages()) {
             throw new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE);
-
+        }
         return result;
     }
 
@@ -104,27 +110,13 @@ public class ProjectService implements IProjectService {
         PageRequest pageRequest = PageRequest.of(page, Constants.ELEMENTS_PER_PAGE);
         Page<Project> result = projectRepository.findAll(predicate, pageRequest);
 
-        if (page > result.getTotalPages())
+        if (page > result.getTotalPages()) {
             throw new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE);
-
+        }
         return result;
     }
 
-    private Project build(ProjectRequest request, Category projectCategory) {
-        Image titleImage = imageService.save(request.getTitleImageFile());
-        List<Image> galleryImages = imageService.save(request.getGalleryImageFiles());
-
-        if (Category.COMMON.equals(projectCategory)) {
-            List<Image> floorPlanImages = imageService.save(((CommonProjectRequest) request).getFloorPlanImageFiles());
-            return CommonProject.build((CommonProjectRequest) request, titleImage, galleryImages, floorPlanImages);
-        } else if (Category.INDIVIDUAL.equals(projectCategory)) {
-            return IndividualProject.build((IndividualProjectRequest) request, titleImage, galleryImages);
-        } else {
-            return InteriorDesignProject.build((InteriorProjectRequest) request, titleImage, galleryImages);
-        }
-    }
-
-    private void deleteImages(Project project) {
+    private void deleteImages(@NotNull Project project) {
         imageService.deleteImage(project.getTitleImage());
         imageService.deleteImages(project.getGalleryImages());
         if (Category.COMMON.equals(project.getCategory())) {

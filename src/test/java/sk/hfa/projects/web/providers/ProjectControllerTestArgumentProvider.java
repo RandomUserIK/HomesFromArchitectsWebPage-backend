@@ -15,7 +15,7 @@ import sk.hfa.projects.domain.enums.Category;
 
 import java.util.stream.Stream;
 
-public class ProjectControllerArgumentsProvider_validRequest_200 implements ArgumentsProvider {
+public class ProjectControllerTestArgumentProvider implements ArgumentsProvider {
 
     private static final Long PROJECT_ID = 1L;
     private static final String COMMON_PROJECT_ENDPOINT = "/common";
@@ -78,41 +78,41 @@ public class ProjectControllerArgumentsProvider_validRequest_200 implements Argu
         );
     }
 
-    private ProjectControllerArgument getInteriorDesignProjectArgument() {
+    private MockMultipartRequestBuilder_ProjectEntity getInteriorDesignProjectArgument() {
         Project projectStub = new InteriorDesignProject();
         MockMultipartHttpServletRequestBuilder builder =
                 MockMvcRequestBuilders.multipart(API_ENDPOINT + INTERIOR_DESIGN_PROJECT_ENDPOINT);
         buildInteriorDesignProjectRequestMock(builder);
         builder.param("category", "INTERIOR_DESIGN");
-        ProjectControllerArgument projectControllerArgument =
-                new ProjectControllerArgument(projectStub, builder);
+        MockMultipartRequestBuilder_ProjectEntity mockMultipartRequestBuilderProjectEntity =
+                new MockMultipartRequestBuilder_ProjectEntity(projectStub, builder);
         projectStub.setCategory(Category.INTERIOR_DESIGN);
         projectStub.setId(PROJECT_ID);
-        return projectControllerArgument;
+        return mockMultipartRequestBuilderProjectEntity;
     }
 
-    private ProjectControllerArgument getIndividualProjectArgument() {
+    private MockMultipartRequestBuilder_ProjectEntity getIndividualProjectArgument() {
         Project projectStub = new IndividualProject();
         MockMultipartHttpServletRequestBuilder builder =
                 MockMvcRequestBuilders.multipart(API_ENDPOINT + INDIVIDUAL_PROJECT_ENDPOINT);
         buildIndividualProjectRequestMock(builder);
         builder.param("category", "INDIVIDUAL");
-        ProjectControllerArgument projectControllerArgument = new ProjectControllerArgument(projectStub, builder);
+        MockMultipartRequestBuilder_ProjectEntity mockMultipartRequestBuilderProjectEntity = new MockMultipartRequestBuilder_ProjectEntity(projectStub, builder);
         projectStub.setCategory(Category.INDIVIDUAL);
         projectStub.setId(PROJECT_ID);
-        return projectControllerArgument;
+        return mockMultipartRequestBuilderProjectEntity;
     }
 
-    private ProjectControllerArgument getCommonProjectArgument() {
+    private MockMultipartRequestBuilder_ProjectEntity getCommonProjectArgument() {
         Project projectStub = new CommonProject();
         MockMultipartHttpServletRequestBuilder builder =
                 MockMvcRequestBuilders.multipart(API_ENDPOINT + COMMON_PROJECT_ENDPOINT);
         buildCommonProjectRequestMock(builder);
         builder.param("category", "COMMON");
-        ProjectControllerArgument projectControllerArgument = new ProjectControllerArgument(projectStub, builder);
+        MockMultipartRequestBuilder_ProjectEntity mockMultipartRequestBuilderProjectEntity = new MockMultipartRequestBuilder_ProjectEntity(projectStub, builder);
         projectStub.setCategory(Category.COMMON);
         projectStub.setId(PROJECT_ID);
-        return projectControllerArgument;
+        return mockMultipartRequestBuilderProjectEntity;
     }
 
 }

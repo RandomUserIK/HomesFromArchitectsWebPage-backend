@@ -33,8 +33,8 @@ import sk.hfa.projects.domain.throwable.ProjectNotFoundException;
 import sk.hfa.projects.services.interfaces.IProjectService;
 import sk.hfa.projects.web.domain.responsebodies.ProjectMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectPageMessageResource;
-import sk.hfa.projects.web.providers.ProjectControllerArgument;
-import sk.hfa.projects.web.providers.ProjectControllerArgumentsProvider_validRequest_200;
+import sk.hfa.projects.web.providers.MockMultipartRequestBuilder_ProjectEntity;
+import sk.hfa.projects.web.providers.ProjectControllerTestArgumentProvider;
 import sk.hfa.util.Constants;
 import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
@@ -75,13 +75,13 @@ class ProjectControllerTest {
     private ObjectMapper mapper = new ObjectMapper();
 
     @ParameterizedTest
-    @ArgumentsSource(ProjectControllerArgumentsProvider_validRequest_200.class)
-    void testCreateIndividualProject_validRequest_200(ProjectControllerArgument projectControllerArgument) throws Exception {
-        final MessageResource response = new ProjectMessageResource(projectControllerArgument.getProject());
+    @ArgumentsSource(ProjectControllerTestArgumentProvider.class)
+    void testCreateIndividualProject_validRequest_200(MockMultipartRequestBuilder_ProjectEntity mockMultipartRequestBuilderProjectEntity) throws Exception {
+        final MessageResource response = new ProjectMessageResource(mockMultipartRequestBuilderProjectEntity.getProject());
 
-        when(projectService.save(any())).thenReturn(projectControllerArgument.getProject());
+        when(projectService.save(any())).thenReturn(mockMultipartRequestBuilderProjectEntity.getProject());
 
-        mockMvc.perform(projectControllerArgument.getRequestBuilder())
+        mockMvc.perform(mockMultipartRequestBuilderProjectEntity.getRequestBuilder())
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -108,13 +108,13 @@ class ProjectControllerTest {
     }
 
     @ParameterizedTest
-    @ArgumentsSource(ProjectControllerArgumentsProvider_validRequest_200.class)
-    void testUpdateIndividualProject_validRequest_200(ProjectControllerArgument projectControllerArgument) throws Exception {
+    @ArgumentsSource(ProjectControllerTestArgumentProvider.class)
+    void testUpdateIndividualProject_validRequest_200(MockMultipartRequestBuilder_ProjectEntity mockMultipartRequestBuilderProjectEntity) throws Exception {
         final Project project = getIndividualProjectStub();
         final MessageResource response = new ProjectMessageResource(project);
 
         when(projectService.update(any())).thenReturn(project);
-        MockMultipartHttpServletRequestBuilder builder = projectControllerArgument.getRequestBuilder();
+        MockMultipartHttpServletRequestBuilder builder = mockMultipartRequestBuilderProjectEntity.getRequestBuilder();
         builder.with(request -> {
             request.setMethod("PUT");
             return request;
