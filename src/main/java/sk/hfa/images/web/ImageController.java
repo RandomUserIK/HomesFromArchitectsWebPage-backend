@@ -16,10 +16,10 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @GetMapping(path = "/{imagePath}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public byte[] getImage(@PathVariable Long imagePath) {
-        log.info("Fetching the image: [" + imagePath + "].");
-        return imageService.getImage(imagePath);
+    @GetMapping(path = "/{imageId}", produces = MediaType.IMAGE_JPEG_VALUE)
+    public byte[] getImage(@PathVariable Long imageId) {
+        log.info("Fetching the image: [" + imageId + "].");
+        return imageService.getImage(imageId);
     }
 
 }

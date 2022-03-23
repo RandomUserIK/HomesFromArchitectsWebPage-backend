@@ -19,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
@@ -31,6 +30,7 @@ import sk.hfa.projects.domain.enums.Category;
 import sk.hfa.projects.domain.throwable.InvalidPageableRequestException;
 import sk.hfa.projects.domain.throwable.ProjectNotFoundException;
 import sk.hfa.projects.services.interfaces.IProjectService;
+import sk.hfa.projects.utils.MessageResourceUtils;
 import sk.hfa.projects.web.domain.responsebodies.ProjectMessageResource;
 import sk.hfa.projects.web.domain.responsebodies.ProjectPageMessageResource;
 import sk.hfa.projects.web.providers.MockMultipartRequestBuilder_ProjectEntity;
@@ -54,7 +54,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @AutoConfigureMockMvc(addFilters = false)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@TestPropertySource("classpath:application-test.properties")
 class ProjectControllerTest {
 
     private static final String ENDPOINT = "/api/projects";
@@ -148,7 +147,7 @@ class ProjectControllerTest {
         // Otherwise, the call to /api/projects/null will result in Bad Request.
         when(projectService.findById(PROJECT_ID)).thenThrow(new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE));
 
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(
+        final String response = MessageResourceUtils.getErrorAsStringWithoutTimestamp(
                 Constants.BAD_REQUEST_TITLE,
                 Constants.INVALID_IDENTIFIER_MESSAGE,
                 HttpStatus.BAD_REQUEST.value()
@@ -168,7 +167,7 @@ class ProjectControllerTest {
     void testGetProject_InvalidId_500() throws Exception {
         when(projectService.findById(PROJECT_ID)).thenThrow(new ProjectNotFoundException(PROJECT_NOT_FOUND_MESSAGE));
 
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(
+        final String response = MessageResourceUtils.getErrorAsStringWithoutTimestamp(
                 Constants.BAD_REQUEST_TITLE,
                 PROJECT_NOT_FOUND_MESSAGE,
                 HttpStatus.BAD_REQUEST.value()
@@ -205,7 +204,7 @@ class ProjectControllerTest {
         doThrow(new IllegalArgumentException(Constants.INVALID_IDENTIFIER_MESSAGE))
                 .when(projectService).deleteById(PROJECT_ID);
 
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(
+        final String response = MessageResourceUtils.getErrorAsStringWithoutTimestamp(
                 Constants.BAD_REQUEST_TITLE,
                 Constants.INVALID_IDENTIFIER_MESSAGE,
                 HttpStatus.BAD_REQUEST.value()
@@ -225,7 +224,7 @@ class ProjectControllerTest {
     void testDeleteProject_invalidId_500() throws Exception {
         doThrow(new ProjectNotFoundException(PROJECT_NOT_FOUND_MESSAGE)).when(projectService).deleteById(PROJECT_ID);
 
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(
+        final String response = MessageResourceUtils.getErrorAsStringWithoutTimestamp(
                 Constants.BAD_REQUEST_TITLE,
                 PROJECT_NOT_FOUND_MESSAGE,
                 HttpStatus.BAD_REQUEST.value()
@@ -259,7 +258,7 @@ class ProjectControllerTest {
 
     @Test
     void testGetAllOnPage_invalidParameters_400() throws Exception {
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
+        final String response = MessageResourceUtils.getErrorAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
                 Constants.INVALID_PAGEABLE_MESSAGE, HttpStatus.BAD_REQUEST.value());
         when(projectService.getAllOnPage(-1, 1, new BooleanBuilder()))
                 .thenThrow(new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE));
@@ -292,7 +291,7 @@ class ProjectControllerTest {
 
     @Test
     void testGetAllOnPageAndQuery_invalidParameters_400() throws Exception {
-        final String response = getErrorMessageResourceAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
+        final String response = MessageResourceUtils.getErrorAsStringWithoutTimestamp(Constants.BAD_REQUEST_TITLE,
                 Constants.INVALID_PAGEABLE_MESSAGE, HttpStatus.BAD_REQUEST.value());
         when(projectService.getAllOnPageAndQuery(1, new BooleanBuilder()))
                 .thenThrow(new InvalidPageableRequestException(Constants.INVALID_PAGEABLE_MESSAGE));
@@ -347,12 +346,5 @@ class ProjectControllerTest {
     private Page<Project> getCommonProjectPageStub() {
         return new PageImpl<>(Collections.singletonList(getCommonProjectStub()), PageRequest.of(0, 1), 1);
     }
-//
-    private String getErrorMessageResourceAsStringWithoutTimestamp(String title, String message, int statusCode) {
-        // We must omit the timestamp property, since this number is generated each time the build method is called.
-        // If we were to include the timestamp property, all such tests would fail due to non-equal timestamp value.
-        return "\"status\":" + statusCode + ",\"title\":\"" + title + "\",\"message\":\"" + message;
-    }
-
 
 }
