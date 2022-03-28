@@ -9,12 +9,11 @@ import sk.hfa.projects.domain.throwable.TextSectionsProcessingException;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public class ProjectUtils {
-
-    private static final String INVALID_CATEGORY_MESSAGE = "Invalid category provided";
 
     private ProjectUtils() {
     }
@@ -24,16 +23,10 @@ public class ProjectUtils {
             throw new InvalidProjectRequestException("Invalid request body");
     }
 
-    public static Category validateAndGetCategory(ProjectRequest request) {
-        Category projectCategory = getCategory(request.getCategory());
-
-        if (Objects.isNull(projectCategory))
-            throw new IllegalArgumentException(INVALID_CATEGORY_MESSAGE);
-
-        return projectCategory;
-    }
-
     public static List<TextSection> readTextSections(String textSectionsJson) {
+        if (Objects.isNull(textSectionsJson)) {
+            return Collections.emptyList();
+        }
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             TextSection[] textSections = objectMapper.readValue(textSectionsJson, TextSection[].class);
@@ -43,15 +36,14 @@ public class ProjectUtils {
         }
     }
 
-    private static Category getCategory(String category) {
-        if (Category.COMMON.name().equals(category))
+    public static Category getCategory(String category) {
+        if (Category.COMMON.name().equals(category)) {
             return Category.COMMON;
-        else if (Category.INDIVIDUAL.name().equals(category))
+        } else if (Category.INDIVIDUAL.name().equals(category)) {
             return Category.INDIVIDUAL;
-        else if (Category.INTERIOR_DESIGN.name().equals(category))
+        } else {
             return Category.INTERIOR_DESIGN;
-
-        return null;
+        }
     }
 
 }

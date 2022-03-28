@@ -4,6 +4,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import sk.hfa.images.domain.Image;
 import sk.hfa.projects.domain.enums.Category;
+import sk.hfa.projects.util.ProjectUtils;
 import sk.hfa.projects.web.domain.requestbodies.InteriorProjectRequest;
 
 import javax.persistence.Entity;
@@ -26,10 +27,9 @@ public class InteriorDesignProject extends Project {
                 .title(request.getTitle())
                 .titleImage(titleImage)
                 .category(Category.INTERIOR_DESIGN)
-                .textSections(null)
+                .textSections(ProjectUtils.readTextSections(request.getTextSections()))
                 .galleryImages(galleryImages)
                 .persons(request.getPersons())
-                .usableArea(request.getUsableArea())
                 .build();
     }
 

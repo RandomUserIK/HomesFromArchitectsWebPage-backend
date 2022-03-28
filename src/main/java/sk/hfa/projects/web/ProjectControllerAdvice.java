@@ -47,13 +47,13 @@ public class ProjectControllerAdvice {
     @ExceptionHandler
     public ResponseEntity<MessageResource> handleInvalidPageableRequestException(InvalidPageableRequestException ex) {
         log.error(ex.getMessage(), ex);
-        return buildInternalServerErrorMessageResource(ex.getMessage());
+        return buildBadRequestMessageResource(ex.getMessage());
     }
 
     @ExceptionHandler
     public ResponseEntity<MessageResource> handleProjectNotFoundException(ProjectNotFoundException ex) {
         log.error(ex.getMessage(), ex);
-        return buildInternalServerErrorMessageResource(ex.getMessage());
+        return buildBadRequestMessageResource(ex.getMessage());
     }
 
     @ExceptionHandler

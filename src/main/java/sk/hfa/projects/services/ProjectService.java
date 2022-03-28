@@ -52,7 +52,7 @@ public class ProjectService implements IProjectService {
     @Transactional
     public Project save(ProjectRequest request) {
         ProjectUtils.validateProjectRequest(request);
-        Category projectCategory = ProjectUtils.validateAndGetCategory(request);
+        Category projectCategory = ProjectUtils.getCategory(request.getCategory());
         Project project = build(request, projectCategory);
         return projectRepository.save(project);
     }
@@ -61,7 +61,7 @@ public class ProjectService implements IProjectService {
     @Transactional
     public Project update(ProjectRequest request) {
         ProjectUtils.validateProjectRequest(request);
-        Category projectCategory = ProjectUtils.validateAndGetCategory(request);
+        Category projectCategory = ProjectUtils.getCategory(request.getCategory());
         Project oldProject = findById(request.getId());
         deleteImages(oldProject);
         return projectRepository.save(build(request, projectCategory));
