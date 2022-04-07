@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
+@Profile("dev")
 @Component
 @Profile("dev")
 public class DummyIndividualProjectRunner implements CommandLineRunner {

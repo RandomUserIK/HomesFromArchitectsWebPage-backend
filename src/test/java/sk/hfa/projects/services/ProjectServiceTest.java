@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -139,7 +140,8 @@ class ProjectServiceTest {
                 25);
 
         when(projectRepository.findAll(any(Predicate.class), any(Pageable.class))).thenReturn(page);
-        projectService.getAllOnPage(0, Constants.ELEMENTS_PER_PAGE, predicate);
+        Page<Project> projects = projectService.getAllOnPage(0, Constants.ELEMENTS_PER_PAGE, predicate);
+        assertNotNull(projects);
     }
 
     @Test
@@ -165,7 +167,8 @@ class ProjectServiceTest {
                 25);
 
         when(projectRepository.findAll(any(Predicate.class), any(Pageable.class))).thenReturn(page);
-        projectService.getAllOnPageAndQuery(0, predicate);
+        Page<Project> projects = projectService.getAllOnPageAndQuery(0, predicate);
+        assertNotNull(projects);
     }
 
 }
