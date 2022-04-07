@@ -24,7 +24,7 @@ public abstract class Project {
 
     private String title;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Image titleImage;
 
     @Enumerated
@@ -39,7 +39,7 @@ public abstract class Project {
 
     private String description;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Image> galleryImages;
 
 }

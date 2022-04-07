@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import sk.hfa.projects.domain.TextSection;
 import sk.hfa.projects.domain.enums.Category;
-import sk.hfa.projects.domain.throwable.InvalidProjectRequestException;
 import sk.hfa.projects.domain.throwable.TextSectionsProcessingException;
-import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,11 +14,6 @@ import java.util.Objects;
 public class ProjectUtils {
 
     private ProjectUtils() {
-    }
-
-    public static void validateProjectRequest(ProjectRequest request) {
-        if (Objects.isNull(request))
-            throw new InvalidProjectRequestException("Invalid request body");
     }
 
     public static List<TextSection> readTextSections(String textSectionsJson) {

@@ -30,11 +30,10 @@ public class ImageService implements IImageService {
     }
 
     public byte[] getImage(Long imageId) {
-        Optional<Image> image = imageRepository.findById(imageId);
-        if (!image.isPresent()) {
-            throw new ImageNotFoundException("Image with id: [" + imageId + "] does not exist");
-        }
-        String fullPath = ImageUtils.getFullPath(image.get());
+        Image image = imageRepository.findById(imageId).orElseThrow(() ->
+            new ImageNotFoundException("Image with id: [" + imageId + "] does not exist")
+        );
+        String fullPath = ImageUtils.getFullPath(image);
         Path path = Paths.get(fullPath);
         try {
             return Files.readAllBytes(path);
