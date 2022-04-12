@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import sk.hfa.images.domain.Image;
 import sk.hfa.images.repositories.ImageRepository;
@@ -24,8 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@Profile("dev")
-@Component
 @Profile("dev")
 public class DummyIndividualProjectRunner implements CommandLineRunner {
 
