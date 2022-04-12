@@ -11,5 +11,4 @@ class HfaApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
