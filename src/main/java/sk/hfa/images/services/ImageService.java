@@ -10,14 +10,12 @@ import sk.hfa.images.repositories.ImageRepository;
 import sk.hfa.images.services.interfaces.IImageService;
 import sk.hfa.images.utils.ImageUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -31,7 +29,7 @@ public class ImageService implements IImageService {
 
     public byte[] getImage(Long imageId) {
         Image image = imageRepository.findById(imageId).orElseThrow(() ->
-            new ImageNotFoundException("Image with id: [" + imageId + "] does not exist")
+                new ImageNotFoundException("Image with id: [" + imageId + "] does not exist")
         );
         String fullPath = ImageUtils.getFullPath(image);
         Path path = Paths.get(fullPath);
