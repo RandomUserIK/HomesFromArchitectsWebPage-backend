@@ -52,6 +52,8 @@ class ProjectServiceTest {
     @MockBean
     private IImageService imageService;
 
+
+    @SuppressWarnings("unchecked")
     @ParameterizedTest
     @ArgumentsSource(ProjectServiceTestArgumentProvider.class)
     void testSave_validRequestProject_shouldSave(ProjectRequest_ProjectEntity holder) {
@@ -66,6 +68,7 @@ class ProjectServiceTest {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @ParameterizedTest
     @ArgumentsSource(ProjectServiceTestArgumentProvider.class)
     void testUpdate_validProjectRequest_shouldUpdate(ProjectRequest_ProjectEntity holder) {
@@ -97,10 +100,10 @@ class ProjectServiceTest {
         assertThrows(ProjectNotFoundException.class, () -> projectService.deleteById(1L));
     }
 
+    @SuppressWarnings("unchecked")
     @ParameterizedTest
     @ArgumentsSource(ProjectServiceTestArgumentProvider.class)
     void testDeleteById_withValidId_shouldDeleteProject(ProjectRequest_ProjectEntity holder) {
-
         Long id = holder.getProjectRequest().getId();
         Optional<Project> project = Optional.of(holder.getProject());
 
