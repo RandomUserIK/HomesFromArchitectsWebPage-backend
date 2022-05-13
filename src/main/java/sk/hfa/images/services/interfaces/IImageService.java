@@ -1,21 +1,24 @@
 package sk.hfa.images.services.interfaces;
 
+import lombok.NonNull;
 import org.springframework.web.multipart.MultipartFile;
 import sk.hfa.images.domain.Image;
 
-import javax.annotation.Nullable;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public interface IImageService {
 
-    byte[] getImage(@Nullable Long imageId);
+    byte[] getImage(@NonNull Long imageId);
 
-    Image save(@NotNull MultipartFile multipartFile);
+    Image save(@NonNull MultipartFile multipartFile);
 
-    List<Image> save(@NotNull List<MultipartFile> multipartFiles);
+    List<Image> save(@NonNull List<MultipartFile> multipartFiles);
 
-    void deleteImage(@NotNull Image image);
+    void deleteImage(@NonNull Image image);
 
-    void deleteImages(@NotNull List<Image> images);
+    void deleteImages(@NonNull List<Image> images);
+
+    void initDirectory();
+
+    void deleteAll();
 }

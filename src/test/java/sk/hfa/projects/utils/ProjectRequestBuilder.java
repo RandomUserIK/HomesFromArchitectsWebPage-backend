@@ -1,12 +1,11 @@
 package sk.hfa.projects.utils;
 
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import sk.hfa.projects.web.domain.requestbodies.CommonProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.IndividualProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.InteriorProjectRequest;
 import sk.hfa.projects.web.domain.requestbodies.ProjectRequest;
+import sk.hfa.utils.MultipartFileUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +33,7 @@ public class ProjectRequestBuilder {
         project.setId(1L);
         project.setTitle("Test project");
         project.setPersons(4);
-        project.setTitleImageFile(getImage("Title image"));
+        project.setTitleImageFile(MultipartFileUtils.getMock("Title image"));
         project.setGalleryImageFiles(getImages());
         project.setTextSections("[{\"title\":\"Title 1\",\"text\":\"Text 1\"},{\"title\":\"Title 2\",\"text\":\"Text 2\"}]");
     }
@@ -73,17 +72,8 @@ public class ProjectRequestBuilder {
 
     private static List<MultipartFile> getImages() {
         List<MultipartFile> images = new ArrayList<>();
-        IntStream.range(0, 4).forEach((i) -> images.add(getImage("Title " + i)));
+        IntStream.range(0, 4).forEach((i) -> images.add(MultipartFileUtils.getMock("Title " + i)));
         return images;
-    }
-
-    private static MockMultipartFile getImage(String name) {
-        return new MockMultipartFile(
-                name,
-                "hello.jpeg",
-                MediaType.IMAGE_JPEG_VALUE,
-                "Hello, World!".getBytes()
-        );
     }
 
 }

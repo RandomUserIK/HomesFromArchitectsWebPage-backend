@@ -17,7 +17,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -36,6 +35,7 @@ import sk.hfa.projects.web.domain.responsebodies.ProjectPageMessageResource;
 import sk.hfa.projects.web.providers.MockMultipartRequestBuilder_ProjectEntity;
 import sk.hfa.projects.web.providers.ProjectControllerTestArgumentProvider;
 import sk.hfa.util.Constants;
+import sk.hfa.utils.MultipartFileUtils;
 import sk.hfa.web.domain.responsebodies.DeleteEntityMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
 
@@ -321,20 +321,11 @@ class ProjectControllerTest {
         return projectStub;
     }
 
-    private MockMultipartFile getMultipartFileMock(String name) {
-        return new MockMultipartFile(
-                name,
-                "hello.jpeg",
-                MediaType.IMAGE_JPEG_VALUE,
-                "Hello, World!".getBytes()
-        );
-    }
-
     private MockHttpServletRequestBuilder buildProjectRequestMock(MockMultipartHttpServletRequestBuilder builder) {
         return builder
-                .file(getMultipartFileMock("titleImageFile"))
-                .file(getMultipartFileMock("galleryImageFiles"))
-                .file(getMultipartFileMock("galleryImageFiles"))
+                .file(MultipartFileUtils.getMock("titleImageFile"))
+                .file(MultipartFileUtils.getMock("galleryImageFiles"))
+                .file(MultipartFileUtils.getMock("galleryImageFiles"))
                 .param("title", "Test")
                 .param("builtUpArea", "22.01")
                 .param("usableArea", "50.55")

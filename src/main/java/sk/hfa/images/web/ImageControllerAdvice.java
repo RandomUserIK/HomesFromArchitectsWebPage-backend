@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import sk.hfa.images.domain.throwable.FetchFileSystemResourceException;
 import sk.hfa.images.domain.throwable.ImageNotFoundException;
+import sk.hfa.images.domain.throwable.StorageException;
 import sk.hfa.util.Constants;
 import sk.hfa.web.domain.responsebodies.ErrorMessageResource;
 import sk.hfa.web.domain.responsebodies.MessageResource;
@@ -23,6 +24,12 @@ public class ImageControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<MessageResource> handleFetchFileSystemResourceException(FetchFileSystemResourceException ex) {
+        log.error(ex.getMessage(), ex);
+        return buildBadRequestResponse(ex.getMessage());
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<MessageResource> handleStorageException(StorageException ex) {
         log.error(ex.getMessage(), ex);
         return buildBadRequestResponse(ex.getMessage());
     }
